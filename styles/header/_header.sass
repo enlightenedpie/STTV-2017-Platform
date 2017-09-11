@@ -1,0 +1,75 @@
+header#siteheader
+	+wfull
+	height: $headerh
+	position: absolute
+	z-index: 399
+	top: 0
+	background-color: $bodybg
+	
+#logo-box
+	width: auto
+	height: $huge
+	display: inline-block
+	position: absolute
+	+centerpos
+	
+#logo-box img
+	width: auto
+	height: 100%
+
+a#main-menu, a#login
+	padding: 0 1em
+	height: 100%
+	display: block
+	position: absolute
+	
+a#main-menu
+	left: 0px
+	@include border($gray,1px,right)
+	
+a#login
+	right: 0px
+	@include border($gray,1px,left)
+	
+a.close
+	display: block
+	padding: 1em
+	+wfull
+	@include border($gray,1px,bottom)
+	
+.X
+	color: red
+	font-family: 'dashicons'
+	font-weight: 800
+	font-size: 1.25em
+	width: 1em !important
+	height: 1em !important
+	vertical-align: top
+	
+.X:before
+	content: '\f153 '
+
+.icon-block
+	position: relative
+	/*top:50%;transform:translateY(-50%)*/
+	+centerpos
+
+.dashicons
+	width: 1em !important
+	height: 1em !important
+	font-size: 1em !important
+	line-height: 1em !important
+	vertical-align: baseline
+	
+	
+/** Mobile **/
+@include MQ($mq-tablet)
+	header
+		position: -webkit-sticky
+		position: -moz-sticky
+		position: -ms-sticky
+		position: -o-sticky
+		position: sticky !important
+		
+	.icon-block span.link-text
+		display: none

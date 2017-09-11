@@ -1,0 +1,99 @@
+#front-main
+	padding: 1em
+	
+	#triptych
+		+wfull
+		
+		div[id$="_panel"]
+			display: inline-block
+			padding: 1em
+			
+			.tripicon-wrap
+				margin-bottom: 1em
+				
+				.tripicon
+					font-size: $huge * 3
+				
+
+.triptext
+	padding: 1em !important
+	text-align: center
+	
+.billboard
+	margin-bottom: 0px
+	color: black
+	min-height: $huge * 6
+	display: flex
+	
+	div.col
+		position: relative
+	
+	.bb-inner
+		display: block
+		
+		h3
+			margin-top: 0px
+	
+	img
+		+wfull
+		height: auto
+		display: block
+	
+	ul
+		display: block
+		list-style-type: none
+		font-size: $small
+		margin-bottom: 1em
+		
+		li
+			display: list-item
+			list-style-type: none
+			line-height: $large
+
+#front-latest-post
+	text-align: center
+	padding: $huge
+	
+	h2, h4
+		text-transform: uppercase
+		font-weight: 700
+	
+	figure
+		padding: 0px
+		margin: 0px
+
+		img
+			display: block
+			width: 100%
+			height: auto
+	
+	summary
+		text-align: left
+		display: block
+		padding-left: $huge * 2
+		padding-right: $huge * 4
+	
+		p
+			font-size: 125%
+
+/* Mobile */
+@include MQ($mq-tablet)
+	.billboard
+		display: block
+		
+		div.col
+			min-height: $huge * 2.5
+			
+		.bb-inner
+			max-width: 100%
+			text-align: center
+			margin-bottom: $huge
+			margin-top: 1em
+
+	#front-latest-post
+
+		summary
+			padding: 1em
+
+			p
+				font-size: 100%

@@ -1,0 +1,156 @@
+.card-content .activator
+	cursor: pointer
+
+.card-title
+	font-weight: inherit !important
+	margin-bottom: 1em
+	
+#practice
+	clear: both
+	+wfull
+
+.course-contentarea
+	min-height: 10em
+
+	.tab-content
+		padding: $large
+		min-height: 20em
+
+.course-preloader
+	display: block
+	position: fixed
+	z-index: 9999999
+	top: 0px
+	bottom: 0px
+	right: 0px
+	left: 0px
+	background-color: white
+	+wfull
+	
+	div
+		position: absolute
+		left: 50%
+		top: 50%
+		transform: translate3D(-50%,-50%,0)
+
+body.single-courses
+	
+	#content-wrapper-full
+		padding: 0px
+		margin: 0px
+
+		.row
+			margin: 0px
+
+		.indicator
+			background-color: $ltblack
+
+		.video-text
+			display: block
+			padding-right: 1em
+
+		.inner-col
+			padding-bottom: 1em
+	
+		.section-resources
+			
+			p
+				margin-bottom: $small
+	
+				a
+					color: $azure
+
+				a:before
+					font-family: 'Material Icons'
+					content: '\E2C0n'
+					width: 0
+					height: 0
+					text-decoration: none
+					vertical-align: text-bottom
+	
+	h1
+		margin-bottom: 0px
+	
+	#courses-right-sidebar, #courses-left-wrapper
+		padding: 0px
+	
+	#courses-right-sidebar
+		min-height: 10em
+		margin: 0px
+		font-size: 14px
+		-webkit-box-shadow: -2px -2px 5px 0px rgba(0,0,0,0.15)
+		-moz-box-shadow: -2px -2px 5px 0px rgba(0,0,0,0.15)
+		box-shadow: -2px -2px 5px 0px rgba(0,0,0,0.15)
+		
+		.course-right-sidebar-inner
+			padding: 0px
+			margin: 0px
+			padding-left: $small
+			padding-bottom: $small
+			background-color: white
+		
+			.course-subsection-container
+				margin: 0px
+				padding-top: 1em
+				padding-right: 1em
+				padding-left: 1em
+				border-bottom: 1px solid $invblack
+			
+			h3
+				padding: 0px
+				margin: 0px
+				text-transform: uppercase
+				font-weight: bold
+				
+				p
+					padding-bottom: $tiny
+		
+		.sidebar-sub-link
+			padding-top: $tiny
+			padding-right: $tiny
+			padding-bottom: $tiny
+			margin-bottom: 0px
+
+			.course-video-title
+				overflow-wrap: break-word
+				word-wrap: break-word
+
+		a:last-child
+			opacity: 1		
+
+			.sidebar-sub-link
+				margin-bottom: 0px
+	
+		.course-video-duration
+			display: block
+			margin-top: $tiny
+			font-size: $small
+			font-style: italic
+
+	#course-after-title
+		text-align: center
+		+wfull
+		
+		h2
+			text-transform: capitalize
+			text-shadow: 0px 2px 5px rgba(150, 150, 150, 0.55)
+
+	#course-nav-container
+		padding: $tiny
+		+wfull
+			
+		.course-nav
+			display: inline-block
+			height: auto
+
+@include MQ($mq-tablet)
+	body.single-courses
+	
+		#courses-right-sidebar
+			font-size: inherit
+
+		.course-contentarea
+			padding: 0px
+			
+			.tabs
+				display: block

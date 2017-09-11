@@ -1,0 +1,48 @@
+@-ms-viewport
+	width: device-width
+
+*
+	+nomp
+	border: 0
+	font-size: 100%
+	vertical-align: baseline
+	box-sizing: border-box !important
+	
+*:before, *:after
+	box-sizing: inherit !important
+
+html, body, header, footer, aside, article, section, div, applet, object, iframe, canvas, embed, figure, nav, audio, video
+	display: block
+
+html, body
+	+wfull
+	height: 100%
+	-webkit-overflow-scrolling: touch !important
+	
+html
+	font-family: 'Texta', sans-serif !important
+
+body
+	line-height: 1
+	overflow-x: hidden
+	
+body.admin-bar
+	margin-top: 32px
+	
+ol, ul
+	list-style: none
+	
+	
+/** Mobile **/
+@include MQ($mq-tablet)
+	html, body
+		overflow-x: hidden
+		
+	body
+		position: relative
+		
+	body.admin-bar
+		margin-top: 0px
+		
+	body.admin-bar header
+		margin-top: 46px

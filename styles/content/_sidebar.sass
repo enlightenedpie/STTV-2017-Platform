@@ -1,0 +1,37 @@
+#sidebar
+	display: block
+	+w1quarter
+	min-height: $huge * 10
+	padding: 1em
+	
+	>div
+		+wfull
+		background-color: white
+		padding: 1em
+		
+		#recentposts
+			font-size: $small
+			
+			.collection-item
+				min-height: 4em
+				line-height: 1em
+		
+		#subscribeform
+			position: relative
+		
+			#subscribe-c2a
+				padding: 1em
+				font-size: $small
+		
+			h4
+				margin: 0px
+				
+			button
+				+widebtn
+			
+			
+		
+/** Mobile **/		
+@include MQ($mq-tablet)
+	#sidebar
+		+wfull

@@ -1,0 +1,75 @@
+/* #not-header-wrapper = container that includes all the main body elements except for <header> and <footer> */
+#not-header-wrapper
+	margin-top: $headerh
+	+wfull
+	margin-bottom: 0px
+	
+/* main = wraps all content except for the "stage" (image/video/slider display area) */
+/*main
+	padding-top: $huge*/
+
+body.single-courses main
+	padding-top: 0px
+
+/* #content = wraps all content except for the "stage" (image/video/slider display area) */
+#content
+	max-width: $bodyw
+	margin: 0 auto
+	
+/* #content-wrapper = wraps the content only (article, title, meta, etc.), excluding the sidebar */
+#content-wrapper
+	+w3quarter
+	padding-left: 1em
+	
+	p
+		margin-bottom: 1em
+		line-height: $medium
+		
+		a
+			color: $azure
+	
+#content-wrapper > *:nth-child(2n+1)
+	clear: both
+	
+main, #content, #content-wrapper
+	overflow: hidden
+	
+#content-wrapper-full
+	+wfull
+	padding: 1em
+
+#content-mobile-reveal
+	display: none
+	-webkit-box-shadow: 0px -30px 50px 0px rgba(255,255,255,1)
+	-moz-box-shadow: 0px -30px 50px 0px rgba(255,255,255,1)
+	box-shadow: 0px -30px 50px 0px rgba(255,255,255,1)
+	background-color: rgba(255,255,255,1)
+	padding: 1em
+	position: relative
+	z-index: 9999
+
+	button
+		+wfull
+		padding: 1em
+
+/** Mobile **/		
+@include MQ($mq-tablet)
+	#not-header-wrapper
+		+wfull
+		margin-top: 0px
+		
+	#content, #content-wrapper, #sidebar
+		+wfull
+		
+	#content>*
+		float: none
+			
+	#content-wrapper
+		font-size: $medium
+
+@include MQ($mq-mobile)
+	#content-wrapper
+		max-height: 16em
+
+	#content-mobile-reveal
+		display: block

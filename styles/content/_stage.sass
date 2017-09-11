@@ -1,0 +1,56 @@
+#stage
+	+wfull
+	background-color: white
+	
+	span.sttv-embed-video, span.post-thumb-top
+		height: 540px
+		+wfull
+		background: black
+		display: block
+		max-height: 700px
+	
+		img, iframe
+			display: block
+			margin: 0 auto
+			width: 60%
+
+		iframe
+			height: 100%
+
+		img
+			width: auto
+			height: 100%
+		
+@include MQ($mq-wide)
+	#stage
+	
+		iframe, img
+			+wfull
+			
+@include MQ($mq-desktop)
+	#stage
+	
+		span.sttv-embed-video, span.post-thumb-top
+			height: 480px
+			
+			iframe
+				+w3quarter
+
+/** Mobile **/		
+@include MQ($mq-tablet)			
+	#stage
+	
+		span.sttv-embed-video, span.post-thumb-top
+			height: 360px
+			
+			iframe
+				+wfull
+
+@include MQ($mq-mobile)			
+	#stage
+	
+		span.sttv-embed-video, span.post-thumb-top
+			height: 240px
+			
+			iframe
+				width: 100%

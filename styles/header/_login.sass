@@ -1,0 +1,91 @@
+form#sttv_login_form
+	display: block
+	+wfull
+	
+	input, button
+		+wfull
+		padding: $small
+		margin-bottom: $tiny
+	
+	button
+		margin-top: $tiny
+		
+#form-wrapper
+	width: 350px
+	padding: 1em
+	height: auto
+	position: absolute
+	z-index: 999
+	background: white
+	+centerpos
+	
+	.loading_overlay
+		z-index: 1000
+	
+	#form-identity
+		+wfull
+		padding: 1em
+		
+		img
+			+wfull
+			height: auto
+			display: block
+		
+		p
+			text-align: center
+			padding-top: $small
+	
+	#forgot-block
+		+wfull
+		padding-right: 1em
+		text-align: right
+		font-size: $small
+		
+		a
+			text-decoration: underline
+
+.row
+	position: relative
+			
+.loading_overlay
+	display: none
+	z-index: 500
+	position: absolute
+	top: 0
+	right: 0
+	left: 0
+	bottom: 0
+	+wfull
+	height: 100%
+	background-color: $transwht
+	
+	p.sblock
+		position: absolute
+		z-index: 500
+		display: block
+		+centerpos
+		
+		i
+			font-size: $huge * 6
+			color: $olive
+			text-align: center
+			+wfull
+		
+		.smessage
+			font-size: $large
+			color: $ltblack
+			display: block
+	
+	img
+		position: absolute
+		display: block
+		width: auto
+		height: auto
+		+centerpos
+
+p.message
+	display: none
+	padding: $small
+	background-color: $sienna
+	color: white
+	margin-bottom: $tiny

@@ -1,0 +1,58 @@
+#main-wrapper
+	position: absolute
+	+wfull
+	min-height: 100%
+	top: 0
+	background: $bodybg
+	z-index: 2
+	-webkit-transition: -webkit-transform .5s ease-in-out
+	transition: transform .5s ease-in-out
+	
+	hr
+		+borderbtm
+		+wfull
+	
+	#acctmodal
+		display: block
+		position: absolute
+		top: 0
+		bottom: 0
+		right: 0
+		left: 0
+		z-index: 9999
+		opacity: 0
+		visibility: hidden
+		-webkit-transition: all .5s ease-in-out
+		transition: all .5s ease-in-out
+	
+#main-wrapper:before
+	content: ''
+	display: block
+	position: absolute
+	top: 0
+	left: 0
+	+wfull
+	height: 100%
+	background-color: rgba(0,0,0,0.75)
+	z-index: 400
+	opacity: 0
+	visibility: hidden
+	-webkit-transition: all .5s ease-in-out
+	transition: all .5s ease-in-out
+
+body.nav-sidebar-open #main-wrapper
+	position: fixed
+	-webkit-transform: translate3d($sidew,0,0)
+	transform: translate3d($sidew,0,0)
+	
+body.login-sidebar-open #main-wrapper
+	position: fixed
+	//-webkit-transform: translate3d(-$sidelog,0,0)
+	//transform: translate3d(-$sidelog,0,0)
+
+body.nav-sidebar-open #main-wrapper:before, body.nav-sidebar-open #navcloser
+	opacity: 1
+	visibility: visible
+
+body.nav-sidebar-open #navcloser
+	display: block

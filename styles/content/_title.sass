@@ -1,0 +1,26 @@
+#title-meta
+	padding-left: 1em
+	padding-right: 1em
+
+	#page-title
+		+wfull
+		text-align: center
+
+	hr
+		height: 2px
+		width: 6em
+		background: $seafoam
+		margin: 0 auto
+		
+	#post-meta
+		text-align: center
+		padding: 1em
+		
+		.category-desc
+			font-style: italic
+			
+/** Mobile **/			
+@include MQ($mq-tablet)
+	#page-title
+		padding-left: 1em
+		padding-right: 1em

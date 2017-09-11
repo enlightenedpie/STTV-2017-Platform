@@ -1,0 +1,26 @@
+.byline
+	font-style: italic
+	font-size: $small
+	
+	a
+		color: $azure
+
+#post-tags
+	+w1quarter
+	margin: 0 auto
+	margin-top: 1em
+
+.post-tag
+	font-size: $tiny
+	padding: $tiny
+	margin-right: $ittybitty
+	display: inline-block
+	border: 1px solid $ltblack
+	border-radius: 2px
+	font-weight: 700
+	
+	
+/** Mobile **/
+@include MQ($mq-tablet)
+	#post-tags
+		+wfull

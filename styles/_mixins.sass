@@ -1,0 +1,60 @@
+@mixin fontFace($family,$weight)
+	@font-face
+		font-family: $family
+		src: url('fonts/#{$family}/Norm/#{$family}-#{$weight}.woff') format('woff'), url('fonts/#{$family}-#{$weight}.ttf') format('truetype')
+		font-style: normal
+		font-weight: $weight
+	
+	@font-face
+		font-family: $family
+		src: url('fonts/#{$family}/Ital/#{$family}-#{$weight}-It.woff') format('woff'), url('fonts/#{$family}-#{$weight}-It.ttf') format('truetype')
+		font-style: italic
+		font-weight: $weight
+		
+@mixin border($color,$size: 1px,$borders: top left right bottom)
+	@each $border in $borders
+		border-#{$border}: #{$size} solid #{$color}
+		
+@mixin MQ($breakpoint)
+	@if $breakpoint == 1700px
+		@media only screen and (min-width: #{$breakpoint})
+			@content
+	@else
+		@media only screen and (max-width: #{$breakpoint})
+			@content
+
+
+=nomp
+	margin: 0px
+	padding: 0px
+	
+=borderbtm
+	height: 5px
+	background: url(i/sttv-border.png) no-repeat
+	background-size: 100% 5px
+	
+=centerpos
+	top: 50%
+	left: 50%
+	transform: translate3d(-50%,-50%, 0)
+	
+=widebtn
+	+wfull
+	padding: $small
+	margin-bottom: $tiny
+	
+=btncolor
+	background: $azure
+	color: white
+	
+=wfull
+	width: 100%
+
+=w3quarter
+	width: 75%
+	
+=whalf
+	width: 50%
+	
+=w1quarter
+	width: 25%

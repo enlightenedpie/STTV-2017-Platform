@@ -1,0 +1,27 @@
+/* CATEGORY STYLES */
+
+.category-post
+	+whalf
+	float: left
+	
+	figure
+		+wfull
+		display: block
+		
+		img
+			display: block
+			+wfull
+			height: auto
+			
+	h5
+		text-align: center
+	
+	figure, h5
+		margin: 0
+		margin-bottom: 1em
+
+/** Mobile **/	
+@include MQ($mq-tablet)
+	.category-post
+		+wfull
+		float: none

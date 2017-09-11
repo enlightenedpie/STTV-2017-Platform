@@ -1,0 +1,139 @@
+#content-wrapper-signup
+	text-align: center
+
+	.sttv-sales-table-wrapper
+		padding: 0px !important
+		margin-bottom: $large
+		margin-top: $large
+
+		table
+			display: block
+
+			tbody
+				display: table
+				width: 100%
+
+		caption
+			display: block
+			padding: 1em
+			font-size: $medium
+			font-weight: 100
+			background: $invblack
+			border: 0
+
+		caption.highlight
+			font-size: $huge
+			font-weight: 700
+
+		tr
+			padding: $ittybitty 1em
+
+		td
+			display: table-cell
+			padding: 1em
+			text-align: center
+			vertical-align: middle
+			border-bottom: 1px solid $invblack
+			border-collapse: collapse
+
+	.sttv-sales-table-wrapper.highlight
+		//-webkit-transform: scale(1.2)
+		//-moz-transform: scale(1.2)
+		//-o-transform: scale(1.2)
+		//transform: scale(1.2)
+		zoom: 1.15
+		margin-top: 0
+
+	caption.highlight, a.pmt-button
+		+btncolor
+
+	.sttv-course-price
+		color: $azure
+		font-size: $medium
+
+	/* FAQ SECTION */
+
+	.sttv-faq-inner
+		text-align: left
+		padding: $huge
+
+		p
+			margin-bottom: 1em
+		
+/* CHECKOUT MODAL */
+	
+#checkout_modal_overlay
+	display: none
+	position: absolute
+	background: white
+	z-index: 99999
+	width: 100%
+	height: 100%
+	top: 0px
+	
+	img
+		position: absolute
+		display: block
+		width: 60px
+		height: 60px
+		top: 50%
+		left: 50%
+		transform: translate(-50%,-50%)
+		
+	div#modal_results
+		width: 100%
+		position: absolute
+		top: 50%
+		transform: translateY(-50%)
+		
+	div#sttv-emotee
+		display: inline-block
+		background-image: url(i/sttv-emotee-sprite.png)
+		background-repeat: no-repeat
+		background-size: 200%
+		width: 100px
+		height: 100px
+		
+	div#sttv-emotee.s-success
+		background-position: -100px 0px
+.error
+	font-size: $small
+	color: red
+	padding-top: 1em
+	
+label[for="same_shipping"]
+	margin-top: $tiny !important
+	margin-bottom: $huge
+		
+@include MQ($mq-desktop)
+	#checkout_modal
+		width: 60% !important
+		
+/* TABLET */
+
+@include MQ($mq-tablet)
+	#checkout_modal
+		width: 96% !important
+		top: 2% !important
+	
+	.modal
+		max-height: 100% !important
+		
+/* MOBILE */
+	
+@include MQ($mq-mobile)
+	.sttv-sales-table-wrapper
+		margin-top: 0
+		
+	.sttv-sales-table-wrapper.highlight
+		zoom: 1
+		
+	.sttv-course-price
+		font-size: $huge
+	
+	.sttv-sales-table-wrapper
+	
+		table
+			
+			caption, caption.highlight
+				font-size: $large
