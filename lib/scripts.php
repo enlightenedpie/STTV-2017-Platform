@@ -39,7 +39,7 @@ function sttv_enqueue_all() {
 		wp_enqueue_script('sttv-checkout-stripe','https://js.stripe.com/v3/','sttv-checkout',null,false);
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
 	elseif (is_page('contact')) :
-		wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
+		//wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
 	endif;
 	
 	if (is_singular('courses')) {

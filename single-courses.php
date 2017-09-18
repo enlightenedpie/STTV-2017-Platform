@@ -26,7 +26,7 @@ function sttv_course_js_object() {
 ?><script>
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
 var courses = {
-	version : '1.0.4',
+	version : '<?php echo STTV_VERSION; ?>',
 	settings : {
 		autoplay : 0,
 		activeColor : $('body').css('color')
@@ -45,12 +45,9 @@ var courses = {
 		},
 		get : function() {return localStorage.getItem('course_data')},
 		set : function(data) {return localStorage.setItem('course_data',JSON.stringify(data));},
-
-		remove : localStorage.removeItem('course_data'),
 		update : {
 			get : function() {return localStorage.getItem('__c-update')},
-			set : function() {return localStorage.setItem('__c-update',Math.floor(Date.now()/1000));},
-			remove : localStorage.removeItem('__c-update')
+			set : function() {return localStorage.setItem('__c-update',Math.floor(Date.now()/1000));}
 		},
 		request : function(method,cdata) {
 			var method = method || 'GET';
@@ -67,9 +64,14 @@ var courses = {
 				 }
 			});
 		},
-		reset : function() {
-			courses.data.remove;
-			courses.data.update.remove;
+		reset : function(cb) {
+			localStorage.removeItem('course_data');
+			localStorage.removeItem('__c-update');
+			
+			if (cb)
+				cb(true)
+			else
+				return false;
 		}
 	},
 	preloader : {
@@ -79,13 +81,15 @@ var courses = {
 		}
 	},
 	init : function(){
-		courses.data.reset();
+		
 		$('body').prepend(this.preloader.html);
 		
-		var ctrl = courses.data.update.get();
+		var ctrl = parseInt(localStorage.getItem('__c-update'));
 	
-		if (!courses.data.get() || !ctrl || Math.floor(Date.now()/1000) >= ctrl+3600) { //86400
-			courses.data.request();
+		if (courses.data.get() === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
+			courses.data.reset(
+				courses.data.request()
+			);
 		}
 		
 		function finish_init() {

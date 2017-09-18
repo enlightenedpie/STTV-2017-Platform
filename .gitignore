@@ -2,7 +2,7 @@
 .DS_Store
 node_modules
 fonts
-lib/Mandrill/config.php
+lib/config.php
 lib/payments
 lib/Stripe
 lib/stripe.php

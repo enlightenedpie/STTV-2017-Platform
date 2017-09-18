@@ -10,13 +10,13 @@ function register_course_meta_endpoint() {
 			$thepost = get_post($data['id']);
 				$cap = str_replace(' ','_',strtolower($thepost->post_title));
 		
-		$legacy = array('_legacy_value_bundle','_legacy_official_guide','_legacy_red_book');
-		
-		foreach($legacy as $l) {
-			if (current_user_can($l)){
-				return current_user_can( $l );
+			$legacy = array('_legacy_value_bundle','_legacy_official_guide','_legacy_red_book');
+
+			foreach($legacy as $l) {
+				if (current_user_can($l)){
+					return current_user_can( $l );
+				}
 			}
-		}
 			return current_user_can( $cap );
 		},
 		'args' => array(
@@ -82,10 +82,6 @@ function get_course_meta($data) {
 	
 	return $data;
 
-}
-
-function courses_res_download() {
-	
 }
 
 /**
@@ -383,7 +379,7 @@ class STTV_Courses_Admin {
 	?>
 	</div>
 </div>
-<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print_r($data); ?></pre>
+<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; //print_r($data); ?></pre>
 		
 <?php }
 	
@@ -525,7 +521,7 @@ class STTV_Courses_Admin {
 		//$h = explode('/', $_SERVER['DOCUMENT_ROOT']);
 		//$root_path = $_SERVER['DOCUMENT_ROOT'].'/';
 
-		$file = $_SERVER['DOCUMENT_ROOT'].'/vim/vcache/'.$id.'.cache';
+		$file = STTV_CACHE_DIR.$id.'.cache';
 		$fcache = fopen($file,'r');
 		$albs = fread($fcache,filesize($file));
 		fclose($fcache);
@@ -535,11 +531,10 @@ class STTV_Courses_Admin {
 	
 	private function album_cache_ids(){
 		//$h = explode('/', $_SERVER['DOCUMENT_ROOT']);
-		$root_path = $_SERVER['DOCUMENT_ROOT'].'/vim/vcache/';
 		
-		$files = scandir($root_path);
+		$files = scandir(STTV_CACHE_DIR);
 		foreach ($files as $file) {
-			if (is_file($root_path.$file)){
+			if (is_file($file)){
 				$this->alb_cache[] = $file;
 			}
 		}

@@ -71,6 +71,8 @@ function sttv_get_template($temp,$dir='',$object=null) {
 	return (include $path.$extension);
 }
 
+
+
 add_action('stripepress_events_invalid','sttv_404_redirect');
 function sttv_404_redirect() {
 	global $wp_query;

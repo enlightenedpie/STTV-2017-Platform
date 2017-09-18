@@ -281,6 +281,21 @@
 		 }
 		 
 	 });
+	 $('select[name=sttv_shipping_country]').one('change',function() {
+		 fsub.shipWasChecked = $('#sttv_digital_book').is(":checked");
+	 });
+	 $('select[name=sttv_shipping_country]').change(function(){
+		 var shipUS = $(this).val();
+			 
+		 if (!shipUS || shipUS !== 'US') {
+			 $('#sttv_digital_book').prop('checked',false)
+			 $('#sttv_digital_book').prop('disabled',true)
+		 } else {
+			 $('#sttv_digital_book').prop('checked',fsub.shipWasChecked)
+			 $('#sttv_digital_book').prop('disabled',false)
+		 }
+		 price_updater();
+	 });
 	$('#same_shipping').change(function() {
 		if ($(this).is(":checked")) {
 			

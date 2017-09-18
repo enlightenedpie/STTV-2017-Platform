@@ -15,9 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 			
 			if ($output['g-recaptcha-response']) : // verify recaptcha if it exists
 			
-				$recapSecret = '6LdjuA0UAAAAAEtl1TF36zJlwZkVwuSepZiwtJCf';
-			
-				$response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recapSecret."&response=".$output['g-recaptcha-response']."&remoteip=".$_SERVER['REMOTE_ADDR']),true);
+				$response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".RECAPTCHA_SECRET."&response=".$output['g-recaptcha-response']."&remoteip=".$_SERVER['REMOTE_ADDR']),true);
 				
 					if (!$response['success']) :
 						echo wp_send_json_error(array('rmessage'=>'Verification failed. Please try again.','response'=>$response),403);
@@ -136,12 +134,13 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 			'merge_fields' => array(
 				'FNAME' => $fname,
 				'LNAME' => $lname
-			)
+			),
+			'ip_signup' => $_SERVER['REMOTE_ADDR']
 		);
 		$hashmail = md5(strtolower($email));
 		
 		$list_id = 'df497b5cbd';
-		$api_key = '476c5a967fe76a385906b1537f6fada4-us7';
+		$api_key = MAILCHIMP_API_KEY;
 		$api_path = 'https://us7.api.mailchimp.com/3.0/lists/'.$list_id.'/members/'.$hashmail;
 		
 		
@@ -161,9 +160,9 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 		$subscribe = file_get_contents($api_path,false,$context);
 		
 		if ($subscribe) :
-			echo wp_send_json_success(array('message'=> __('Success! Thank you for subscribing to SupertutorTV!', 'wordpress-seo'), 'subscribed' => true, 'sdata' => $subscribe));
+			echo wp_send_json_success(array('message'=> '<h1 style="display:block">Success!</h1> Thank you for subscribing to SupertutorTV!', 'subscribed' => true, 'sdata' => $subscribe));
 		else :
-			echo wp_send_json_error(array('message'=> __('Something went wrong. Please try again later.', 'wordpress-seo'), 'subscribed' => false, 'sdata' => $subscribe));
+			echo wp_send_json_error(array('message'=> 'Something went wrong. Please try again later.', 'subscribed' => false, 'sdata' => $subscribe));
 		endif;
 	}
 	
@@ -425,10 +424,6 @@ function sttv_check_zip() {
 function sttv_check_coupon() {
 	
 	try {
-		//echo wp_send_json_error(array('field'=>'testing','error'=>get_included_files()));
-		//if (in_array()){}
-		//require(dirname(__DIR__).'/Stripe/init.php');
-		//echo wp_send_json_success(array('field'=>'testing','error'=>'This is after the Stripe include'));
 		
 		\Stripe\Stripe::setApiKey(Spress()->secret_key);
 
@@ -443,4 +438,8 @@ function sttv_check_coupon() {
 		echo wp_send_json_error(array('field'=>'coupon','error'=>$err));
 	}
 	
+}
+
+function sttv_md5it() {
+	echo wp_send_json(md5($_POST['email']));
 }

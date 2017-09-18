@@ -91,29 +91,11 @@ function sttv_subscribe_form($atts,$content = '') {
 						grecaptcha.getResponse();
 					};
 				</script>
-				<script src=\'https://www.google.com/recaptcha/api.js\' async defer></script>
 				<h4>'.$atts['title'].'</h4>
 				<div id="subscribe-c2a">'.$content.'</div>
-				<form id="sttv_subscribe" class="col s12" action="/" method="post">
-					<div class="loading_overlay"></div>
-					  <div class="row">
-						<div class="input-field '.$context.' m12 s12">
-						  <input name="sttv_mc_fname" id="sttv_mc_fname" minlength="2" value="'.$current_user->user_firstname.'" type="text" class="validate" required>
-						  <label for="sttv_mc_fname" data-error="Please enter your first name">First Name (required)</label>
-						</div>
-						<div class="input-field '.$context.' m12 s12">
-						  <input name="sttv_mc_lname" id="sttv_mc_lname" minlength="2" value="'.$current_user->user_lastname.'" type="text" class="validate" required>
-						  <label for="sttv_mc_lname" data-error="Please enter your last name">Last Name (required)</label>
-						</div>
-						<div class="input-field l12 m12 s12">
-						  <input name="sttv_mc_email" id="sttv_mc_email" value="'.$current_user->user_email.'" type="email" class="validate" required>
-						  <label for="sttv_mc_email" data-error="Please enter a valid email address">Email Address (required)</label>
-						</div>
-						<p class="message"></p>
-						<button class="g-recaptcha z-depth-2 submitter" data-callback="response" data-sitekey="6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86">Submit</button>
-						<input type="hidden" name="whichform" value="subscribe" />
-					</div>
-				</form>
+				<div id="sub_redir_button">
+					<a class="z-depth-2 button" href="'.site_url().'/subscribe"><h3>Subscribe now!</h3></a>
+				</div>
 			</div>';
 	
 }
