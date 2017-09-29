@@ -298,7 +298,7 @@ class STTV_Courses_Admin {
 			foreach ( $data['sections'] as $sec => $val ){
 				$html .= "<div class='course_section'>";
 				$html .= "<label for='courses[sections][{$i}][title]'>Section name: <input name='courses[sections][{$i}][title]' value='{$sec}'/></label>&nbsp;";
-				$html .= "<label for='courses[sections][{$i}][id]'>Section ID: <input name='courses[sections][{$i}][id]' value='{$val['id']}' disabled/></label>&nbsp;";
+				//$html .= "<label for='courses[sections][{$i}][id]'>Section ID: <input name='courses[sections][{$i}][id]' value='{$val['id']}' disabled/></label>&nbsp;";
 				$html .= "<button class='add-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
 				$html .= "<div class='course_subsec'>";
 				
@@ -379,7 +379,7 @@ class STTV_Courses_Admin {
 	?>
 	</div>
 </div>
-<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; //print_r($data); ?></pre>
+<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 		
 <?php }
 	
@@ -454,8 +454,7 @@ class STTV_Courses_Admin {
 						);
 				}
 				
-				//$ha = explode('/', $_SERVER['DOCUMENT_ROOT']);
-				$root_path = $_SERVER['DOCUMENT_ROOT'].'/resources/'.strtolower($data['test']).'/'.$sec['title'].'/';
+				$root_path = STTV_RESOURCE_DIR.strtolower($data['test']).'/'.$sec['title'].'/';
 				$resources = array();
 				$files = scandir($root_path);
 				foreach ($files as $file) {
@@ -469,6 +468,7 @@ class STTV_Courses_Admin {
 					'cap'=>$cap,
 					'color'=>'#'.$color,
 					'resources'=>$resources,
+					'videos'=>new stdClass(),
 					'subsec'=>$albs
 				);
 				$i++;
@@ -518,8 +518,6 @@ class STTV_Courses_Admin {
 	}
 	
 	private function get_cached_album($id) {
-		//$h = explode('/', $_SERVER['DOCUMENT_ROOT']);
-		//$root_path = $_SERVER['DOCUMENT_ROOT'].'/';
 
 		$file = STTV_CACHE_DIR.$id.'.cache';
 		$fcache = fopen($file,'r');
@@ -530,11 +528,10 @@ class STTV_Courses_Admin {
 	}
 	
 	private function album_cache_ids(){
-		//$h = explode('/', $_SERVER['DOCUMENT_ROOT']);
 		
-		$files = scandir(STTV_CACHE_DIR);
+		$files = scandir(''.STTV_CACHE_DIR);
 		foreach ($files as $file) {
-			if (is_file($file)){
+			if (is_file(STTV_CACHE_DIR.$file)){
 				$this->alb_cache[] = $file;
 			}
 		}
