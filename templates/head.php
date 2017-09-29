@@ -17,11 +17,11 @@
 			var recapOnload = function() {
 				<?php if (is_page('contact')) : ?>
 					contactRecap = grecaptcha.render('contact_recap', {
-						'sitekey' : '6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86'
+						'sitekey' : '<?php echo RECAPTCHA_SITEKEY; ?>'
 					});
 				<?php endif; if (is_page('subscribe')) : ?>
 					grecaptcha.render('subscribe_form', {
-						'sitekey' : '6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86'
+						'sitekey' : '<?php echo RECAPTCHA_SITEKEY; ?>'
 					});
 				<?php endif; ?>
 			};
@@ -31,6 +31,7 @@
 </head>
 
 <body <?php body_class(); ?>>
+<?php do_action('sttv_after_body_tag'); ?>
 <?php do_action('sttv_sale_banner'); ?>
 	<div id="main-wrapper">
     	<div id="navcloser" class="close"></div>
