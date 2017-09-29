@@ -15,7 +15,13 @@ class STTV_Product_Reviews extends WP_REST_Controller {
 	
 	public function __construct() {
 		add_action( 'rest_api_init', array($this,'sttv_product_reviews_api') );
+		
+		register_shutdown_function( array( $this, '__destruct' ) );
 	}
+	
+	public function __destruct() {
+        return true;
+    }
 	
 	public function sttv_product_reviews_api() {
  		register_rest_route( STTV_REST_NAMESPACE, '/reviews/(?P<id>[\d]+)', 
@@ -29,21 +35,20 @@ class STTV_Product_Reviews extends WP_REST_Controller {
 							'required' => true
 						)
 					)
-				),
+				)
+			)
+		);
+		register_rest_route( STTV_REST_NAMESPACE, '/reviews/',
+			array(
 				array(
 					'methods' => 'PUT',
 					'callback' => array($this,'post_product_review'),
-					'permission_callback' => array($this,'can_post_reviews'),
-					'args' => array(
-						'id' => array(
-							'validate_callback' => 'absint',
-							'required' => true
-						)
-					)
+					'permission_callback' => array($this,'can_post_reviews')
 				),
 				array(
 					'methods' => 'POST',
-					'callback' => array($this,'review_exists')
+					'callback' => array($this,'get_review_template'),
+					'permission_callback' => 'is_user_logged_in'
 				)
 			)
 		);
@@ -55,6 +60,10 @@ class STTV_Product_Reviews extends WP_REST_Controller {
 	}
 	
 	public function post_product_review(WP_REST_Request $request) {
+		if ($this->review_exists($request)){
+			return false;
+			exit();
+		}
 		$body = json_decode($request->get_body());
 		
 		$user = get_user_by('id', $body->user_id);
@@ -74,16 +83,30 @@ class STTV_Product_Reviews extends WP_REST_Controller {
 		);
 		$comment = wp_insert_comment($args);
 		
-		return rest_ensure_response($comment);
+		if (!is_wp_error($comment)){
+			return rest_ensure_response(array('templateHtml'=>file_get_contents(STTV_TEMPLATE_DIR.'courses/ratings_thankyou.html')));
+		} else {
+			return rest_ensure_response(array('error'=>$comment));
+		}
+		die;
 	}
 	
 	public function can_post_reviews() {
-		return current_user_can( 'course_post_reviews' );
+		return current_user_can( 'course_post_reviews' )?:is_user_logged_in();
 	}
 	
-	public function review_exists($d) {
-		$body = json_decode($d->get_body());
-		return !!get_comments(array('post_id'=>$body->post,'user_id'=>$body->user_id,'count'=>true));
+	public function review_exists($wpr) {
+		if (is_object($wpr)){
+			$body = json_decode($wpr->get_body());
+			return !!get_comments(array('post_id'=>$body->post,'user_id'=>$body->user_id,'count'=>true,'post_status'=>'any'));
+		} else {
+			return false;
+		}
+	}
+	
+	public function get_review_template(WP_REST_Request $request) {
+		$template = (!$this->review_exists($request)) ? file_get_contents(STTV_TEMPLATE_DIR.'courses/ratings_post.html') : file_get_contents(STTV_TEMPLATE_DIR.'courses/ratings_thankyou.html');
+		return array('templateHtml'=>$template);
 	}
 	
 }
