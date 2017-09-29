@@ -98,7 +98,8 @@ function stajax_object() {
 			$stajax['rest'] = array(
 				'nonce' => wp_create_nonce('wp_rest'), 
 				'url' => rest_url('sttv/v1/course_data/'.$post->ID),
-				'dls' =>rest_url('sttv/v1/course_download/'.$post->ID)
+				'dls' =>rest_url('sttv/v1/course_download/'.$post->ID),
+				'reviews'=>rest_url('sttv/v1/reviews/')
 			);
 		}
 		?>
