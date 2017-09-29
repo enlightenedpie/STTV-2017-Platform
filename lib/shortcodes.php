@@ -171,7 +171,7 @@ function sttv_stripe_plan($atts,$content='') {
     		?>
             <tr>
             	<td>
-                	<a href="#" class="payment-launcher pmt-button btn" data-bind="<?php echo $databind; ?>">Sign up now!</a>
+                	<a href="#" class="payment-launcher pmt-button btn  waves-effect waves-light" data-bind="<?php echo $databind; ?>">Sign up now!</a>
                 </td>
             </tr>
             </table>
