@@ -22,6 +22,12 @@ class STTV_Setup {
 
 		remove_action( 'wp_head', '_admin_bar_bump_cb' );
 		remove_action( 'wp_head', 'wp_generator' );
+
+		$flushed = get_option('sttv_rest_flush_once');
+		if (!$flushed){
+			flush_rewrite_rules();
+			update_option('sttv_rest_flush_once',true);
+		}
 		
 	}
 	
@@ -89,7 +95,7 @@ class STTV_Setup {
 		return site_url();
 	}
 
-	public function sttv_rest_prefix() {
+	public function sttv_rest_prefix($prefix) {
 		return 'api';
 	}
 
