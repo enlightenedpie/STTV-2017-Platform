@@ -76,8 +76,13 @@ function sttv_ga() { ?>
   ga('create', 'UA-69908802-1', 'auto');
   ga('send', 'pageview');
 //ga added
-</script>
-<script>
+</script><?php
+
+##########################
+##### FACEBOOK PIXEL #####
+##########################
+
+?><script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
 n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
@@ -112,9 +117,9 @@ function stajax_object() {
 		if (is_singular('courses')) {
 			$stajax['rest'] = array(
 				'nonce' => wp_create_nonce('wp_rest'), 
-				'url' => rest_url('sttv/v1/course_data/'.$post->ID),
-				'dls' =>rest_url('sttv/v1/course_download/'.$post->ID),
-				'reviews'=>rest_url('sttv/v1/reviews/')
+				'url' => rest_url(STTV_REST_NAMESPACE.'/course_data/'.$post->ID),
+				'dls' =>rest_url(STTV_REST_NAMESPACE.'/course_download/'.$post->ID),
+				'reviews'=>rest_url(STTV_REST_NAMESPACE.'/reviews/')
 			);
 		}
 		?>
