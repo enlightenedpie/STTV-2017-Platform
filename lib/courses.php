@@ -3,7 +3,7 @@
 add_action( 'rest_api_init' , 'register_course_meta_endpoint' );
 function register_course_meta_endpoint() {
 
-	register_rest_route( 'sttv/v1', '/course_data/(?P<id>[\d]+)', array(
+	register_rest_route( STTV_REST_NAMESPACE , '/course_data/(?P<id>[\d]+)', array(
 		'methods' => WP_REST_Server::READABLE,
 		'callback' => 'get_course_meta',
 		'permission_callback' => function($data) {
