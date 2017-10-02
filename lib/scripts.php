@@ -10,7 +10,7 @@ function sttv_admin_scripts($hook) {
 	wp_deregister_script('jquery');
 	
 	//jquery scripts
-	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',false,null);
+	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js',false,null);
 	wp_enqueue_script('courses-admin',get_stylesheet_directory_uri().'/s/admin/courses.js','jquery',time(),true);
 }
 
