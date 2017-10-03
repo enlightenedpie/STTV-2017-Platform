@@ -1,9 +1,9 @@
 <?php
-/**
+if ( ! defined( 'ABSPATH' ) ) exit;
 
+#################
 ##### HOOKS #####
-
-**/
+#################
 
 add_action('sttv_pre_footer','sttv_subscribe_cta');
 function sttv_subscribe_cta() {
