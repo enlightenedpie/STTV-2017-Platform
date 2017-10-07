@@ -30,6 +30,7 @@ class STTV_Product_Reviews extends WP_REST_Controller {
 				array(
 					'methods' => 'GET',
 					'callback' => array($this,'get_product_reviews'),
+					'permission_callback' => 'is_user_logged_in',
 					'args' => array(
 						'id' => array(
 							'validate_callback' => 'absint',
