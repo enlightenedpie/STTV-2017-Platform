@@ -44,6 +44,7 @@ function sttv_enqueue_all() {
 	
 	if (is_singular('courses')) {
 		wp_enqueue_script('courses-gzip',get_stylesheet_directory_uri().'/s/lz-string.js',null,null,true);
+		wp_enqueue_script('vimeo-player','https://player.vimeo.com/api/player.js');
 	}
 }
 
