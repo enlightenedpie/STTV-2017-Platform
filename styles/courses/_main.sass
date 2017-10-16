@@ -30,16 +30,21 @@ body.single-courses
 	#courses-left-wrapper
 		
 		h1
-			margin-bottom: 0px
+			margin: $tiny 0 0 0
+			line-height: 1em
+			vertical-align: baseline
 
 		#course-after-title
 			text-align: center
 			+wfull
 			
 			h2
-				text-transform: capitalize
+				font-size: $large
+				font-weight: 400
+				text-transform: uppercase
 				text-shadow: 0px 2px 5px rgba(150, 150, 150, 0.55)
 				margin: 1em 0
+				line-height: 1em
 	
 		#content-wrapper-full
 			padding: 0 1em
@@ -158,6 +163,9 @@ body.single-courses
 						border: 0
 						padding: $large $large 0
 						position: relative
+
+						>span
+							font-size: 85%
 
 						.collapsible-footer
 							display: block
