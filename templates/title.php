@@ -58,10 +58,8 @@
 						
 					?>
                 </div><?php 
-		endif;
-	else : ?>
-	<div id="course-sub-title"></div>
-	<?php endif; ?>
+			endif;
+		endif; ?>
 			</section><?php
 	endif; ?>
 	<div id="content">
