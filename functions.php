@@ -17,6 +17,7 @@ require_once('lib/posts.php');
 require_once('lib/stage.php');
 require_once('lib/account.php');
 require_once('lib/endpoints.php');
+require_once('lib/feedback.php');
 require_once('lib/courses.php');
 require_once('lib/shortcodes.php');
 require_once('lib/customizer.php');
