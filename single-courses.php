@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $post;
 
@@ -17,16 +18,73 @@ $subsec = get_query_var('subsection');
 $video = get_query_var('video');
 $q = get_query_var('q');
 
+$student = get_user_by('id',get_current_user_id());
+
 /**
  * Let's output all the course JS; this function prints the code in the head
 **/
 function sttv_course_js_object() {
-	global $section, $subsec, $video, $q, $post;
+	global $section, $subsec, $video, $q, $post, $student, $cpp;
 	
 ?><script>
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
+var student = {
+	id : <?php echo $student->ID; ?>,
+	name : '<?php echo $student->display_name; ?>',
+	alerts : {
+		dismissed : function() {return localStorage.getItem('alertsDismissed')}
+	}
+};
+	
+var _st = {
+	request : function(obj) {
+		$.ajax({
+			url: obj.route || '',
+			data: JSON.stringify(obj.cdata || {}),
+			method: obj.method || 'GET',
+			headers: obj.headers || {},
+			processData : false,
+			dataType : obj.dataType || 'json',
+			success: function(data){
+				typeof obj.success !== 'undefined' && obj.success(data);
+			},
+			error: function(x,s,r){
+				typeof obj.error !== 'undefined' && obj.error([x,s,r]);
+			}
+		})
+	},
+	loadTemplate : function(t) {
+		var part = t.part ? ' '+t.part : '';
+		$(t.into).load(t.url+part,t.data,function(r){
+			typeof t.callback === 'function' && t.callback(r);
+		})
+	},
+	heartBeat : function() {
+		_st.request({
+			route : "<?php echo site_url(); ?>/ping.php",
+			success : function(d){
+				try {
+					if (!d) {
+						throw new Exception('Invalid response from _st.heartBeat.');
+					} else {
+						$(document).dequeue('heartbeat');
+					}
+				} catch (e) {
+					console.log(e);
+				}
+			},
+			error : function(x,s,r){
+				Materialize.toast('Offline', 6000);
+				console.log(x,s,r);
+			}
+		});
+	}
+}
+
 var courses = {
-	version : '1.0.4',
+	version : '<?php echo STTV_VERSION; ?>',
+	hash : '<?php echo sttvhashit($post->post_title.'/'.STTV_VERSION.'/'.$post->ID); ?>',
+	salesPage : <?php echo $cpp; ?>,
 	settings : {
 		autoplay : 0,
 		activeColor : $('body').css('color')
@@ -45,31 +103,30 @@ var courses = {
 		},
 		get : function() {return localStorage.getItem('course_data')},
 		set : function(data) {return localStorage.setItem('course_data',JSON.stringify(data));},
-
-		remove : localStorage.removeItem('course_data'),
 		update : {
 			get : function() {return localStorage.getItem('__c-update')},
-			set : function() {return localStorage.setItem('__c-update',Math.floor(Date.now()/1000));},
-			remove : localStorage.removeItem('__c-update')
+			set : function() {return localStorage.setItem('__c-update',Math.floor(Date.now()/1000));}
 		},
-		request : function(method,cdata) {
-			var method = method || 'GET';
-			var cdata = cdata || null;
-
+		request : function(cdata,method) {
 			$.ajax({
 				url: stajax.rest.url,
-				data: cdata,
-				type: method,
+				data: cdata || null,
+				type: method || 'GET',
 				headers: {'X-WP-Nonce' : stajax.rest.nonce},
 				success: function(r) {
 					courses.data.update.set();
 					courses.data.set(r);
-				 }
-			});
+				 },
+				error: function(x,s,e) {
+					console.log(x,s,e);
+				}
+			})
 		},
-		reset : function() {
-			courses.data.remove;
-			courses.data.update.remove;
+		reset : function(cb) {
+			localStorage.removeItem('course_data');
+			localStorage.removeItem('__c-update');
+			
+			return typeof cb === 'function' && cb()
 		}
 	},
 	preloader : {
@@ -79,18 +136,52 @@ var courses = {
 		}
 	},
 	init : function(){
-		courses.data.reset();
-		$('body').prepend(this.preloader.html);
+		$(document).queue('heartbeat',function(){console.log('first heartbeat')});
+
+		if (student.alerts.dismissed() === null){
+			localStorage.setItem('alertsDismissed',JSON.stringify([]));
+		}
+		if (JSON.parse(student.alerts.dismissed()).indexOf(courses.hash) === -1) {
+			courses.modal.init({
+				dismissible : false,
+				complete : function(){
+					var al = JSON.parse(student.alerts.dismissed())
+					al.push(courses.hash)
+					localStorage.setItem('alertsDismissed',JSON.stringify(al))
+					courses.modal.destroy()
+					courses.modal.init()
+				}
+			},function() {
+				$(document).queue('afterload',function(){
+					$('.modal-loading-overlay').fadeIn(250);
+					$('#course_modal').modal('open');
+					courses.modal.alert(function(d) {
+						$('#course_modal .modal-content').append(d.html);
+						$('.modal-loading-overlay').fadeOut(250);
+					});
+				})
+			})
+		} else {
+			courses.modal.init();
+		}
 		
-		var ctrl = courses.data.update.get();
+		var ctrl = parseInt(localStorage.getItem('__c-update'));
 	
-		if (!courses.data.get() || !ctrl || Math.floor(Date.now()/1000) >= ctrl+3600) { //86400
-			courses.data.request();
+		if (courses.data.get() === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
+			courses.data.reset(
+				courses.data.request()
+			);
 		}
 		
 		function finish_init() {
 			clearInterval(checker);
 			courses.data.objectify(courses.data.get());
+
+			if (typeof courses.data.object.version === 'undefined' || courses.data.object.version !== courses.version) {
+				courses.data.reset(
+					window.location.reload()
+				);
+			}
 		
 			console.log('Initialized!');
 			
@@ -179,18 +270,19 @@ var courses = {
 		processRequest : function(req) {
 			var r = this.validateRequest(req);
 			var obj = courses.data.object;
-			//console.log(r);
+			courses.settings.activeColor = typeof obj.sections[courses.defaultReq.section] !== 'undefined' ? obj.sections[courses.defaultReq.section].color : 'SlateGray';
+
 			switch (r.type) {
 				case 'root':
 					courses.render.stage.changeActiveVid(obj.intro,'Intro');
 					break;
 				case 'practice':
-					//courses.render.courseSidebar();
+					courses.render.courseSidebar();
 					break;
 				case 'section':
-					//courses.render.courseSidebar();
-					courses.settings.activeColor = r.object.color;
 					//console.log(r);
+					courses.render.stage.changeActiveVid(r.object.intro,'Intro');
+					courses.render.courseSidebar();
 					break;
 				case 'video':
 					courses.render.singleVid(r);
@@ -203,9 +295,7 @@ var courses = {
 					courses.error404();
 					return false;
 			}
-			
-			//courses.settings.activeColor = obj.sections[].color;
-			courses.render.courseSidebar();
+
 			return r;
 		},
 		newRequest : function(l) {
@@ -216,15 +306,6 @@ var courses = {
 				this.processRequest();
 				courses.render.courseNav();
 				courses.render.courseSidebar();
-				var tb = $('ul.tabs');
-				tb.tabs({'onShow':function(x){
-					
-					var tThis = $(this);
-					$('li a.active',tThis).html(x.html());
-					//console.log(x);
-				}});
-				tb.tabs('select_tab',courses.defaultReq.section);
-				//$('a[href="#'+courses.defaultReq.section+'"]').addClass('active');
 			} catch (err) {
 				console.log(err);
 			}
@@ -233,8 +314,11 @@ var courses = {
 		},
 	},
 	shutdown : function() {
+		var hb = setInterval(_st.heartBeat,3000);
 		this.preloader.fade();
+		$(document).dequeue('shutdown');
 		console.log('Shutdown complete')
+		$(document).dequeue('afterload')
 	},
 	render : {
 		stage : {
@@ -260,64 +344,60 @@ var courses = {
 		courseNav : function() {
 			var obj = courses.data.object;
 			var nav = $('<ul/>',{
-				"class": "tabs",
+				"class": "collapsible",
+				"data-collapsible": "accordion",
 				id: "coursenav"
 			});
-			var container = $('<div/>',{class:"row"});
-			var inner = $('<div/>',{class:"col s12"});
-			
-			var c = $('<div/>',{"class":'tab-content-inner'}).append($('<div/>',{"class":'inner-col inner-col-left col s12 m3'})).append($('<div/>',{"class":'inner-col inner-col-mid col s12 m6'})).append($('<div/>',{"class":'inner-col inner-col-right col s12 m3'}));
-			
+						
 			$.each(obj.sections,function(k,v){
-				$('<li/>',{
-					"class": "tab col s2"
-				}).append($('<a/>',{
-					href: '#'+k,
+				var active = (k === courses.defaultReq.section) ? ' active':'';
+				var item = $('<li/>').append($('<div/>',{
 					text: v.name,
 					style: "color: "+v.color,
-					"class": "section-link",
+					"class": "section-link collapsible-header"+active,
 					"data-req" : JSON.stringify({section:k})
-				})).appendTo(nav);
-				
-				var tabbed = $('<div/>',{
-					id: k,
-					"class": "col s12 tab-content"
-				}).append(c.clone());
-				
-				$('.inner-col-mid',tabbed).append('<h3 style="line-height:100%;margin-top:0px;text-transform:uppercase;font-weight:700">Text</h3>').append($('<span/>',{
-					class: "video-text"
-				}));
-				
-				var resc = $('<div/>');
-				$.each(v.resources,function(i,l){
-					$('<p/>').append($('<a/>',{"class":"resources-download",href:'/course-dl.php?res='+i+'&section='+k+'&test=act&checksum='+l,text:i,'download':true})).appendTo(resc);
+				})).append($('<div/>',{
+					"class": "collapsible-body",
+					html: '<span>'+v.description+'</span>'
+				}).append($('<div/>',{
+					"class":"collapsible-footer"
+				})));
 
+				$.each(v.subsec,function(a,b){
+					var sub = $('<a/>',{
+						"class":"cfooter-subsec-link",
+						text: b.title,
+						href: "",
+						style: "color:"+v.color
+					}).prepend('<i class="material-icons">web</i>&nbsp;')
+					$('.collapsible-footer',item).append(sub)
 				});
-				$('.inner-col-right',tabbed).append($('<div/>',{
-					class: "section-resources"
-				}).append('<h3 style="line-height:100%;margin-top:0px;text-transform:uppercase;font-weight:700">Resources</h3><br/><span style="display:block;margin-bottom:1em"><i>Please stand by, more downloads available soon.</i></span>')
-				.append(resc));
-				
-				tabbed.appendTo(container);
+
+				$('.collapsible-footer',item).append(
+					$('<a/>',{
+						"class": "cfooter-dl-link",
+						"data-sec":k,
+						href: "",
+						text: "downloads",
+						style: "color:"+v.color
+					}).prepend('<i class="material-icons">cloud_download</i>&nbsp;')
+				)
+
+				item.appendTo(nav);
 			});
 			
-			$('<li/>',{
-				"class": "tab col s2",
-			}).append($('<a/>',{
+			$('<li/>').append($('<a/>',{
 				text: 'Practice',
 				href: '#practice',
-				"class": "section-link practice-section-link",
+				"class": "section-link practice-section-link collapsible-header",
 				"data-req" : JSON.stringify({section:'practice'})
 			})).appendTo(nav);
-			$('<div/>',{
-				id: 'practice',
-				"class": "col s12 tab-content",
-				text: 'practice'
-			}).append(c.clone()).appendTo(container);
 			
-			nav.appendTo(inner);
-			inner.prependTo(container);
-			container.appendTo($('#course-nav-container'));
+			nav.appendTo($('#course-nav-container'));
+
+			$(document).queue('shutdown',function(){
+				$('.collapsible').collapsible();
+			})
 		},
 		courseSidebar : function() {
 			var wrap = $('<div/>',{
@@ -484,14 +564,12 @@ var courses = {
 				txt = courses.defaultReq.section+' &raquo; '+courses.defaultReq.subsec+' &raquo; '+req.object.name;
 			}
 			courses.render.title(txt);
-			courses.render.content();
-			var vidtxt = (req.object.text || '<i>Text temporarily unavailable for this video.</i>');
-			var secRef = $('#'+courses.defaultReq.section);
-			$('.video-text',secRef).empty().append(vidtxt);
+			//courses.render.content();
 		}
 	},
-	pushHist : function(obj,url) {
+	pushHist : function(obj,url,cb) {
 		window.history.pushState(obj, document.title, url);
+		typeof cb === 'function' && cb();
 	},
 	backHist : function(r) {
 		courses.setup.newRequest(r);
@@ -503,12 +581,258 @@ var courses = {
 			courses.render.title(e);
 		}
 	},
-	resourceDownload : function(res){
-		var qstring = '?res='+res.attr('data-res')+'&section='+res.closest('.tab-content').attr('id')+'&test=act';
-		
+	modal : {
+		init : function(obj,cb) {
+			var o = (typeof obj === 'object') ? obj : {};
+			if ($('#course_modal').length == 0) {
+				$('<div/>',{id:"course_modal","class":"modal"})
+					.append($('<div/>',{"class":"modal-loading-overlay"}).html('<div style="text-align:center"><img src="'+stajax.contentURL+'/i/sttv-spinner.gif" /><h3 class="modal-message" style="text-transform:uppercase;font-weight:700"></h3></div>'))
+					.append($('<div/>',{"class":"modal-content"}))
+					.prependTo('body');
+			}
+			$('#course_modal').modal({
+				dismissible : (typeof o.dismissible === 'boolean' && !o.dismissible)?false:true,
+				opacity : .5, // Opacity of modal background
+				inDuration : 300, // Transition in duration
+				outDuration : 200, // Transition out duration
+				startingTop : '4%', // Starting top style attribute
+				endingTop : '10%',
+				ready : o.ready || function(){},
+				complete : o.complete || function(){
+					$('.modal-content',this).empty();
+				}
+			});
+			typeof cb === 'function' && cb();
+		},
+		destroy : function(cb) {
+			$('#course_modal').remove();
+			typeof cb === 'function' && cb();
+		},
+		alert : function(scb,ecb) {
+			_st.request(
+				{
+					method : 'GET',
+				 	route : stajax.rest.url+'/alert',
+				 	cdata : {},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce},
+				 	success : function(e){
+						typeof scb === 'function' && scb(e);
+					},
+					error: function(z){
+						console.log(z);
+					}
+				}
+			);
+		}
+	},
+	ratings : {
+		value : 5,
+		run : function() {
+			$('.modal-loading-overlay').fadeIn(250);
+			$('#course_modal').modal('open');
+			courses.ratings.verify(function(){
+				$('.modal-loading-overlay').fadeOut(250)
+			});
+		},
+		verify : function(cb) {
+			_st.request(
+				{
+					method : 'POST',
+				 	route : stajax.rest.reviews,
+				 	cdata : {'user_id':student.id,'post':courses.salesPage},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
+				 	success : function(e){
+						$('#course_modal .modal-content').append(e.templateHtml);
+						typeof cb === 'function' && cb();
+					},
+					error: function(z){
+						console.log(z);
+					}
+				}
+			);
+		},
+		submit : function(cb) {
+			$('.modal-loading-overlay').fadeToggle(250);
+			_st.request(
+				{
+					method : 'PUT',
+				 	route : stajax.rest.reviews,
+				 	cdata : {
+						'user_id':student.id,
+						'post':courses.salesPage,
+						'rating':courses.ratings.value,
+						'UA':'STTV REST/<?php echo STTV_VERSION; ?>--browser: '+navigator.userAgent,
+						'comment_content':$('#review-content').val()
+					},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
+				 	success : function(e){
+						typeof cb === 'function' && cb(e)
+					},
+					error: function(z){
+						console.log(z);
+					}
+				}
+			);
+		}
+	},
+	downloads : {
+		container : '<div class="modal-downloads-container row"></div>',
+		get : function(s,cb){
+			var cont = $(this.container); 
+			$('.modal-loading-overlay').fadeIn(250);
+			$('#course_modal').modal('open');
+			cont.append('<h1><span>'+s+'</span> Downloads</h1>')
+
+			var obj = courses.data.object;
+			var res = obj.sections[s].resources;
+
+			if (res.length === 0) {
+				cont.append($('<div/>',{"class":"col s12",text:"No downloads found"}))
+			} else {
+				$.each(res,function(k,v){
+					cont.append($('<a/>',{
+						"class" : "dl-link col s6 m4",
+						text : k,
+						href : "<?php echo site_url(); ?>/course-dl.php?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
+					}))
+				})
+			}
+
+			cont.appendTo($('.modal-content','#course_modal'));
+
+			typeof cb === 'function' && cb();
+		}
+	},
+	feedback : {
+		run : function() {
+			//return $('body').load('templates/feedback_post.php')
+		}
 	}
 }; //end courses object
+
+window.onpopstate = function(e){
+	if (e.state == null) {window.location.reload();}
+	courses.backHist(JSON.stringify(e.state));
+};
+
+$(document).on('click','.section-link, .course-rating, .course-feedback, .ratings-submit-button, .course-updater, .cfooter-dl-link, .cfooter-subsec-link, .alert-dismiss',function(e){
+	e.preventDefault();
+	var t = $(this);
+	var s = e.handleObj.selector.split(/,\s+/);
+	var c = t.attr('class').split(/\s+/);
+
+	var f = {
+		'alert-dismiss' : function() {
+			t.closest('#course_modal').modal('close')
+		},
+		'cfooter-dl-link' : function() {
+			courses.downloads.get(t.attr('data-sec'),function(){
+				$('.modal-loading-overlay').fadeOut(250)
+			})
+		},
+		'cfooter-subsec-link' : function() {
+			return false;
+		},
+		'course-rating' : function() {
+			courses.ratings.run()
+		},
+		'course-feedback' : function() {
+			courses.feedback.run()
+		},
+		'course-updater' : function() {
+			if (confirm('Only do this if advised by a technician at SupertutorTV, as access to your course could be broken or interrupted. Are you sure you want to proceed?')){
+				courses.data.reset(window.location.reload());
+			}
+		},
+		'ratings-submit-button' : function() {
+			courses.ratings.submit(function(data){
+				if (data.error){
+					$('.modal-error').text(data.error);
+				} else {
+					$('#course_modal .modal-content').html(data.templateHtml);
+				}
+				$('.modal-loading-overlay').fadeToggle(250);
+			});
+		},
+		'section-link' : function() {
+			var d = JSON.parse(t.attr('data-req'));
+			var a = courses.setup.newRequest(t.attr('data-req'));
+			var b = courses.data.object.link+'/'+d.section;
+			courses.pushHist(a,b,function(){
+				$('.indicator').css('background-color',t.css('color'));
+			});
+		}
+	}
+	c.some(function(v){typeof f[v] !== 'undefined' && f[v]()});
+});
+
+// Reads Vimeo Player
+$(window).on('load',function(){
+
+	var video = document.querySelector('iframe.sttv-course-player');
+	var player = new Vimeo.Player(video);
+	player.on('timeupdate',function(d){
+		if (d.percent<0.5){
+			return false;
+		} else {
+			console.log(d)
+		}
+	});
+})
+
+$(document).on('click','.course-click',function(e) {
+		e.preventDefault();
+		var t = this,
+			o = $(t).attr('data-req'),
+			g = $(t).attr('href'),
+			a = courses.setup.newRequest(o)
+
+		courses.pushHist(a,g);
+		//console.log(e.isPropagationStopped());
+		$('.course-click .sidebar-sub-link').css({"color":"","background-color":""}).removeClass('z-depth-1 course-active');
+		$('.sidebar-sub-link',this).css(
+			{
+				color: "white",
+				"background-color": courses.settings.activeColor
+			}
+		).addClass('z-depth-1 course-active');
+	}
+);
 	
+$(document).on({
+	click : function(){
+		var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+		var stars = $(this).parent().children('li.star');
+		for (i = 0; i < stars.length; i++) {
+		  $(stars[i]).removeClass('selected');
+		}
+
+		for (i = 0; i < onStar; i++) {
+		  $(stars[i]).addClass('selected');
+		}
+		
+		courses.ratings.value = onStar;
+	},
+	mouseover: function(){
+		var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+   
+		// Now highlight all the stars that's not after the current hovered star
+		$(this).parent().children('li.star').each(function(e){
+		  if (e < onStar) {
+			$(this).addClass('hover');
+		  }
+		  else {
+			$(this).removeClass('hover');
+		  }
+		});
+	},
+	mouseout: function(){
+		$(this).parent().children('li.star').each(function(e){
+		  $(this).removeClass('hover');
+		});
+	}
+},'#stars li');
+
 $(document).ready(function(){
 	courses.init();
 	$('.sttv-vid-clicker').click(function(e){
@@ -519,12 +843,6 @@ $(document).ready(function(){
 		return false;
 	});
 });
-
-window.onpopstate = function(e){
-	if (e.state == null) {window.location.reload();}
-	courses.backHist(JSON.stringify(e.state));
-	//console.log(e);
-};
 </script>
 <?php
 	
@@ -545,6 +863,11 @@ function courses_apologies() {
 	print '<div class="azure-bg" style="width:100%;padding:1em;color:white;text-align:center">Thank you for your patience. We are still working out some bugs in the system. Apologies if the course acts wonky at any point.</div>';
 }
 
+add_action('sttv_after_body_tag','sttv_course_preloader');
+function sttv_course_preloader() {
+	print '<div class="course-preloader"><div style="text-align:center"><img src="'.get_stylesheet_directory_uri().'/i/sttv-spinner.gif"><h3 style="text-transform:uppercase;font-weight:700">Loading</h3></div></div>';
+}
+
 /**
  * Okay, let's do this thang! Start outputting the page.
 **/
@@ -553,28 +876,24 @@ get_header();
 get_template_part('templates/title'); ?>
 <noscript>
 	All SupertutorTV courses require Javascript to be enabled. Please enable Javascript in your browser to use this course properly.
-	<style type="text/css">.course-contentarea { display: none; } </style>
+	<style type="text/css">.course-contentarea, .course-preloader { display: none; } </style>
 </noscript>
 <div id="course-after-title"><h2>&nbsp;</h2></div>
 <section class="course-contentarea course-<?php the_ID(); ?> row" id="content-wrapper-full">
-	<div id="course-nav-container"></div>
-	<div id="course-content-hitbox-container" class="row"></div>
+<div id="course-content-hitbox-container" class="row">
+	<div id="course-resource-bar" class="col s12 m3 z-depth-1">
+		<div class="col s12 user-bug">
+			<div class="col s12"><span>Hi David!</span></div>
+		</div>
+		<div class="resource-links">
+			<div class="chevron"></div>
+			<a href="#!" class="course-resource-link course-rating"><i class="material-icons">rate_review</i>Rate This Course</a>
+			<a href="#!" class="course-resource-link course-feedback"><i class="material-icons">send</i>Leave Feedback</a>
+			<a href="#!" class="course-resource-link course-updater"><i class="material-icons">refresh</i>Update Course</a>
+			<a href="#!" class="course-resource-link">Version <?php echo STTV_VERSION; ?></a>
+		</div>
+	</div>
+	<div id="course-nav-container" class="col s12 m9"></div>
+</div>
 </section>
-<script>
-	$(document).on('click','.course-click, .section-link',function(e){
-		e.preventDefault();
-		var a = courses.setup.newRequest($(this).attr('data-req'));
-		var b = ($(this).hasClass('section-link')) ? courses.data.object.link+'/'+$(this).attr('href').split('#')[1] : $(this).attr('href');
-		courses.pushHist(a,b);
-		if ($(this).hasClass('section-link')) {
-			$('.indicator').css('background-color',$(this).css('color'));
-		}
-		//if ($(this).hasClass('course-click')) {window.scroll(0,0);}
-	});
-	
-	$(document).on('click','.resources-download',function(e){
-		//e.preventDefault();
-		//courses.resourceDownload($(this));
-	});
-</script>
 <?php get_footer(); ?>

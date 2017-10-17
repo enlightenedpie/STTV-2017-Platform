@@ -1,0 +1,31 @@
+body.single-courses
+
+    #course_modal
+
+        .modal-content
+
+            .modal-downloads-container
+                +wfull
+
+                h1
+                    +wfull
+                    text-align: center
+
+                a
+                    padding: 1em
+                    display: block
+                    text-align: center
+
+@include MQ($mq-tablet)
+    body.single-courses
+
+        #course_modal
+
+            .modal-content
+
+                .modal-downloads-container
+
+                    a
+                        font-size: $small
+                        //overflow-wrap: break-word
+                        word-break: break-word

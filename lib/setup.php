@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 ##################################
 ##### STTV THEME SETUP CLASS #####
@@ -17,16 +18,23 @@ class STTV_Setup {
 		add_filter( 'author_link', array($this,'sttv_modify_author_link'), 10, 1 );
 		add_filter( 'ls_meta_generator', '__return_false' );
 		add_filter( 'show_admin_bar', '__return_false' );
-		add_filter( 'login_headerurl' ,array($this,'sttv_login_url'));
+		add_filter( 'login_headerurl' , array($this,'sttv_login_url'));
+		add_filter( 'rest_url_prefix', array($this,'sttv_rest_prefix') );
 
 		remove_action( 'wp_head', '_admin_bar_bump_cb' );
 		remove_action( 'wp_head', 'wp_generator' );
+
+		$flushed = get_option('sttv_rest_flush_once');
+		if (!$flushed){
+			flush_rewrite_rules();
+			update_option('sttv_rest_flush_once',true);
+		}
 		
 	}
 	
 	public function sttv_declare_themes_support() {
 
-		add_theme_support( 'post-thumbnails' );
+		add_theme_support( 'post-thumbnails', array( 'post', 'page' ) );
 		add_theme_support( 'custom-header' );
 		add_theme_support( 'title-tag' );
 		add_theme_support( 'automatic-feed-links' );
@@ -86,6 +94,10 @@ class STTV_Setup {
 	
 	public function sttv_login_url() {
 		return site_url();
+	}
+
+	public function sttv_rest_prefix($prefix) {
+		return 'api';
 	}
 
 }

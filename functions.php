@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 ##### STTV 2017 FUNCTIONS FILE #####
 ####################################
 
+require_once('lib/config.php');
 require_once('lib/setup.php');
 require_once('lib/sttv-api.php');
 require_once('lib/scripts.php');
@@ -16,6 +17,7 @@ require_once('lib/posts.php');
 require_once('lib/stage.php');
 require_once('lib/account.php');
 require_once('lib/endpoints.php');
+require_once('lib/feedback.php');
 require_once('lib/courses.php');
 require_once('lib/shortcodes.php');
 require_once('lib/customizer.php');

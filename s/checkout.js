@@ -46,6 +46,7 @@ $('.payment-launcher').click(function(e) {
 
 var fsub = {
 			valid : false,
+			shipWasChecked : false,
 			setOutcome : function(result) {
 				var successElement = document.querySelector('.success');
 				var errorElement = document.querySelector('.error');

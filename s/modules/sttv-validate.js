@@ -39,7 +39,10 @@ $('.submitter').click(function(e) {
 							//$('#login .link-text').html(d.name);
 					});
 				} else if (d.sent || d.subscribed) {
-					$('.sblock',this.ld).append('<p class="smessage">'+d.message+'</p>');
+					var s = $('.sblock',this.ld);
+					var p = $('<p/>',{"class":"smessage"});
+					p.appendTo(s).append(d.message);
+					
 					$("#"+submitter.form.attr('id')+" :input").prop("disabled",true);
 				} else {
 					alert("Something went wrong. Please reload the page.");

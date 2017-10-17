@@ -10,7 +10,7 @@ function sttv_admin_scripts($hook) {
 	wp_deregister_script('jquery');
 	
 	//jquery scripts
-	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',false,null);
+	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js',false,null);
 	wp_enqueue_script('courses-admin',get_stylesheet_directory_uri().'/s/admin/courses.js','jquery',time(),true);
 }
 
@@ -22,7 +22,7 @@ function sttv_enqueue_all() {
 	
 	
 	//jquery scripts
-	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',false,null);
+	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js',false,null);
 	wp_enqueue_script('sttv-js', get_stylesheet_directory_uri().'/sttv-js.min.js','jquery',null,true);
 	wp_enqueue_script('materialize-js', get_stylesheet_directory_uri().'/material/materialize.min.js','jquery',null);
 	wp_enqueue_script('jq-validate','https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js','jquery');
@@ -39,11 +39,12 @@ function sttv_enqueue_all() {
 		wp_enqueue_script('sttv-checkout-stripe','https://js.stripe.com/v3/','sttv-checkout',null,false);
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
 	elseif (is_page('contact')) :
-		wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
+		//wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
 	endif;
 	
 	if (is_singular('courses')) {
 		wp_enqueue_script('courses-gzip',get_stylesheet_directory_uri().'/s/lz-string.js',null,null,true);
+		wp_enqueue_script('vimeo-player','https://player.vimeo.com/api/player.js');
 	}
 }
 
@@ -65,18 +66,60 @@ function sttv_login_brand() {
 ##### GOOGLE ANALYTICS #####
 ############################
 
-add_action('wp_head','sttv_ga');
+add_action('wp_head','sttv_ga',99);
 function sttv_ga() { ?>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-69908802-1', 'auto');
+	ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+<?php
 
-  ga('create', 'UA-69908802-1', 'auto');
-  ga('send', 'pageview');
-//ga added
-</script><?php }
+##########################
+##### FACEBOOK PIXEL #####
+##########################
+
+?><script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '131594624139844');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=131594624139844&ev=PageView&noscript=1"
+/></noscript>
+<!-- Global site tag (gtag.js) - Google AdWords: 881289703 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-881289703"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-881289703');
+</script>
+<?php if (get_page_template_slug() == 'signup.php') : ?>
+<!-- Event snippet for Purchase Best ACT Prep Course Ever conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<script>
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-881289703/p1h6CIzTjnYQ59OdpAM',
+      'transaction_id': '',
+      'event_callback': callback
+  });
+  return false;
+}
+</script>
+<?php endif; }
 
 #########################
 ##### STAJAX OBJECT #####
@@ -97,8 +140,9 @@ function stajax_object() {
 		if (is_singular('courses')) {
 			$stajax['rest'] = array(
 				'nonce' => wp_create_nonce('wp_rest'), 
-				'url' => rest_url('sttv/v1/course_data/'.$post->ID),
-				'dls' =>rest_url('sttv/v1/course_download/'.$post->ID)
+				'url' => rest_url(STTV_REST_NAMESPACE.'/course_data/'.$post->ID),
+				'dls' =>rest_url(STTV_REST_NAMESPACE.'/course_download/'.$post->ID),
+				'reviews'=>rest_url(STTV_REST_NAMESPACE.'/reviews/')
 			);
 		}
 		?>
