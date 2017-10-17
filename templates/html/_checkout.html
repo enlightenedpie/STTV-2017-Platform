@@ -385,6 +385,7 @@
 						
 						if (response.success) {
 							action.ST = function() {
+								gtag_report_conversion()
 								setTimeout(function(){
 									window.location.replace('/my-account')
 								},5000);
