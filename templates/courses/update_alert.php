@@ -1,0 +1,1 @@
+<div class="alert-inner"><div class="dismiss"><a href="#!" class="alert-dismiss">Dismiss</a></div><?php echo $the_post->post_content; ?></div>
