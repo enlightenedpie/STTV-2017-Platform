@@ -1,0 +1,58 @@
+body.single-courses
+
+    #course_modal
+
+        .alert-inner
+            position: relative
+            padding: 0 1em 1em
+
+            .dismiss
+                position: absolute
+                top: 0
+                right: 0
+                font-size: $small
+
+                a
+                    text-decoration: underline
+                    transition: color .25s ease-out
+
+                    &:hover
+                        color: $sienna
+
+            h1
+                +wfull
+                text-align: center
+                margin-bottom: 0
+
+            h2
+                font-size: 1em
+                margin-bottom: 0
+            
+            h3
+                +wfull
+                font-size: $large
+                color: $azure
+                font-weight: 700
+                text-align: center
+                text-transform: uppercase
+
+            ul
+                padding-left: 1em
+                padding-bottom: 1em
+                list-style: disc
+                font-size: 90%
+
+                li
+                    list-style-type: disc
+                    padding: $tiny
+
+                    &:last-child
+                        padding-bottom: 0
+
+                    ul
+                        list-style: circle
+                        padding-top: $tiny
+                        padding-bottom: 0
+
+                        li
+                            list-style-type: circle
