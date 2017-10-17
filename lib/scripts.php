@@ -92,7 +92,34 @@ fbq('track', 'PageView');
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=131594624139844&ev=PageView&noscript=1"
 /></noscript>
-<?php }
+<!-- Global site tag (gtag.js) - Google AdWords: 881289703 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-881289703"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-881289703');
+</script>
+<?php if (get_page_template_slug() == 'signup.php') : ?>
+<!-- Event snippet for Purchase Best ACT Prep Course Ever conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<script>
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-881289703/p1h6CIzTjnYQ59OdpAM',
+      'transaction_id': '',
+      'event_callback': callback
+  });
+  return false;
+}
+</script>
+<?php endif; }
 
 #########################
 ##### STAJAX OBJECT #####
