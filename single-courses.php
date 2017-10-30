@@ -30,7 +30,8 @@ function sttv_course_js_object() {
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
 var student = {
 	id : <?php echo $student->ID; ?>,
-	name : '<?php echo $student->display_name; ?>',
+	firstName : '<?php echo $student->first_name; ?>',
+	lastName : '<?php echo $student->last_name; ?>',
 	alerts : {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
@@ -310,6 +311,9 @@ var courses = {
 				console.log(err);
 			}
 			console.log('Setup complete');
+			if (typeof student.firstName !== 'undefined') {
+				$('div.user-bug > div > span').text('Hi '+student.firstName+'!')
+			}
 			setTimeout(function() {courses.shutdown()},1000);
 		},
 	},
@@ -627,6 +631,7 @@ var courses = {
 	},
 	ratings : {
 		value : 5,
+		content : 'This course is fantastic! Thx Brooke!',
 		run : function() {
 			$('.modal-loading-overlay').fadeIn(250);
 			$('#course_modal').modal('open');
@@ -662,7 +667,7 @@ var courses = {
 						'post':courses.salesPage,
 						'rating':courses.ratings.value,
 						'UA':'STTV REST/<?php echo STTV_VERSION; ?>--browser: '+navigator.userAgent,
-						'comment_content':$('#review-content').val()
+						'comment_content':courses.ratings.content
 					},
 					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
 				 	success : function(e){
@@ -673,6 +678,12 @@ var courses = {
 					}
 				}
 			);
+		}
+	},
+	feedback : {
+		run : function() {
+			$('.modal-loading-overlay').fadeIn(250);
+			$('#course_modal').modal('open');
 		}
 	},
 	downloads : {
@@ -701,11 +712,6 @@ var courses = {
 			cont.appendTo($('.modal-content','#course_modal'));
 
 			typeof cb === 'function' && cb();
-		}
-	},
-	feedback : {
-		run : function() {
-			//return $('body').load('templates/feedback_post.php')
 		}
 	}
 }; //end courses object
@@ -745,6 +751,15 @@ $(document).on('click','.section-link, .course-rating, .course-feedback, .rating
 			}
 		},
 		'ratings-submit-button' : function() {
+			if (!$('#review-content').val()) {
+				$('#review-content')
+					.focus()
+					.attr('placeholder','You must enter a review')
+				return false
+			} else {
+				courses.ratings.content = $('#review-content').val()
+			}
+			
 			courses.ratings.submit(function(data){
 				if (data.error){
 					$('.modal-error').text(data.error);
@@ -883,14 +898,14 @@ get_template_part('templates/title'); ?>
 <div id="course-content-hitbox-container" class="row">
 	<div id="course-resource-bar" class="col s12 m3 z-depth-1">
 		<div class="col s12 user-bug">
-			<div class="col s12"><span>Hi David!</span></div>
+			<div class="col s12"><span>Hi there!</span></div>
 		</div>
 		<div class="resource-links">
 			<div class="chevron"></div>
 			<a href="#!" class="course-resource-link course-rating"><i class="material-icons">rate_review</i>Rate This Course</a>
 			<a href="#!" class="course-resource-link course-feedback"><i class="material-icons">send</i>Leave Feedback</a>
 			<a href="#!" class="course-resource-link course-updater"><i class="material-icons">refresh</i>Update Course</a>
-			<a href="#!" class="course-resource-link">Version <?php echo STTV_VERSION; ?></a>
+			<a href="#!" class="course-resource-link course-version">Version <?php echo STTV_VERSION; ?></a>
 		</div>
 	</div>
 	<div id="course-nav-container" class="col s12 m9"></div>
