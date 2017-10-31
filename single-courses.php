@@ -110,7 +110,7 @@ var courses = {
 		},
 		request : function(cdata,method) {
 			$.ajax({
-				url: stajax.rest.url,
+				url: stajax.rest.url+'/course_data/'+stajax.rest.ID,
 				data: cdata || null,
 				type: method || 'GET',
 				headers: {'X-WP-Nonce' : stajax.rest.nonce},
@@ -643,7 +643,7 @@ var courses = {
 			_st.request(
 				{
 					method : 'POST',
-				 	route : stajax.rest.reviews,
+				 	route : stajax.rest.url+'/reviews/',
 				 	cdata : {'user_id':student.id,'post':courses.salesPage},
 					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
 				 	success : function(e){
@@ -661,7 +661,7 @@ var courses = {
 			_st.request(
 				{
 					method : 'PUT',
-				 	route : stajax.rest.reviews,
+				 	route : stajax.rest.url+'/reviews/',
 				 	cdata : {
 						'user_id':student.id,
 						'post':courses.salesPage,
