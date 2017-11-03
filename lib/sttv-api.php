@@ -71,8 +71,8 @@ function sttv_get_template($temp,$dir='',$object=null) {
 	return (include $path.$extension);
 }
 
-function sttvhashit($input) {
-	return base64_encode(substr(md5($input),0,9));
+function sttvhashit($input,$num = 9) {
+	return base64_encode(substr(md5($input),0,$num));
 }
 
 add_action('stripepress_events_invalid','sttv_404_redirect');
