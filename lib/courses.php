@@ -457,7 +457,10 @@ class STTV_Courses_Admin {
 		
 		if ($_POST['courses']) :
 			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
-			$caps = array();
+			$caps = array( //default caps for all courses
+				'course_post_feedback',
+				'course_post_reviews'
+			);
 		
 			$data = array(
 				'id'=>$post_id,
