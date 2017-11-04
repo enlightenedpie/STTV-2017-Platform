@@ -684,6 +684,28 @@ var courses = {
 		run : function() {
 			$('.modal-loading-overlay').fadeIn(250);
 			$('#course_modal').modal('open');
+			this.req('GET',null,function(e){
+					$('#course_modal .modal-content').append(e.templateHtml)
+					$('.modal-loading-overlay').fadeOut(250)
+				}
+			)
+		},
+		req : function(m,d,suc,err) {
+			_st.request(
+				{
+					method : m,
+				 	route : stajax.rest.url+'/feedback',
+					cdata : d || {},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
+				 	success : function(e){
+						typeof suc === 'function' && suc(e);
+					},
+					error: function(z){
+						console.log(z);
+						typeof err === 'function' && err(z);
+					}
+				}
+			);
 		}
 	},
 	downloads : {
@@ -721,7 +743,9 @@ window.onpopstate = function(e){
 	courses.backHist(JSON.stringify(e.state));
 };
 
-$(document).on('click','.section-link, .course-rating, .course-feedback, .ratings-submit-button, .course-updater, .cfooter-dl-link, .cfooter-subsec-link, .alert-dismiss',function(e){
+var handlers = '.section-link, .course-rating, .course-feedback, .ratings-submit-button, .feedback-submit-button, .course-updater, .cfooter-dl-link, .cfooter-subsec-link, .alert-dismiss';
+
+$(document).on('click',handlers,function(e){
 	e.preventDefault();
 	var t = $(this);
 	var s = e.handleObj.selector.split(/,\s+/);
@@ -768,6 +792,49 @@ $(document).on('click','.section-link, .course-rating, .course-feedback, .rating
 				}
 				$('.modal-loading-overlay').fadeToggle(250);
 			});
+		},
+		'feedback-submit-button' : function() {
+			if (t.hasClass('disabled')){return;}
+			var content = $('#feedback-post-form>textarea').val();
+			if (!content){
+				$('#feedback-post-form>textarea')
+					.focus()
+					.attr('placeholder','You must enter some feedback before you submit')
+				return false
+			}
+
+			$('.modal-loading-overlay').fadeToggle(250);
+			_st.request(
+				{
+					method : 'POST',
+				 	route : stajax.rest.url+'/feedback',
+					cdata : {
+						student : student.id,
+						postID : courses.data.object.id,
+						content : content
+					},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
+				 	success : function(e){
+						$('.modal-loading-overlay').fadeToggle(250);
+						if (e) {
+							$('#course_modal').modal('close')
+							Materialize.toast('Feedback sent. Thanks!', 5000)
+						} else {
+							$('.modal-content').empty().append($('<pre/>',{
+								text : 'Something went wrong. Please email techsupport@supertutortv.com with your issue.'
+							}))
+							$('.modal-loading-overlay').fadeToggle(250);
+						}
+					},
+					error: function(x){
+						console.log('error')
+						$('.modal-content').empty().append($('<pre/>',{
+							text : JSON.stringify(x[0]['responseJSON'])
+						}))
+						$('.modal-loading-overlay').fadeToggle(250);
+					}
+				}
+			);
 		},
 		'section-link' : function() {
 			var d = JSON.parse(t.attr('data-req'));
