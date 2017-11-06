@@ -424,7 +424,7 @@ class STTV_Courses_Admin {
 	?>
 	</div>
 </div>
-<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
+<pre style="display:block;width:100%"><?php //print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 		
 <?php }
 	
@@ -457,7 +457,10 @@ class STTV_Courses_Admin {
 		
 		if ($_POST['courses']) :
 			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
-			$caps = array();
+			$caps = array( //default caps for all courses
+				'course_post_feedback',
+				'course_post_reviews'
+			);
 		
 			$data = array(
 				'id'=>$post_id,

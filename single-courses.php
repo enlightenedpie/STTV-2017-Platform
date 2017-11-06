@@ -30,7 +30,8 @@ function sttv_course_js_object() {
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
 var student = {
 	id : <?php echo $student->ID; ?>,
-	name : '<?php echo $student->display_name; ?>',
+	firstName : '<?php echo $student->first_name; ?>',
+	lastName : '<?php echo $student->last_name; ?>',
 	alerts : {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
@@ -109,7 +110,7 @@ var courses = {
 		},
 		request : function(cdata,method) {
 			$.ajax({
-				url: stajax.rest.url,
+				url: stajax.rest.url+'/course_data/'+stajax.rest.ID,
 				data: cdata || null,
 				type: method || 'GET',
 				headers: {'X-WP-Nonce' : stajax.rest.nonce},
@@ -310,6 +311,9 @@ var courses = {
 				console.log(err);
 			}
 			console.log('Setup complete');
+			if (typeof student.firstName !== 'undefined') {
+				$('div.user-bug > div > span').text('Hi '+student.firstName+'!')
+			}
 			setTimeout(function() {courses.shutdown()},1000);
 		},
 	},
@@ -627,6 +631,7 @@ var courses = {
 	},
 	ratings : {
 		value : 5,
+		content : 'This course is fantastic! Thx Brooke!',
 		run : function() {
 			$('.modal-loading-overlay').fadeIn(250);
 			$('#course_modal').modal('open');
@@ -638,7 +643,7 @@ var courses = {
 			_st.request(
 				{
 					method : 'POST',
-				 	route : stajax.rest.reviews,
+				 	route : stajax.rest.url+'/reviews/',
 				 	cdata : {'user_id':student.id,'post':courses.salesPage},
 					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
 				 	success : function(e){
@@ -656,13 +661,13 @@ var courses = {
 			_st.request(
 				{
 					method : 'PUT',
-				 	route : stajax.rest.reviews,
+				 	route : stajax.rest.url+'/reviews/',
 				 	cdata : {
 						'user_id':student.id,
 						'post':courses.salesPage,
 						'rating':courses.ratings.value,
 						'UA':'STTV REST/<?php echo STTV_VERSION; ?>--browser: '+navigator.userAgent,
-						'comment_content':$('#review-content').val()
+						'comment_content':courses.ratings.content
 					},
 					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
 				 	success : function(e){
@@ -670,6 +675,34 @@ var courses = {
 					},
 					error: function(z){
 						console.log(z);
+					}
+				}
+			);
+		}
+	},
+	feedback : {
+		run : function() {
+			$('.modal-loading-overlay').fadeIn(250);
+			$('#course_modal').modal('open');
+			this.req('GET',null,function(e){
+					$('#course_modal .modal-content').append(e.templateHtml)
+					$('.modal-loading-overlay').fadeOut(250)
+				}
+			)
+		},
+		req : function(m,d,suc,err) {
+			_st.request(
+				{
+					method : m,
+				 	route : stajax.rest.url+'/feedback',
+					cdata : d || {},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
+				 	success : function(e){
+						typeof suc === 'function' && suc(e);
+					},
+					error: function(z){
+						console.log(z);
+						typeof err === 'function' && err(z);
 					}
 				}
 			);
@@ -702,11 +735,6 @@ var courses = {
 
 			typeof cb === 'function' && cb();
 		}
-	},
-	feedback : {
-		run : function() {
-			//return $('body').load('templates/feedback_post.php')
-		}
 	}
 }; //end courses object
 
@@ -715,7 +743,9 @@ window.onpopstate = function(e){
 	courses.backHist(JSON.stringify(e.state));
 };
 
-$(document).on('click','.section-link, .course-rating, .course-feedback, .ratings-submit-button, .course-updater, .cfooter-dl-link, .cfooter-subsec-link, .alert-dismiss',function(e){
+var handlers = '.section-link, .course-rating, .course-feedback, .ratings-submit-button, .feedback-submit-button, .course-updater, .cfooter-dl-link, .cfooter-subsec-link, .alert-dismiss';
+
+$(document).on('click',handlers,function(e){
 	e.preventDefault();
 	var t = $(this);
 	var s = e.handleObj.selector.split(/,\s+/);
@@ -745,6 +775,15 @@ $(document).on('click','.section-link, .course-rating, .course-feedback, .rating
 			}
 		},
 		'ratings-submit-button' : function() {
+			if (!$('#review-content').val()) {
+				$('#review-content')
+					.focus()
+					.attr('placeholder','You must enter a review')
+				return false
+			} else {
+				courses.ratings.content = $('#review-content').val()
+			}
+			
 			courses.ratings.submit(function(data){
 				if (data.error){
 					$('.modal-error').text(data.error);
@@ -753,6 +792,49 @@ $(document).on('click','.section-link, .course-rating, .course-feedback, .rating
 				}
 				$('.modal-loading-overlay').fadeToggle(250);
 			});
+		},
+		'feedback-submit-button' : function() {
+			if (t.hasClass('disabled')){return;}
+			var content = $('#feedback-post-form>textarea').val();
+			if (!content){
+				$('#feedback-post-form>textarea')
+					.focus()
+					.attr('placeholder','You must enter some feedback before you submit')
+				return false
+			}
+
+			$('.modal-loading-overlay').fadeToggle(250);
+			_st.request(
+				{
+					method : 'POST',
+				 	route : stajax.rest.url+'/feedback',
+					cdata : {
+						student : student.id,
+						postID : courses.data.object.id,
+						content : content
+					},
+					headers : {'X-WP-Nonce' : stajax.rest.nonce,'Content-Type':'application/json'},
+				 	success : function(e){
+						$('.modal-loading-overlay').fadeToggle(250);
+						if (e) {
+							$('#course_modal').modal('close')
+							Materialize.toast('Feedback sent. Thanks!', 5000)
+						} else {
+							$('.modal-content').empty().append($('<pre/>',{
+								text : 'Something went wrong. Please email techsupport@supertutortv.com with your issue.'
+							}))
+							$('.modal-loading-overlay').fadeToggle(250);
+						}
+					},
+					error: function(x){
+						console.log('error')
+						$('.modal-content').empty().append($('<pre/>',{
+							text : JSON.stringify(x[0]['responseJSON'])
+						}))
+						$('.modal-loading-overlay').fadeToggle(250);
+					}
+				}
+			);
 		},
 		'section-link' : function() {
 			var d = JSON.parse(t.attr('data-req'));
@@ -883,14 +965,14 @@ get_template_part('templates/title'); ?>
 <div id="course-content-hitbox-container" class="row">
 	<div id="course-resource-bar" class="col s12 m3 z-depth-1">
 		<div class="col s12 user-bug">
-			<div class="col s12"><span>Hi David!</span></div>
+			<div class="col s12"><span>Hi there!</span></div>
 		</div>
 		<div class="resource-links">
 			<div class="chevron"></div>
 			<a href="#!" class="course-resource-link course-rating"><i class="material-icons">rate_review</i>Rate This Course</a>
 			<a href="#!" class="course-resource-link course-feedback"><i class="material-icons">send</i>Leave Feedback</a>
 			<a href="#!" class="course-resource-link course-updater"><i class="material-icons">refresh</i>Update Course</a>
-			<a href="#!" class="course-resource-link">Version <?php echo STTV_VERSION; ?></a>
+			<a href="#!" class="course-resource-link course-version">Version <?php echo STTV_VERSION; ?></a>
 		</div>
 	</div>
 	<div id="course-nav-container" class="col s12 m9"></div>

@@ -139,10 +139,9 @@ function stajax_object() {
 			);
 		if (is_singular('courses')) {
 			$stajax['rest'] = array(
+				'ID' => $post->ID,
 				'nonce' => wp_create_nonce('wp_rest'), 
-				'url' => rest_url(STTV_REST_NAMESPACE.'/course_data/'.$post->ID),
-				'dls' =>rest_url(STTV_REST_NAMESPACE.'/course_download/'.$post->ID),
-				'reviews'=>rest_url(STTV_REST_NAMESPACE.'/reviews/')
+				'url' => rest_url(STTV_REST_NAMESPACE)
 			);
 		}
 		?>

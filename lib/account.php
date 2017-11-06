@@ -21,7 +21,7 @@ class STTV_Test_Dates extends WP_REST_Controller {
 		'satii',
 		'psat',
 		'gre',
-		'isee'
+		'isee',
 	);
 
 	private $tests_table = STTV_PREFIX.'_tests_data';
@@ -66,14 +66,15 @@ class STTV_Test_Dates extends WP_REST_Controller {
 	}
 
 	public function is_allowed_test($val) {
-		return in_array($val, $this->allowed_tests);
+		return ($val === 'all')?:in_array($val, $this->allowed_tests);
 	}
 
 	public function get_test_dates($data) {
 		global $wpdb;
 		$test = esc_sql($data['test']);
 		$time = time();
-		return $wpdb->get_results( "SELECT * FROM $this->tests_table WHERE test = '$test' AND test_date > $time",OBJECT);
+		//return $wpdb->get_results( "SELECT * FROM $this->tests_table WHERE test = '$test' AND test_date > $time",OBJECT);
+		return rest_get_server();
 	}
 
 	public function update_test_dates(WP_REST_Request $request) {

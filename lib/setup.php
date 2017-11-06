@@ -19,6 +19,8 @@ class STTV_Setup {
 		add_filter( 'ls_meta_generator', '__return_false' );
 		add_filter( 'show_admin_bar', '__return_false' );
 		add_filter( 'login_headerurl' , array($this,'sttv_login_url'));
+
+		// REST alterations
 		add_filter( 'rest_url_prefix', array($this,'sttv_rest_prefix') );
 
 		remove_action( 'wp_head', '_admin_bar_bump_cb' );
