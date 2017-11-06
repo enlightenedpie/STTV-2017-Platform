@@ -617,7 +617,7 @@ var courses = {
 				{
 					method : 'GET',
 				 	route : stajax.rest.url+'/alert',
-				 	cdata : {},
+				 	data : {},
 					headers : {'X-WP-Nonce' : stajax.rest.nonce},
 				 	success : function(e){
 						typeof scb === 'function' && scb(e);
