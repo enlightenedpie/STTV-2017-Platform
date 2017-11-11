@@ -7,7 +7,7 @@ $current_user = wp_get_current_user();
 get_header(); ?>
 <?php get_template_part('templates/title'); ?>
 <section id="content-wrapper-full">
-<div id="subscribe_page_form" class="col s12 m6 push-m3 z-depth-2">
+<div id="subscribe_page_form" class="col s12 m6 push-m3 z-depth-5">
 <h4>Join our mailing list to get exclusive news, updates, coupons, and promotions from SupertutorTV!</h4>
 	<form id="subscribe_page_mc" class="col s12" action="/" method="post" style="position:relative">
 		<div class="loading_overlay"></div>
