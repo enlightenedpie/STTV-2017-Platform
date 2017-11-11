@@ -6,23 +6,24 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 ##### STTV 2017 FUNCTIONS FILE #####
 ####################################
 
-require_once('lib/config.php');
-require_once('lib/setup.php');
-require_once('lib/sttv-api.php');
-require_once('lib/scripts.php');
-require_once('lib/menus.php');
-require_once('lib/sidebars.php');
-require_once('lib/widgets.php');
-require_once('lib/posts.php');
-require_once('lib/stage.php');
-require_once('lib/account.php');
-require_once('lib/endpoints.php');
-require_once('lib/feedback.php');
-require_once('lib/courses.php');
-require_once('lib/shortcodes.php');
-require_once('lib/customizer.php');
-require_once('lib/stripe.php');
-require_once('lib/ajax/handlers.php');
-require_once('lib/ajax/functions.php');
+require('lib/config.php');
+require('lib/setup.php');
+require('lib/sttv-api.php');
+require('lib/scripts.php');
+require('lib/menus.php');
+require('lib/sidebars.php');
+require('lib/widgets.php');
+require('lib/posts.php');
+require('lib/stage.php');
+require('lib/account.php');
+require('lib/endpoints.php');
+require('lib/feedback.php');
+require('lib/courses.php');
+require('lib/shortcodes.php');
+require('lib/customizer.php');
+require('lib/stripe.php');
+require('lib/jobs.php');
+require('lib/ajax/handlers.php');
+require('lib/ajax/functions.php');
 
 //end of line, man.
