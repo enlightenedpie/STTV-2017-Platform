@@ -1,0 +1,70 @@
+body.page-template-jobs-template
+
+    #page-title
+        max-width: 768px
+        margin: 0 auto
+        text-align: left !important
+
+        h1
+            margin-bottom: 0
+
+    #content-wrapper-full
+
+        .jobs-action-button
+            background-color: $azure
+            color: white
+
+        #jobs
+            max-width: 768px
+            margin: 0 auto
+
+            .meta-bar
+                +wfull
+                margin-bottom: 1em
+                padding: 0
+
+                .col
+                    padding: 0
+
+                .meta-apply-button
+                    text-align: right
+
+                .meta
+                    margin-right: 1em
+                    font-size: $small
+                    color: $azure
+                    text-transform: uppercase
+
+                    i
+                        font-size: 1em
+
+                .meta-remote
+                    color: $sunrise
+
+                .meta-job-type
+                    font-style: italic
+
+            .job-description, .job-apply, .job-edit
+                background: white
+                padding: 1em
+                border: 1px solid $smblack
+
+            .after-job-description
+                text-align: center
+                padding: $huge*2 0
+
+@include MQ($mq-mobile)
+    body.page-template-jobs-template
+
+        #content-wrapper-full
+
+            #jobs
+
+                .jobs-action-button
+                        display: block
+
+                .meta-bar
+                    display: block
+
+                    .jobs-action-button
+                        margin-top: 1em
