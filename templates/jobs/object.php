@@ -11,6 +11,9 @@ global $wp_query;
         } else {
             function job_title($title) {
                 global $stjob;
+                if (get_query_var('job-action') == 'edit'){
+                    return 'Edit Job';
+                }
                 $afterpipe = strstr($title,'|');
                 return ($afterpipe) ? $stjob->title.' '.$afterpipe : $stjob->title;
             }
