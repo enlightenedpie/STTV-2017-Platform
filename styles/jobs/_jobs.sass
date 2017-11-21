@@ -49,6 +49,38 @@ body.page-template-jobs-template
                 padding: 1em
                 border: 1px solid $smblack
 
+            .job-edit-saved
+                position: fixed
+                top: 0
+                left: 1em
+                z-index: 99999
+                margin-top: $headerh
+                padding-top: 1em
+
+            #immutables
+                margin-bottom: 1em
+                padding: 0
+
+                &>div
+                    padding: 0
+
+            #job-edit-inputs
+
+                #title
+                    @extend h3
+                    margin: 0
+                    padding: 1em 0
+                    line-height: 1
+
+                .col.job-input
+                    padding: 0
+
+                    div
+                        border-bottom: 1px solid $smblack
+                        padding: 1em 0
+                        margin: 0 1em 0 0
+
+
             .after-job-description
                 text-align: center
                 padding: $huge*2 0
