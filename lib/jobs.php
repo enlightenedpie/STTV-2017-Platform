@@ -1,4 +1,4 @@
-<?php
+<?
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
@@ -24,10 +24,9 @@ class STTV_Jobs {
         
     }
     public function init() {
-        add_filter( 'query_vars', array($this, 'sttv_jobs_qvar') );
-        add_filter( 'template_include', array($this,'jobs_page_template'), 99 );
-        add_action( 'init', array($this, 'sttv_jobs_endpoint') );
-        //add_action( 'parse_query', array($this, 'init_job_global') );
+        add_filter( 'query_vars', [$this, 'sttv_jobs_qvar'] );
+        add_filter( 'template_include', [$this,'jobs_page_template'], 99 );
+        add_action( 'init', [$this, 'sttv_jobs_endpoint'] );
         $this->sttv_jobs_tables();
     }
 
@@ -47,7 +46,7 @@ class STTV_Jobs {
         $base = STTV_TEMPLATE_DIR;
 
         if (isset($wp_query->query['job-action'])) {
-            if (($wp_query->query['job-action'] === 'edit' || $wp_query->query['job-action'] === 'submissions' ) && !current_user_can('manage_options')){
+            if (($wp_query->query['job-action'] === 'edit' || $wp_query->query['job-action'] === 'submissions' ) && !current_user_can('edit_posts')){
                 return wp_redirect(site_url().'/'.$wp_query->query['pagename'].'/'.$wp_query->query['job-post']);
             } elseif ($wp_query->query['job-action'] === 'edit') {
                 return $base.'jobs/edit-single.php';
@@ -69,10 +68,11 @@ class STTV_Jobs {
         return $template;
     }
 
-    public function get_job($name = '') {
+    public function get_job($val = '') {
         global $wpdb;
+        $column = is_numeric($val) ? 'id' : 'name';
         $job = $wpdb->get_results( 
-            $wpdb->prepare("SELECT * FROM $this->jobs_table WHERE name=%s", $name) 
+            $wpdb->prepare("SELECT * FROM $this->jobs_table WHERE $column=%s", $val) 
         );
 
         if (!$job) {
@@ -83,45 +83,64 @@ class STTV_Jobs {
 
     public function get_jobs() {
         global $wpdb;
-        return $wpdb->get_results( 
+        $jobject = [];
+        $res = $wpdb->get_results( 
             $wpdb->prepare("SELECT * FROM $this->jobs_table WHERE status=%s", 'active') 
         );
+        foreach ($res as $r) {
+            $jobject[] = $this->set_job_object_types($r);
+        }
+        return $jobject;
     }
 
-    public function create_job($job = array()){
-        global $wpdb;
-        $defaults = array(
-            'title' => '',
-            'name' => '',
-            'description' => '',
-            'url' => '/',
+    public function create_job($job = []){
+        if (!isset($job['title'])){
+            return new WP_Error( 'bad_request', '`title` is a required field.', [ 'status' => 400 ] );
+        }
+        $defaults = [
             'location' => 'Los Angeles, CA',
             'is_remote' => false,
             'status' => 'active',
-            'sub_count' => 0
-        );
-        $vals = array_merge($defaults,$job);
+            'category' => 'general',
+            'job_type' => 'full-time'
+        ];
 
-        $init = $wpdb->insert($this->jobs_table,$vals,array('%s','%s','%s','%s','%s','%s','%d','%d'));
+        global $wpdb;
+        $init = $wpdb->insert($this->jobs_table,$defaults);
 
-        if (!$init) {
+        if (!$init || is_wp_error($init)) {
             return $init;
         }
 
-        $newjob = $wpdb->get_results( 
-            $wpdb->prepare("SELECT * FROM $this->jobs_table WHERE status=%s", 'active') 
-        );
+        $job['title'] = ucwords($job['title']);
+        $job['name'] = sanitize_title_with_dashes($job['title']).'-'.$wpdb->insert_id;
+        $job['url'] = site_url().'/jobs/'.$job['name'];
 
-        //return $wpdb->update($this->jobs_table,);
+        $vals = array_merge($defaults,$job);
+        $the_job = $this->update_job(['id'=>$wpdb->insert_id],$vals);
+        if (!$the_job){
+            $this->delete_job($wpdb->insert_id);
+        }
+
+        return $this->get_job($wpdb->insert_id);
+    }
+
+    public function update_job($where = [],$vals = []) {
+        global $wpdb;
+        return $wpdb->update($this->jobs_table,$vals,$where);
+    }
+
+    public function delete_job($id = 0) {
+        global $wpdb;
+        return $wpdb->delete($this->jobs_table,['id'=>$id]);
     }
 
     public function set_job_object_types($job){
         $job->id = (int) $job->id;
-        $job->description = esc_html($job->description);
+        $job->description = (string) esc_html($job->description);
         $job->is_remote = (bool) $job->is_remote;
         $job->sub_count = (int) $job->sub_count;
         $job->date_posted = strtotime($job->date_posted);
-        $job->expires = (int) $job->expires;
         return (object) $job;
     }
 
@@ -140,9 +159,9 @@ class STTV_Jobs {
                     category tinytext,
                     is_remote boolean NOT NULL DEFAULT 0,
                     status tinytext,
+                    job_type tinytext,
                     sub_count smallint DEFAULT 0,
                     date_posted TIMESTAMP,
-                    expires int(10),
                     UNIQUE KEY id (id)
             ) AUTO_INCREMENT=20508 $charset_collate;";
             dbDelta( $sql );
@@ -170,11 +189,75 @@ class STTV_Jobs_REST extends WP_REST_Controller {
 
     public function __construct() {
         $this->jobs = new STTV_Jobs();
-        add_action( 'rest_api_init', array($this, 'jobs_rest_init') );
+        add_action( 'rest_api_init', [$this, 'jobs_rest_init'] );
     }
 
     public function jobs_rest_init() {
+
+        // get ALL jobs
+        register_rest_route( STTV_REST_NAMESPACE, '/jobs',
+            [
+                [
+                    'methods' => WP_REST_Server::READABLE,
+                    'callback' => [$this,'rest_job_getter'],
+                    'permission_callback' => '__return_true',
+                    'args' => [
+                        'id' => [
+                            'validate_callback' => function($param,$request,$key){
+                                return is_numeric($param) && intval($param) !== 0;
+                            }
+                        ]
+                    ]
+                ],
+                [
+                    'methods' => WP_REST_Server::EDITABLE,
+                    'callback' => [$this,'rest_job_editor'],
+                    'permission_callback' => [$this,'jobs_cud_permissions']
+                ],
+                [
+                    'methods' => WP_REST_Server::DELETABLE,
+                    'callback' => [$this,'rest_job_deleter'],
+                    'permission_callback' => [$this,'jobs_cud_permissions'],
+                    'args' => [
+                        'id' => [
+                            'validate_callback' => function($param,$request,$key){
+                                return is_numeric($param) && intval($param) !== 0;
+                            }
+                        ]
+                    ]
+                ]
+            ]
+        );
         
+    }
+
+    public function rest_job_getter(WP_REST_Request $request) {
+        //return $request->get_param('id');
+        if (null !== $request->get_param( 'id' )) {
+            $job = $this->jobs->get_job($request->get_param( 'id' ));
+            return ($job == null) ? new WP_Error( 'job_not_found', 'Invalid job request', [ 'status' => 404 ] ) : $job;
+        } else {
+            return $this->jobs->get_jobs();
+        }
+    }
+
+    public function rest_job_editor(WP_REST_Request $request) {
+        switch ($request->get_method()) {
+            case "POST":
+                return $this->jobs->create_job($request->get_json_params());
+            case "PUT":
+            case "PATCH":
+                return 'PUT and PATCH method; edits part of a job';
+        }
+    }
+
+    public function rest_job_deleter(WP_REST_Request $request) {
+        return $this->jobs->delete_job($request->get_param( 'id' ));
+    }
+
+    public function jobs_cud_permissions() {
+        //return current_user_can('edit_posts');
+        return true;
     }
  }
  new STTV_Jobs_REST;
