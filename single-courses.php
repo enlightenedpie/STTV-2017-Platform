@@ -8,7 +8,8 @@ $cpp = get_post_meta($post->ID,'course_product_page',true);
 /**
  * Let's check that our current user is logged in. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
 **/
-if (!current_user_can(get_post_meta($post->ID,'course_primary_cap',true))) :
+// !current_user_can(get_post_meta($post->ID,'course_primary_cap',true))
+if (!is_user_logged_in()) :
 	wp_redirect( esc_url( add_query_arg( 'access', time(), get_permalink($cpp) ) ) );
 	exit;
 endif;

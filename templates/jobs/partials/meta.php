@@ -1,5 +1,5 @@
 <div class="meta-bar row valign-wrapper">
-    <div class="col s12 m8">
+    <div class="col s12">
         <span class="meta meta-location"><?php echo $stjob->location; ?></span>
         <?php
             if ($stjob->is_remote) {
@@ -7,13 +7,6 @@
             }
         ?>
         <span class="meta meta-category"><?php echo $stjob->category; ?></span>
-        <span class="meta meta-job-type">Full-time<?php //echo $stjob->location; ?></span>
-    </div>
-    <div class="col s12 m4 meta-apply-button">
-        <?php 
-            if (!get_query_var('job-action')) {
-                include 'action-button.php';
-            }
-        ?>
+        <span class="meta meta-job-type"><?php echo $stjob->job_type; ?></span>
     </div>
 </div>

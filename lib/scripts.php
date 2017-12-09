@@ -137,7 +137,7 @@ function stajax_object() {
 					'public_key' => Spress()->public_key
 				)
 			);
-		if (is_singular('courses')) {
+		if (is_singular('courses') || is_page('jobs')) {
 			$stajax['rest'] = array(
 				'ID' => $post->ID,
 				'nonce' => wp_create_nonce('wp_rest'), 

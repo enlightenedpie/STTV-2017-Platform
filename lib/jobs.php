@@ -18,14 +18,14 @@ class STTV_Jobs {
 
     private $st_jobs_table = STTV_PREFIX.'_jobs_data';
 
-     private $submissions_table = STTV_PREFIX.'_jobs_submissions';
+    private $submissions_table = STTV_PREFIX.'_jobs_submissions';
     
     public function __construct() {
         
     }
     public function init() {
         add_filter( 'query_vars', [$this, 'sttv_jobs_qvar'] );
-        add_filter( 'template_include', [$this,'jobs_page_template'], 99 );
+        add_filter( 'template_include', [$this,'jobs_page_template'], 0 );
         add_action( 'init', [$this, 'sttv_jobs_endpoint'] );
         $this->sttv_jobs_tables();
     }
@@ -114,7 +114,7 @@ class STTV_Jobs {
 
         $job['title'] = ucwords($job['title']);
         $job['name'] = sanitize_title_with_dashes($job['title']).'-'.$wpdb->insert_id;
-        $job['url'] = site_url().'/jobs/'.$job['name'];
+        $job['url'] = '/jobs/'.$job['name'];
 
         $vals = array_merge($defaults,$job);
         $the_job = $this->update_job(['id'=>$wpdb->insert_id],$vals);
@@ -125,9 +125,11 @@ class STTV_Jobs {
         return $this->get_job($wpdb->insert_id);
     }
 
-    public function update_job($where = [],$vals = []) {
+    public function update_job($params = []) {
         global $wpdb;
-        return $wpdb->update($this->jobs_table,$vals,$where);
+        $where = ['id'=>$params['id']];
+        unset($params['id']);
+        return $wpdb->update($this->jobs_table,$params,$where);
     }
 
     public function delete_job($id = 0) {
@@ -243,11 +245,15 @@ class STTV_Jobs_REST extends WP_REST_Controller {
 
     public function rest_job_editor(WP_REST_Request $request) {
         switch ($request->get_method()) {
+            case "GET":
+                return;
             case "POST":
                 return $this->jobs->create_job($request->get_json_params());
             case "PUT":
             case "PATCH":
-                return 'PUT and PATCH method; edits part of a job';
+                return $this->jobs->update_job($request->get_params());
+            case "DELETE":
+                return;
         }
     }
 
@@ -256,7 +262,7 @@ class STTV_Jobs_REST extends WP_REST_Controller {
     }
 
     public function jobs_cud_permissions() {
-        //return current_user_can('edit_posts');
+        return current_user_can('edit_posts');
         return true;
     }
  }

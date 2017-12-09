@@ -9,16 +9,25 @@ global $wp_query;
             $wp_query->set_404();
             status_header(404);
         } else {
-            function job_title($title) {
-                global $stjob;
+            function job_title($title,$post_id) {
+                global $wp_query, $stjob;
+
+                if ($post_id !==  $wp_query->queried_object_id) {
+                    return $title;
+                } 
+                
                 if (get_query_var('job-action') == 'edit'){
                     return 'Edit Job';
                 }
+
                 $afterpipe = strstr($title,'|');
                 return ($afterpipe) ? $stjob->title.' '.$afterpipe : $stjob->title;
             }
-            add_filter('the_title','job_title');
-            add_filter('wpseo_title','job_title');
+            add_filter('the_title','job_title',11,2);
+            add_filter('wpseo_title',function($title){
+                global $stjob;
+                $afterpipe = strstr($title,'|');
+                return ($afterpipe) ? $stjob->title.' '.$afterpipe : $stjob->title;
+            });
         }
     }
-?>

@@ -1,5 +1,19 @@
 body.page-template-jobs-template
 
+    #stage
+
+        span.post-thumb-jobs
+            +wfull
+            background: black
+            display: block
+            max-height: 700px
+
+            img
+                display: block
+                min-width: 768px
+                height: auto
+                margin: 0 auto
+
     #page-title
         max-width: 768px
         margin: 0 auto
@@ -14,7 +28,7 @@ body.page-template-jobs-template
             background-color: $azure
             color: white
 
-        #jobs
+        #jobs, .jobs-hero-img
             max-width: 768px
             margin: 0 auto
 
@@ -49,13 +63,48 @@ body.page-template-jobs-template
                 padding: 1em
                 border: 1px solid $smblack
 
+            .job-description
+
+                p
+                    margin-bottom: 1em
+                    text-indent: 2em
+
+                li
+                    margin-bottom: $small
+
+                ul
+                    list-style-position: inside
+                    margin-left: 1em
+
+                    li
+                        list-style-type: disc
+
+                ol
+                    list-style-position: inside
+                    margin-left: 1em
+
+                    li
+                        list-style-type: decimal
+
+                ul ul, ol ul
+                    list-style-position: inside
+                    margin-left: 2em
+
+                    li
+                        list-style-type: circle
+
+                ol ol, ul ol
+                    list-style-position: inside
+                    margin-left: 2em
+
+                    li
+                        list-style-type: lower-latin
+
             .job-edit-saved
-                position: fixed
-                top: 0
-                left: 1em
+                position: absolute
+                right: 3em
                 z-index: 99999
-                margin-top: $headerh
-                padding-top: 1em
+                color: $olive
 
             #immutables
                 margin-bottom: 1em
@@ -75,6 +124,9 @@ body.page-template-jobs-template
                 .col.job-input
                     padding: 0
 
+                    &:focus
+                        outline: none
+
                     div
                         border-bottom: 1px solid $smblack
                         padding: 1em 0
@@ -84,6 +136,56 @@ body.page-template-jobs-template
             .after-job-description
                 text-align: center
                 padding: $huge*2 0
+
+                .apply
+
+                    a
+                        color: $azure
+                        opacity: 1
+                        transition: opacity .25s ease-in-out
+
+                        &:hover
+                            opacity: .75
+
+            .single-job
+                margin-bottom: 1em
+
+                .single-job-title, .single-job-button
+                    padding: 0
+
+                .single-job-title
+
+                    h3
+                        margin: 0
+
+                .single-jobs-meta
+                    padding: 0
+                    height: $large
+                    vertical-align: top
+                    font-size: $small
+                    font-weight: 700
+                    text-transform: uppercase
+
+                    .meta
+                        margin-right: $large
+
+            .job-apply
+
+                form
+
+                fieldset
+                    border: 0
+                    padding: 1em
+                    margin: 1em 0
+
+                input, textarea
+
+                    &:focus
+                        border-bottom: 1px solid $azure
+                        box-shadow: 0 1px 0 0 $smblack
+
+                    &::placeholder
+                        color: $ltblack
 
 @include MQ($mq-mobile)
     body.page-template-jobs-template
