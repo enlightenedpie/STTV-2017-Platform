@@ -133,6 +133,7 @@ function stajax_object() {
 			$stajax = array(
 				'ajaxURL'=>trailingslashit(site_url()).'stajax.php',
 				'contentURL'=>get_stylesheet_directory_uri(),
+				'rootURL'=>site_url(),
 				'stripe' => array(
 					'public_key' => Spress()->public_key
 				)
