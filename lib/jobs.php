@@ -117,7 +117,8 @@ class STTV_Jobs {
         $job['url'] = '/jobs/'.$job['name'];
 
         $vals = array_merge($defaults,$job);
-        $the_job = $this->update_job(['id'=>$wpdb->insert_id],$vals);
+        $vals['id'] = $wpdb->insert_id;
+        $the_job = $this->update_job($vals);
         if (!$the_job){
             $this->delete_job($wpdb->insert_id);
         }
@@ -248,12 +249,13 @@ class STTV_Jobs_REST extends WP_REST_Controller {
             case "GET":
                 return;
             case "POST":
-                return $this->jobs->create_job($request->get_json_params());
+                return $this->jobs->create_job($request->get_params());
+                //return $request->get_params();
             case "PUT":
             case "PATCH":
                 return $this->jobs->update_job($request->get_params());
             case "DELETE":
-                return;
+                return "deleted";
         }
     }
 
