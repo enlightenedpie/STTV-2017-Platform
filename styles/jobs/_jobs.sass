@@ -28,6 +28,9 @@ body.page-template-jobs-template
             background-color: $azure
             color: white
 
+        #jobs
+            padding-bottom: $huge * 2
+
         #jobs, .jobs-hero-img
             max-width: 768px
             margin: 0 auto
@@ -153,6 +156,9 @@ body.page-template-jobs-template
                 .single-job-title, .single-job-button
                     padding: 0
 
+                    .job-deleter
+                        padding-right: 1em
+
                 .single-job-title
 
                     h3
@@ -186,6 +192,23 @@ body.page-template-jobs-template
 
                     &::placeholder
                         color: $ltblack
+
+    #job_add_form
+        display: block
+        padding: $huge
+
+        input, textarea
+
+            &:focus
+                border-bottom: 1px solid $azure
+
+        a.add-job-submit
+            background-color: $azure
+            color: white
+
+        .job-add-error
+            color: $sienna
+            padding: 0 $huge
 
 @include MQ($mq-mobile)
     body.page-template-jobs-template
