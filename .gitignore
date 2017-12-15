@@ -5,7 +5,6 @@ fonts
 lib/config.php
 lib/payments
 lib/Stripe
-lib/stripe.php
 X*
 Gulpfile.js
 .vscode

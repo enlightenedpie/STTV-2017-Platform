@@ -480,6 +480,7 @@ class STTV_Courses_Admin {
 				'practice'=>array()
 			);
 			$caps[]=$data['cap'];
+			update_post_meta($post_id,'course_primary_cap',$data['cap']);
 		
 			foreach($_POST['courses']['sections'] as $sec) :
 				$i = 0;

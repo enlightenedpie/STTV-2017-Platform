@@ -34,7 +34,8 @@
 				<div itemprop="name" id="page-title">
 					<h1><?php _e($title, 'wordpress-seo') ?></h1>
 				</div>
-				<?php if (!is_singular('courses')) : ?>
+				<?php 
+				if (!(is_singular('courses') || is_page('jobs'))) : ?>
 				<?php yoast_breadcrumb('<div id="breadcrumbs">','</div>'); ?>
                 
                 	<?php if (is_single()) :

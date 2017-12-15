@@ -58,6 +58,8 @@ get_header(); ?>
 		return;
 	});
 </script>
+<div class="col s12">
 <?php the_content(); ?>
+</div>
 </section>
 <?php get_footer(); ?>

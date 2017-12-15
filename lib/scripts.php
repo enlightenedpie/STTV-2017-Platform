@@ -133,11 +133,12 @@ function stajax_object() {
 			$stajax = array(
 				'ajaxURL'=>trailingslashit(site_url()).'stajax.php',
 				'contentURL'=>get_stylesheet_directory_uri(),
+				'rootURL'=>site_url(),
 				'stripe' => array(
 					'public_key' => Spress()->public_key
 				)
 			);
-		if (is_singular('courses')) {
+		if (is_singular('courses') || is_page('jobs')) {
 			$stajax['rest'] = array(
 				'ID' => $post->ID,
 				'nonce' => wp_create_nonce('wp_rest'), 
