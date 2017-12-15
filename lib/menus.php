@@ -26,8 +26,8 @@ function sttv_admin_only_link( $items, $menu ) {
 		endif;
 		
 		if (current_user_can('manage_options')) :
-	  		$items[] = _custom_nav_menu_item( 'Admin', get_admin_url(), 111, array('admin-link') );
-	  		$items[] = _custom_nav_menu_item( 'Edit '.get_post_type(), get_edit_post_link($post->ID), 120);
+	  		$items[] = @_custom_nav_menu_item( 'Admin', get_admin_url(), 111, array('admin-link') );
+	  		$items[] = @_custom_nav_menu_item( 'Edit '.get_post_type(), get_edit_post_link($post->ID), 120);
 		endif;
 	}
 	return $items;
@@ -38,7 +38,7 @@ function _custom_nav_menu_item( $title = '', $url = '', $order = 0, $classes = a
   $item->title = $title;
   $item->url = $url;
   $item->menu_order = $order;
-  $item->menu_parent_item = 0;
+  $item->menu_item_parent = 0;
   $item->target = '';
 	$item->attr_title = '';
 	$item->description = '';
