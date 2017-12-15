@@ -59,8 +59,8 @@ var _stadd = {
 			success: function(data){
                 rowEl.fadeOut(250, function() {
                     $(this).remove()
-                    if (!$('.single-job','#jobs').length) {
-                        $('#jobs').text('There are currently no open positions.')
+                    if (!$('.single-job','#jobs-inner').length) {
+                        $('#jobs-inner').text('There are currently no open positions.')
                     }
                 })
 			},
@@ -118,7 +118,7 @@ $(document).on('click','.add-job-submit',function(e){
             newjob = $('.single-job','#jobs').last().clone()
         } else {
             newjob = _stadd.jobRow()
-            $('#jobs').empty()
+            $('#jobs-inner').empty()
         }
 
         $('.single-job-title > h3 > a',newjob).text(d.title).attr('href',stajax.rootURL+d.url)
@@ -139,7 +139,7 @@ $(document).on('click','.add-job-submit',function(e){
         }))
 
         newjob.fadeOut(250,function() {
-            $(this).appendTo('#jobs')
+            $(this).appendTo('#jobs-inner')
         })
         newjob.fadeIn(250)
 
