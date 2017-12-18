@@ -22,6 +22,7 @@ class STTV_Setup {
 
 		// REST alterations
 		add_filter( 'rest_url_prefix', array($this,'sttv_rest_prefix') );
+		add_action( 'rest_api_init', array($this,'sttv_rest_cors'), 15 );
 
 		remove_action( 'wp_head', '_admin_bar_bump_cb' );
 		remove_action( 'wp_head', 'wp_generator' );
@@ -100,6 +101,23 @@ class STTV_Setup {
 
 	public function sttv_rest_prefix($prefix) {
 		return 'api';
+	}
+	public function sttv_rest_cors() {
+    
+		remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
+		add_filter( 'rest_pre_serve_request', function( $value ) {
+			$origin = get_http_origin();
+			if ( $origin ) {
+				header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+			} else {
+				header( 'Access-Control-Allow-Origin: *' );
+			}
+        	header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
+        	header( 'Access-Control-Allow-Credentials: true' );
+	
+			return $value;
+			
+		});
 	}
 
 }
