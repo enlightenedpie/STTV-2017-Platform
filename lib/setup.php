@@ -113,7 +113,15 @@ class STTV_Setup {
 				header( 'Access-Control-Allow-Origin: *' );
 			}
         	header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
-        	header( 'Access-Control-Allow-Credentials: true' );
+			header( 'Access-Control-Allow-Credentials: true' );
+			header( 'Content-Type: application/sttv.app.data+json' );
+			header( 'Host: supertutortv.com/api/'.STTV_REST_NAMESPACE );
+
+			//remove default headers
+			header_remove( 'Access-Control-Expose-Headers' );
+			header_remove( 'Link' );
+			header_remove( 'X-Powered-By' );
+			header_remove( 'X-Robots-Tag' );
 	
 			return $value;
 			
