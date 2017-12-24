@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * REST endpoints for adding, displaying, and updating product reviews.
  *
  * @class 		STTV_Test_Dates
- * @version		1.1.0
+ * @version		1.4
  * @package		STTV
  * @category	Class
  * @author		Supertutor Media, inc.
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class STTV_Test_Dates extends WP_REST_Controller {
 	
-	private $allowed_tests = array(
+	private $allowed_tests = [
 		'act',
 		'sat',
 		'satsubject',
@@ -22,7 +22,7 @@ class STTV_Test_Dates extends WP_REST_Controller {
 		'psat',
 		'gre',
 		'isee',
-	);
+	];
 
 	private $tests_table = STTV_PREFIX.'_tests_data';
 	
@@ -32,9 +32,9 @@ class STTV_Test_Dates extends WP_REST_Controller {
 			$this->create_tests_table($wpdb);
 		}
 
-		add_action( 'rest_api_init', array($this,'sttv_test_dates_api') );
+		add_action( 'rest_api_init', [ $this, 'sttv_test_dates_api' ] );
 		
-		register_shutdown_function( array( $this, '__destruct' ) );
+		register_shutdown_function( [ $this, '__destruct' ] );
 	}
 	
 	public function __destruct() {
@@ -42,47 +42,55 @@ class STTV_Test_Dates extends WP_REST_Controller {
     }
 	
 	public function sttv_test_dates_api() {
-		register_rest_route( STTV_REST_NAMESPACE, '/all_test_dates/',array(
-				array(
-					'methods' => 'POST',
-					'callback' => array($this,'update_test_dates')
-				)
-			)
+		register_rest_route( STTV_REST_NAMESPACE, '/test_dates', [
+				[
+					'methods' => WP_REST_Server::ALLMETHODS,
+					'callback' => [ $this, 'init' ],
+					'permission_callback' => [ $this, 'check_auth' ],
+					'args' => [
+						'test' => [
+							'validate_callback' => [ $this, 'is_allowed_test' ]
+						]
+					]
+				]
+			]
 		);
-		register_rest_route( STTV_REST_NAMESPACE, '/test_dates/(?P<test>[a-zA-Z]+)',array(
-				array(
-					'methods' => 'GET',
-					'callback' => array($this,'get_test_dates'),
-					'args' => array(
-						'test' => array(
-							'validate_callback' => array($this,'is_allowed_test'),
-							'required' => true
-						)
-					)
-				),
-				array()
-			)
-	   );
+		return $this;
 	}
 
-	public function is_allowed_test($val) {
-		return ($val === 'all')?:in_array($val, $this->allowed_tests);
-	}
-
-	public function get_test_dates($data) {
-		global $wpdb;
-		$test = esc_sql($data['test']);
-		$time = time();
+	public function init( WP_REST_Request $request ) {
+		switch ($request->get_method()) {
+			case 'GET' :
+			case 'POST' :
+			case 'PUT' :
+			case 'PATCH' :
+			case 'DELETE' :
+				$test = [
+					$request->get_param('auth')
+				];
+		}
+		//$time = time();
 		//return $wpdb->get_results( "SELECT * FROM $this->tests_table WHERE test = '$test' AND test_date > $time",OBJECT);
-		return rest_get_server();
+		return $test;
+	}
+
+	public function is_allowed_test( $val ) {
+		return ( is_null($val) || $val === 'all' ) ?: in_array($val, $this->allowed_tests);
 	}
 
 	public function update_test_dates(WP_REST_Request $request) {
 		return $request->get_param('auth');
 	}
 
-	public function check_auth(WP_REST_Request $request, $action) {
-		return wp_verify_nonce($request->get_param('auth'),$action) && current_user_can('edit_test_dates_api');
+	public function delete_test_dates(WP_REST_Request $request) {
+
+	}
+
+	public function check_auth( WP_REST_Request $request ) {
+		if ( 'GET' === $request->get_method() ) {
+			return true;
+		}
+		return wp_verify_nonce( $request->get_param('auth'), 'wp_rest') && current_user_can('edit_test_dates_api');
 	}
 
 	private function create_tests_table($wpdb){
