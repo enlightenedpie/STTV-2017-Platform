@@ -141,7 +141,7 @@ function stajax_object() {
 		if (is_singular('courses') || is_page('jobs')) {
 			$stajax['rest'] = array(
 				'ID' => $post->ID,
-				'nonce' => wp_create_nonce('wp_rest'), 
+				'nonce' => wp_create_nonce(STTV_REST_AUTH), 
 				'url' => rest_url(STTV_REST_NAMESPACE)
 			);
 		}
