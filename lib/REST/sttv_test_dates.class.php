@@ -90,7 +90,7 @@ class STTV_Test_Dates extends WP_REST_Controller {
 		if ( 'GET' === $request->get_method() ) {
 			return true;
 		}
-		return wp_verify_nonce( $request->get_param('auth'), 'wp_rest') && current_user_can('edit_test_dates_api');
+		return wp_verify_nonce( $request->get_param('auth'), STTV_REST_AUTH ) && current_user_can('edit_test_dates_api');
 	}
 
 	private function create_tests_table($wpdb){
