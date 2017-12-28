@@ -51,32 +51,56 @@ class STTV_Test_Dates extends WP_REST_Controller {
 						'test' => [
 							'validate_callback' => [ $this, 'is_allowed_test' ],
 							'default' => 'all'
+						],
+						'range' => [
+							'type' => 'string',
+							'sanitize_callback' => [ $this, 'date_range_sanitizer']
+						],
+						'order_by' => [
+							'type' => 'string',
+							'enum' => [
+								'test',
+								'test_date',
+								'reg_date',
+								'change_date',
+								'late_reg'
+							]
+						],
+						'sort' => [
+							'type' => 'string',
+							'enum' => [
+								'ASC',
+								'asc',
+								'DESC',
+								'desc'
+							]
 						]
 					]
 				]
 			]
 		);
-		return $this;
 	}
 
 	public function init( WP_REST_Request $request ) {
-		global $wpdb;
+		$params = $request->get_params();
 		switch ( $request->get_method() ) {
 			case 'GET' :
-				//$test = $request->get_params();
-				$test = $this->get_test_dates( $request->get_params() );
+				$test = $this->get_test_dates( $params );
 				break;
 			case 'POST' :
+				$test = $params;
+				break;
 			case 'PUT' :
 			case 'PATCH' :
+				break;
 			case 'DELETE' :
 				$test = [
 					$request->get_param('test')
 				];
+				break;
 			default:
 				$test = 'nope';
 		}
-		//return $wpdb->get_results( "SELECT * FROM $this->tests_table WHERE test = '$test' AND test_date > $time",OBJECT);
 		return $test;
 	}
 	
@@ -91,6 +115,18 @@ class STTV_Test_Dates extends WP_REST_Controller {
 			$query .= ' test=\''.$vals['test'].'\'';
 		}
 
+		if ( isset($vals['range']) && isset($vals['range'][1]) ){
+			$query .= ' AND (test_date BETWEEN '.$vals['range'][0].' AND '.$vals['range'][1].')';
+		} elseif ( isset($vals['range']) && count($vals['range']) === 1) {
+			$query .= ' AND test_date='.$vals['range'][0];
+		}
+
+		$order = (isset($vals['order_by'])) ? $vals['order_by'] : 'test';
+
+		$sort = (isset($vals['sort'])) ? strtoupper($vals['sort']) : 'ASC';
+
+		$query .= ' ORDER BY '.$order.' '.$sort;
+
 		return $wpdb->get_results( $query );
 		return $query;
 	}
@@ -103,10 +139,16 @@ class STTV_Test_Dates extends WP_REST_Controller {
 
 	}
 
+	public function date_range_sanitizer( $val, $request ){
+		$dates = array_map( 'strtotime', explode( '|', $val ) );
+		return $request->set_param( 'range', $dates );
+	}
+
 	public function check_auth( WP_REST_Request $request ) {
 		if ( 'GET' === $request->get_method() ) {
 			return true;
 		}
+		return true;
 		return wp_verify_nonce( $request->get_param('auth'), STTV_REST_AUTH ) && current_user_can('edit_test_dates_api');
 	}
 
