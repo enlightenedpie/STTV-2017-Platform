@@ -49,7 +49,8 @@ class STTV_Test_Dates extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'check_auth' ],
 					'args' => [
 						'test' => [
-							'validate_callback' => [ $this, 'is_allowed_test' ]
+							'validate_callback' => [ $this, 'is_allowed_test' ],
+							'default' => 'all'
 						]
 					]
 				]
@@ -59,30 +60,46 @@ class STTV_Test_Dates extends WP_REST_Controller {
 	}
 
 	public function init( WP_REST_Request $request ) {
-		switch ($request->get_method()) {
+		global $wpdb;
+		switch ( $request->get_method() ) {
 			case 'GET' :
+				//$test = $request->get_params();
+				$test = $this->get_test_dates( $request->get_params() );
+				break;
 			case 'POST' :
 			case 'PUT' :
 			case 'PATCH' :
 			case 'DELETE' :
 				$test = [
-					$request->get_param('auth')
+					$request->get_param('test')
 				];
+			default:
+				$test = 'nope';
 		}
-		//$time = time();
 		//return $wpdb->get_results( "SELECT * FROM $this->tests_table WHERE test = '$test' AND test_date > $time",OBJECT);
 		return $test;
 	}
+	
+	private function get_test_dates( $vals ) {
+		global $wpdb;
+		$query = "SELECT * FROM $this->tests_table";
+		
+		if ( 'all' !== $vals['test']) {
+			if (!strpos($query,'WHERE')){
+				$query .= ' WHERE';
+			}
+			$query .= ' test=\''.$vals['test'].'\'';
+		}
 
-	public function is_allowed_test( $val ) {
-		return ( is_null($val) || $val === 'all' ) ?: in_array($val, $this->allowed_tests);
+		return $wpdb->get_results( $query );
+		return $query;
 	}
 
-	public function update_test_dates(WP_REST_Request $request) {
+	private function update_test_dates( WP_REST_Request $request ) {
 		return $request->get_param('auth');
 	}
 
-	public function delete_test_dates(WP_REST_Request $request) {
+	private function delete_test_dates( WP_REST_Request $request ) {
 
 	}
 
@@ -91,6 +108,10 @@ class STTV_Test_Dates extends WP_REST_Controller {
 			return true;
 		}
 		return wp_verify_nonce( $request->get_param('auth'), STTV_REST_AUTH ) && current_user_can('edit_test_dates_api');
+	}
+
+	public function is_allowed_test( $val ) {
+		return ( is_null($val) || $val === 'all' ) ?: in_array($val, $this->allowed_tests);
 	}
 
 	private function create_tests_table($wpdb){
