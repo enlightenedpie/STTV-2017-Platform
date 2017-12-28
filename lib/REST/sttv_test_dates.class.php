@@ -88,10 +88,11 @@ class STTV_Test_Dates extends WP_REST_Controller {
 				$test = $this->get_test_dates( $params );
 				break;
 			case 'POST' :
+				unset($params['auth']);
 				$test = $params;
 				break;
 			case 'PUT' :
-			case 'PATCH' :
+				$test = 'PATCH method';
 				break;
 			case 'DELETE' :
 				$test = [
@@ -99,7 +100,7 @@ class STTV_Test_Dates extends WP_REST_Controller {
 				];
 				break;
 			default:
-				$test = 'nope';
+				return $this->method_not_supported( $request->get_method() );
 		}
 		return $test;
 	}
@@ -137,6 +138,17 @@ class STTV_Test_Dates extends WP_REST_Controller {
 
 	private function delete_test_dates( WP_REST_Request $request ) {
 
+	}
+
+	private function method_not_supported( $method ) {
+		$data = [
+			'code'    => 'method_not_allowed',
+			'message' => $method.' method not supported',
+			'data'    => [ 
+				'status' => 405
+			]
+		];
+		return new WP_REST_Response( $data, 405 );
 	}
 
 	public function date_range_sanitizer( $val, $request ){
