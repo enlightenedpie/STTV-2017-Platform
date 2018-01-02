@@ -1,10 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-global $post;
-
-$cpp = get_post_meta($post->ID,'course_product_page',true);
-
 /**
  * Let's check that our current user is logged in. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
 **/
@@ -13,6 +9,10 @@ if (!is_user_logged_in()) :
 	wp_redirect( esc_url( add_query_arg( 'access', time(), get_permalink($cpp) ) ) );
 	exit;
 endif;
+
+global $post;
+
+$cpp = get_post_meta($post->ID,'course_product_page',true);
 
 $section = get_query_var('section');
 $subsec = get_query_var('subsection');
@@ -69,7 +69,9 @@ var _st = {
 					if (!d) {
 						throw new Exception('Invalid response from _st.heartBeat.');
 					} else {
-						$(document).dequeue('heartbeat');
+						do {
+							$(document).dequeue('heartbeat')
+						} while ($(document).queue('heartbeat').length)
 					}
 				} catch (e) {
 					console.log(e);
@@ -319,9 +321,14 @@ var courses = {
 		},
 	},
 	shutdown : function() {
-		var hb = setInterval(_st.heartBeat,3000);
-		this.preloader.fade();
-		$(document).dequeue('shutdown');
+		var hb = setInterval(()=>{
+			if ($(document).queue('heartbeat').length >= 1){
+				_st.heartBeat()
+			}
+		}
+		,3000);
+		this.preloader.fade()
+		$(document).dequeue('shutdown')
 		console.log('Shutdown complete')
 		$(document).dequeue('afterload')
 	},
