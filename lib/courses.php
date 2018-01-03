@@ -2,28 +2,33 @@
 
 add_action( 'rest_api_init' , 'register_course_meta_endpoint' );
 function register_course_meta_endpoint() {
-	register_rest_route( STTV_REST_NAMESPACE , '/course_data/(?P<id>[\d]+)/alert', array(
-			'methods' => WP_REST_Server::READABLE,
-			'callback' => 'get_course_alert_template',
-			'permission_callback' => 'course_permissions_check',
-			'args' => array(
-				'id' => array(
-					'validate_callback' => 'absint'
-				)
-			)
-		)
+	register_rest_route( STTV_REST_NAMESPACE , '/course_log', [
+			'methods' => 'POST',
+			'callback' => 'course_access_log',
+			'permission_callback' => 'is_user_logged_in'
+		]
 	);
 
-	register_rest_route( STTV_REST_NAMESPACE , '/course_data/(?P<id>[\d]+)', array(
+	register_rest_route( STTV_REST_NAMESPACE , '/course_data/(?P<id>[\d]+)', [
 		'methods' => WP_REST_Server::READABLE,
 		'callback' => 'get_course_meta',
 		'permission_callback' => 'course_permissions_check',
-		'args' => array(
-			'id' => array(
+		'args' => [
+			'id' => [
 				'validate_callback' => 'absint'
-			)
-		)
-	));
+			]
+		]
+	]);
+}
+
+function course_access_log( WP_REST_Request $request ) {
+	$data = [
+		date('c',time()),
+		$_SERVER['REMOTE_ADDR']
+	];
+	$data = array_merge($data, (array) json_decode($request->get_body()));
+	$data = implode(' | ',$data);
+	return file_put_contents(STTV_LOGS_DIR.get_current_user_id().'.log',PHP_EOL.$data.PHP_EOL,FILE_APPEND);
 }
 
 function get_course_alert_template($data) {

@@ -31,12 +31,13 @@ function sttv_course_js_object() {
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
 var student = {
 	id : <?php echo $student->ID; ?>,
+	userName : '<?php echo $student->user_login; ?>',
 	firstName : '<?php echo $student->first_name; ?>',
 	lastName : '<?php echo $student->last_name; ?>',
 	alerts : {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
-};
+}
 	
 var _st = {
 	request : function(obj) {
@@ -140,7 +141,10 @@ var courses = {
 		}
 	},
 	init : function(){
-		$(document).queue('heartbeat',function(){console.log('first heartbeat')});
+		$(document).queue('heartbeat',()=>{
+			console.log('first heartbeat')
+		})
+		courses.log.access()
 
 		if (student.alerts.dismissed() === null){
 			localStorage.setItem('alertsDismissed',JSON.stringify([]));
@@ -741,6 +745,27 @@ var courses = {
 			cont.appendTo($('.modal-content','#course_modal'));
 
 			typeof cb === 'function' && cb();
+		}
+	},
+	log : {
+		access : function() {
+			_st.request({
+				route : stajax.rest.url+'/course_log',
+				method : 'POST',
+				headers : {'X-WP-Nonce' : stajax.rest.nonce},
+				cdata : {
+					user : student.userName,
+					UA : navigator.userAgent,
+					uri : location.href
+				},
+				success : function(d){
+					return this
+				},
+				error : function(x) {
+					console.log(x)
+					return this
+				}
+			})
 		}
 	}
 }; //end courses object
