@@ -41,72 +41,72 @@ class STTV_Course {
 
 	private $modified;
 	
-	private function __construct( $course ) {
+	public function __construct( $course ) {
 		$this->id = $course;
 		return $this;
 	}
 
-	private function set_name( $name ) {
+	public function set_name( $name ) {
 		$this->name = $name;
 		return $this;
 	}
 
-	private function set_slug( $slug ) {
+	public function set_slug( $slug ) {
 		$this->slug = $slug;
 		return $this;
 	}
 
-	private function set_link( $link ) {
+	public function set_link( $link ) {
 		$this->link = $link;
 		return $this;
 	}
 	
-	private function set_sales_page( $page ) {
+	public function set_sales_page( $page ) {
 		$this->sales_page = $page;
 		return $this;
 	}
 
-	private function set_test( $test ) {
+	public function set_test( $test ) {
 		$this->test = $test;
 		return $this;
 	}
 
-	private function set_intro( $intro ) {
+	public function set_intro( $intro ) {
 		$this->intro = $intro;
 		return $this;
 	}
 
-	private function set_description( $desc ) {
+	public function set_description( $desc ) {
 		$this->description = $desc;
 		return $this;
 	}
 
-	private function set_tl_content( $tlc ) {
+	public function set_tl_content( $tlc ) {
 		$this->tl_content = $tlc;
 		return $this;
 	}
 
-	private function set_dashboard( $dash ) {
+	public function set_dashboard( $dash ) {
 		$this->dashboard = $dash;
 		return $this;
 	}
 
-	private function set_cap( $cap ) {
+	public function set_cap( $cap ) {
 		$this->cap = $cap;
 		return $this;
 	}
 
-	private function set_all_caps( $allcaps ) {
+	public function set_all_caps( $allcaps ) {
 		$this->allcaps = $allcaps;
 		return $this;
 	}
 
-	private function set_created( $cre ) {
+	public function set_created( $cre ) {
 		$this->created = $cre;
 		return $this;
 	}
 
-	private function set_modified( $mod ) {
+	public function set_modified( $mod ) {
 		$this->modified = $mod;
 		return $this;
 	}
