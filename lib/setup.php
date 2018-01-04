@@ -72,7 +72,7 @@ class STTV_Setup {
             //Allow ajax calls
             return;
 		}
-		if( ! current_user_can( "manage_options" ) ) {
+		if( ! current_user_can( 'edit_others_posts' ) ) {
            //Redirect to main page if the user has no "manage_options" capability
            wp_redirect( get_site_url( ) );
            wp_die();
