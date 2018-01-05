@@ -367,7 +367,7 @@ var courses = {
 			});
 						
 			$.each(obj.sections,function(k,v){
-				var active = (k === courses.defaultReq.section) ? ' active':'';
+				var active = (k === courses.defaultReq.section) ? ' active' : '' ;
 				var item = $('<li/>').append($('<div/>',{
 					text: v.name,
 					style: "color: "+v.color,
@@ -485,7 +485,7 @@ var courses = {
 								if (!v){
 									div.text("No videos found in this section");
 								} else {
-
+									var time = ~~( v.time / 60 ) + 'm ' + ( v.time % 60 ) + 's'
 									$('<div/>',{
 										"class":"col s4",
 										style: "padding:0px"
@@ -501,7 +501,7 @@ var courses = {
 										text : v.name
 									})).append($('<span/>',{
 										"class":"course-video-duration",
-										text : v.duration
+										text : time
 									})).appendTo(div);
 
 									div.appendTo(a);
@@ -537,7 +537,7 @@ var courses = {
 							if (!v){
 								div.text("No videos found in this section");
 							} else {
-								
+								var time = ~~( v.time / 60 ) + 'm ' + ( v.time % 60 ) + 's'
 								$('<div/>',{
 									"class":"col s4",
 									style: "padding:0px"
@@ -553,7 +553,7 @@ var courses = {
 									text : v.name
 								})).append($('<span/>',{
 									"class":"course-video-duration",
-									text : v.duration
+									text : time
 								})).appendTo(div);
 								
 								/*$('<div/>',{
