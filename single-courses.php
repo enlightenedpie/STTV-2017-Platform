@@ -83,7 +83,8 @@ var _st = {
 				console.log(x,s,r);
 			}
 		});
-	}
+	},
+	fn : function() {}
 }
 
 var courses = {
@@ -570,7 +571,6 @@ var courses = {
 			$('#courses-right-sidebar').empty().append(wrap);
 		},
 		singleVid : function(req) {
-			//console.log(req);
 			courses.render.stage.changeActiveVid(req.object.ID,req.object.name);
 			var txt = '';
 			var obj = courses.data.object;
@@ -580,7 +580,6 @@ var courses = {
 				txt = courses.defaultReq.section+' &raquo; '+courses.defaultReq.subsec+' &raquo; '+req.object.name;
 			}
 			courses.render.title(txt);
-			//courses.render.content();
 		}
 	},
 	pushHist : function(obj,url,cb) {
@@ -608,10 +607,10 @@ var courses = {
 			}
 			$('#course_modal').modal({
 				dismissible : (typeof o.dismissible === 'boolean' && !o.dismissible)?false:true,
-				opacity : .5, // Opacity of modal background
-				inDuration : 500, // Transition in duration
-				outDuration : 500, // Transition out duration
-				ready : o.ready || function(){},
+				opacity : o.opacity || .5,
+				inDuration : o.in || 500,
+				outDuration : o.out || 500,
+				ready : o.ready || _st.fn,
 				complete : o.complete || function(){
 					$('.modal-content',this).empty();
 				}
