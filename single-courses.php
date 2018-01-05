@@ -609,10 +609,8 @@ var courses = {
 			$('#course_modal').modal({
 				dismissible : (typeof o.dismissible === 'boolean' && !o.dismissible)?false:true,
 				opacity : .5, // Opacity of modal background
-				inDuration : 300, // Transition in duration
-				outDuration : 200, // Transition out duration
-				startingTop : '4%', // Starting top style attribute
-				endingTop : '10%',
+				inDuration : 500, // Transition in duration
+				outDuration : 500, // Transition out duration
 				ready : o.ready || function(){},
 				complete : o.complete || function(){
 					$('.modal-content',this).empty();
@@ -730,19 +728,23 @@ var courses = {
 			var obj = courses.data.object;
 			var res = obj.sections[s].resources;
 
+			var inner = $('<div/>',{
+				"class" : "dls-inner"
+			});
+
 			if (res.length === 0) {
-				cont.append($('<div/>',{"class":"col s12",text:"No downloads found"}))
+				inner.append($('<div/>',{"class":"col s12",text:"No downloads found"}))
 			} else {
 				$.each(res,function(k,v){
-					cont.append($('<a/>',{
+					inner.append($('<a/>',{
 						"class" : "dl-link col s6 m4",
 						text : k,
 						href : "<?php echo site_url(); ?>/course-dl.php?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
 					}))
 				})
 			}
-
-			cont.appendTo($('.modal-content','#course_modal'));
+			inner.appendTo(cont)
+			cont.appendTo($('.modal-content','#course_modal'))
 
 			typeof cb === 'function' && cb();
 		}
