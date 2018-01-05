@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'init', 'sttv_add_menus');
 
