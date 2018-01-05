@@ -1,5 +1,7 @@
 <?php
 
+include_once 'courses/sttv_course.class.php';
+
 add_action( 'rest_api_init' , 'register_course_meta_endpoint' );
 function register_course_meta_endpoint() {
 	register_rest_route( STTV_REST_NAMESPACE , '/course_log', [
@@ -408,7 +410,7 @@ class STTV_Courses_Admin {
 	?>
 	</div>
 </div>
-<pre style="display:block;width:100%"><?php //print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
+<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 		
 <?php }
 	
@@ -446,7 +448,11 @@ class STTV_Courses_Admin {
 			$caps = [ 
 				'course_post_feedback',
 				'course_post_reviews'
-			]; 
+			];
+
+			/* $data = sttvcourse( $post_id )
+				->set_name( $post->post_title )
+				->set_slug( $post->post_name ); */
 		
 			// start building the course object
 			$data = [
