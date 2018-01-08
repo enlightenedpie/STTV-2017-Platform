@@ -142,6 +142,9 @@ var courses = {
 		}
 	},
 	init : function(){
+		var ctrl = parseInt(localStorage.getItem('__c-update'));
+		var objd = courses.data.get();
+		
 		$(document).queue('heartbeat',()=>{
 			console.log('first heartbeat')
 		})
@@ -173,13 +176,13 @@ var courses = {
 		} else {
 			courses.modal.init();
 		}
-		
-		var ctrl = parseInt(localStorage.getItem('__c-update'));
 	
-		if (courses.data.get() === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
+		if (objd === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
 			courses.data.reset(
 				courses.data.request()
 			);
+		} else if (objd !== null && objd['version'] !== courses.version) {
+			courses.data.reset(window.location.reload())
 		}
 		
 		function finish_init() {
