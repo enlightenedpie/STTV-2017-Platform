@@ -259,48 +259,54 @@ class STTV_Courses_Admin {
 <div id="sttv_course_practice" class="row">
 	<div id="practice_title_h"><h3>Practice</h3></div>
     <div id="practice_wrapper">
+		<div class='course_practice'>
     <?php
-		$a = $b = 0;
-		$html = '';
-		if (empty($data['practice'])) {
-			$data['practice'] = [ false => false ];
-		}
-		foreach ( $data['practice'] as $val ){
-			$html .= "<div class='course_practice'>";
-			$html .= "<label for='courses[practice][{$a}][title]'>Book/Test name: <input size='50' name='courses[practice][{$a}][title]' value='{$val['name']}'/></label>&nbsp;";
-			$html .= "<button class='add-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
-			$html .= "<label for='courses[practice][{$a}][description]'>Description: <textarea rows='5' cols='80' name='courses[practice][{$a}][description]'>{$val['desc']}</textarea></label>&nbsp;";
-			$html .= "<div class='course_practice_test'>";
-			
-			if (empty($val['sections'])) {
-				$val['sections'] = [ false => false ];
-			}
-			foreach ($val['sections'] as $sec) {
-				
-				$pract_id = "courses[practice][{$a}][sections][{$b}][id]";
-				$pract_title = "courses[practice][{$a}][sections][{$b}][title]";
-				$pract_intro = "courses[practice][{$a}][sections][{$b}][intro_vid]";
-				$html .= "<div class='course_practice_test_inner'>";
-				$html .= "<label for='{$pract_title}'>Section name: <input name='{$pract_title}' value='{$sec['title']}'/></label>&nbsp;";
-				$html .= "<label for='{$pract_id}'>Intro video:&nbsp;";
-				$html .= $this->album_video_select($intro,$pract_intro,$sec['intro']);
-				$html .= "</label>&nbsp;";
-				$html .= "<label for='{$pract_id}'>Video album ID:&nbsp;";
-				$html .= $this->cached_album_select($pract_id,$sec['id'],$disabled);
-				$html .= "</label>&nbsp;";
-				$html .= "<button class='add-sub-sub-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
-				$html .= "</div>";
-				
+		$val = $data['sections']['practice'] ?: [ 'subsec' => [], 'description' => '' ];
+		$a = 0;
+
+		$html = <<<HTML
+			<textarea placeholder='Description' rows='10' cols='100' name='courses[practice][description]'>{$val['description']}</textarea>
+			<br/><hr/><br/>
+HTML;
+		
+		$subval = $val['subsec'] ?? [ 'title' => '', 'subjects' => [] ];
+
+		foreach ($subval as $sub) {
+			$b = 0;
+			$title = $sub['title'] ?? $a;
+			$html .= <<<HTML
+			<div class='course_practice_test'>
+			<input name="courses[practice][tests][{$a}][title]" placeholder="Test Name" value="{$title}" style="width:40em"/>
+				<button class='add-section' href='/'>Add test</button>&nbsp;<button class='remove-section' href='/'>Remove test</button><br/>
+HTML;
+			$subsub = $sub['sections'] ?? [ 'title' => '', 'intro' => 0, 'videos' => [] ];
+			foreach ($subsub as $sec) {
+				$pract_title = "courses[practice][tests][{$a}][subjects][{$b}][title]";
+				$pract_vids = "courses[practice][tests][{$a}][subjects][{$b}][videos]";
+				$html .= <<<HTML
+					<div class='course_practice_test_inner'>
+						<label for='{$pract_title}'>Section name: <input name='{$pract_title}' value='{$sec['title']}'/></label>&nbsp;
+						<label for='{$pract_id}'>Intro video:&nbsp;
+						{$this->album_video_select($intro,$pract_intro,$sec['intro'])};
+						</label>&nbsp;
+						<label for='{$pract_id}'>Video album ID:&nbsp;
+						{$this->cached_album_select($pract_id,$sec['id'])};
+						</label>&nbsp;
+						<button class='add-sub-sub-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>
+					</div>
+HTML;
 				$b++;
 			}
-			$html .= "</div></div>";
 			$a++;
-			$b = 0;
 		}
+		$html .= <<<HTML
+		</div>
+HTML;
+
 		print $html;
-		
 	?>
-	</div>
+		</div><?php //end course practice ?>
+	</div><?php //end practice wrapper ?>
 </div>
 <pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 		
@@ -334,17 +340,13 @@ class STTV_Courses_Admin {
 		endif;
 		
 		if ($_POST['courses']) :
-			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
+			$test = strtolower($_POST['courses']['test_abbrev'])?:'sttv';
 
 			//default caps for all courses
 			$caps = [ 
 				'course_post_feedback',
 				'course_post_reviews'
 			];
-
-			/* $data = sttvcourse( $post_id )
-				->set_name( $post->post_title )
-				->set_slug( $post->post_name ); */
 		
 			// start building the course object
 			$data = [
@@ -470,6 +472,7 @@ class STTV_Courses_Admin {
 		
 			$data['allcaps'] = $caps;
 			
+			//$data = $_POST['courses'];
 			update_post_meta($post_id, 'sttv_course_data', $data);
 		
 			$admin = get_role('administrator');
