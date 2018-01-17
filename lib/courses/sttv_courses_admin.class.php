@@ -4,18 +4,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class STTV_Courses_Admin {
 	
 	private $alb_cache = [];
-
 	private $introvid_album = false;
 	
 	public function __construct() {
-
 		$this->album_cache_ids();
 		
-		add_action( 'init', [ $this, 'sttv_course_init' ], 10, 0);
-		add_action( 'init', [ $this, 'sttv_course_endpoints' ], 10, 0);
-		add_filter( 'query_vars', [ $this, 'sttv_course_query_vars' ], 10, 1);
-		add_action( 'edit_form_after_title', [ $this, 'course_meta_position' ]);
-		add_action( 'save_post_courses' , [ $this,'save_course_meta' ], 10, 2 );
+		add_action( 'init', [ $this, 'sttv_course_init' ], 10, 0 );
+		add_action( 'init', [ $this, 'sttv_course_endpoints' ], 10, 0 );
+		add_filter( 'query_vars', [ $this, 'sttv_course_query_vars' ], 10, 1 );
+		add_action( 'edit_form_after_title', [ $this, 'course_meta_position' ] );
+		add_action( 'save_post_courses' , [ $this, 'save_course_meta' ], 10, 2 );
 		
 	}
 	
@@ -41,7 +39,7 @@ class STTV_Courses_Admin {
 			],
 			'delete_with_user'		=>	false,
 			'can_export'			=>	true,
-			'supports'				=>	[ 'title', 'editor', 'comments', 'revisions', 'author', 'excerpt', 'thumbnail' ],
+			'supports'				=>	['title', 'editor', 'comments', 'revisions', 'author', 'excerpt', 'thumbnail'],
 			'register_meta_box_cb'	=> [ $this, 'sttv_add_course_meta' ]
 		];
 		
@@ -75,7 +73,7 @@ class STTV_Courses_Admin {
 			add_meta_box(
 				 'course_info', // $id
 				 'Course Information', // $title
-				 [ $this , 'sttv_display_course_meta' ], // $callback
+				 [ $this, 'sttv_display_course_meta' ], // $callback
 				 'courses', // $post_type
 				 'top', // $context
 				 'high' // $priority
@@ -84,16 +82,15 @@ class STTV_Courses_Admin {
 			add_meta_box(
 				 'course_product_page', // $id
 				 'Course Product Page', // $title
-				 [ $this , 'sttv_display_course_product_page' ], // $callback
+				 [ $this, 'sttv_display_course_product_page' ], // $callback
 				 'courses', // $post_type
 				 'side', // $context
 				 'low' // $priority
 			);
-
 			add_meta_box(
 				'course_introvid_album', // $id
 				'Course Introvideo Album', // $title
-				[ $this , 'sttv_display_course_introvid_album' ], // $callback
+				[ $this, 'sttv_display_course_introvid_album' ], // $callback
 				'courses', // $post_type
 				'side', // $context
 				'low' // $priority
@@ -135,7 +132,6 @@ class STTV_Courses_Admin {
 			
 			$data = get_post_meta($post->ID,'sttv_course_data',true);
 			$intro = get_post_meta($post->ID,'course_introvid_album',true);
-
 			//$this->album_video_select($intro);
 ?>
 <style type="text/css" scoped>
@@ -208,9 +204,6 @@ class STTV_Courses_Admin {
 				$data['sections'] = [ false => false ];
 			}
 			foreach ( $data['sections'] as $sec => $val ){
-				if ( 'practice' == $sec ){
-					continue;
-				}
 				$html .= "<div class='course_section'>";
 				$html .= "<label for='courses[sections][{$i}][title]'>Section name: <input name='courses[sections][{$i}][title]' value='{$sec}'/></label>&nbsp;";
 				$html .= "<label for='courses[sections][{$i}][title]'>Section name: ";
@@ -259,54 +252,48 @@ class STTV_Courses_Admin {
 <div id="sttv_course_practice" class="row">
 	<div id="practice_title_h"><h3>Practice</h3></div>
     <div id="practice_wrapper">
-		<div class='course_practice'>
     <?php
-		$val = $data['sections']['practice'] ?: [ 'subsec' => [], 'description' => '' ];
-		$a = 0;
-
-		$html = <<<HTML
-			<textarea placeholder='Description' rows='10' cols='100' name='courses[practice][description]'>{$val['description']}</textarea>
-			<br/><hr/><br/>
-HTML;
-		
-		$subval = $val['subsec'] ?? [ 'title' => '', 'subjects' => [] ];
-
-		foreach ($subval as $sub) {
-			$b = 0;
-			$title = $sub['title'] ?? $a;
-			$html .= <<<HTML
-			<div class='course_practice_test'>
-			<input name="courses[practice][tests][{$a}][title]" placeholder="Test Name" value="{$title}" style="width:40em"/>
-				<button class='add-section' href='/'>Add test</button>&nbsp;<button class='remove-section' href='/'>Remove test</button><br/>
-HTML;
-			$subsub = $sub['sections'] ?? [ 'title' => '', 'intro' => 0, 'videos' => [] ];
-			foreach ($subsub as $sec) {
-				$pract_title = "courses[practice][tests][{$a}][subjects][{$b}][title]";
-				$pract_vids = "courses[practice][tests][{$a}][subjects][{$b}][videos]";
-				$html .= <<<HTML
-					<div class='course_practice_test_inner'>
-						<label for='{$pract_title}'>Section name: <input name='{$pract_title}' value='{$sec['title']}'/></label>&nbsp;
-						<label for='{$pract_id}'>Intro video:&nbsp;
-						{$this->album_video_select($intro,$pract_intro,$sec['intro'])};
-						</label>&nbsp;
-						<label for='{$pract_id}'>Video album ID:&nbsp;
-						{$this->cached_album_select($pract_id,$sec['id'])};
-						</label>&nbsp;
-						<button class='add-sub-sub-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>
-					</div>
-HTML;
+		$a = $b = 0;
+		$html = '';
+		if (empty($data['practice'])) {
+			$data['practice'] = [false=>false];
+		}
+		foreach ( $data['practice'] as $val ){
+			$html .= "<div class='course_practice'>";
+			$html .= "<label for='courses[practice][{$a}][title]'>Book/Test name: <input size='50' name='courses[practice][{$a}][title]' value='{$val['name']}'/></label>&nbsp;";
+			$html .= "<button class='add-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
+			$html .= "<label for='courses[practice][{$a}][description]'>Description: <textarea rows='5' cols='80' name='courses[practice][{$a}][description]'>{$val['desc']}</textarea></label>&nbsp;";
+			$html .= "<div class='course_practice_test'>";
+			
+			if (empty($val['sections'])) {
+				$val['sections'] = [false=>false];
+			}
+			foreach ($val['sections'] as $sec) {
+				
+				$pract_id = "courses[practice][{$a}][sections][{$b}][id]";
+				$pract_title = "courses[practice][{$a}][sections][{$b}][title]";
+				$pract_intro = "courses[practice][{$a}][sections][{$b}][intro_vid]";
+				$html .= "<div class='course_practice_test_inner'>";
+				$html .= "<label for='{$pract_title}'>Section name: <input name='{$pract_title}' value='{$sec['title']}'/></label>&nbsp;";
+				$html .= "<label for='{$pract_id}'>Intro video:&nbsp;";
+				$html .= $this->album_video_select($intro,$pract_intro,$sec['intro']);
+				$html .= "</label>&nbsp;";
+				$html .= "<label for='{$pract_id}'>Video album ID:&nbsp;";
+				$html .= $this->cached_album_select($pract_id,$sec['id'],$disabled);
+				$html .= "</label>&nbsp;";
+				$html .= "<button class='add-sub-sub-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
+				$html .= "</div>";
+				
 				$b++;
 			}
+			$html .= "</div></div>";
 			$a++;
+			$b = 0;
 		}
-		$html .= <<<HTML
-		</div>
-HTML;
-
 		print $html;
+		
 	?>
-		</div><?php //end course practice ?>
-	</div><?php //end practice wrapper ?>
+	</div>
 </div>
 <pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 		
@@ -314,9 +301,7 @@ HTML;
 	
 	public function course_meta_position() {
 		global $post, $wp_meta_boxes;
-
 		do_meta_boxes(get_current_screen(), 'top', $post);
-
 		unset($wp_meta_boxes[get_post_type($post)]['top']);
 	}
 	
@@ -324,11 +309,9 @@ HTML;
 		// Stop WP from clearing custom fields on autosave
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
 			return;
-
 		// Prevent quick edit from clearing custom fields
 		if (defined('DOING_AJAX') && DOING_AJAX)
 			return;
-
 		//save course intro album
 		if ($_POST['course_introvid_album']) :
 			update_post_meta($post_id, 'course_introvid_album', sanitize_text_field($_POST['course_introvid_album']));
@@ -340,15 +323,12 @@ HTML;
 		endif;
 		
 		if ($_POST['courses']) :
-			$test = strtolower($_POST['courses']['test_abbrev'])?:'sttv';
-
-			//default caps for all courses
-			$caps = [ 
+			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
+			$caps = [ //default caps for all courses
 				'course_post_feedback',
 				'course_post_reviews'
 			];
 		
-			// start building the course object
 			$data = [
 				'id'=>$post_id,
 				'name'=>$post->post_title,
@@ -437,33 +417,12 @@ HTML;
 					];
 				}
 		
-				$a[$title] = [
+				$data['practice'][$title] = [
 					'name'=>$prac['title'],
 					'desc'=>$prac['description'],
 					'cap'=>"course_{$test}_practice_{$title}",
 					'sections'=>$sections
 				];
-
-				$rp = STTV_RESOURCE_DIR.strtolower($data['test']).'/practice/';
-				$resc = [];
-				$files = scandir($rp);
-				foreach ($files as $file) {
-					if (is_file($rp.$file)){
-						$resc[$file] = md5_file($rp.$file);
-					}
-				}
-
-				$data['sections']['practice'] = [
-					'name'=>ucfirst('practice'),
-					'description'=>'',
-					'intro'=>'0',
-					'cap'=>$cap,
-					'color'=>'#'.$color,
-					'resources'=>$resc,
-					//'videos'=>new stdClass(),
-					'subsec'=>$a
-				];
-
 				$caps[]=$data['practice'][$title]['cap'];
 		
 			endforeach;
@@ -472,7 +431,6 @@ HTML;
 		
 			$data['allcaps'] = $caps;
 			
-			//$data = $_POST['courses'];
 			update_post_meta($post_id, 'sttv_course_data', $data);
 		
 			$admin = get_role('administrator');
