@@ -92,7 +92,7 @@ function get_course_meta($data) {
 		if ($sec === 'resources'){
 			continue;
 		}
-		$data['sections']['practice'][$sec] = [
+		$data['practice'][$sec] = [
 			'name'=> $val['name'],
 			'description'=>$val['desc'],
 			'color'=>'rgba(0,0,0,0.60)'
