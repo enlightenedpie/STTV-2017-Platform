@@ -9,9 +9,11 @@ require( __DIR__ . '/limiter/Limiter.php' );
 remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
 remove_action( 'template_redirect', 'rest_output_link_header', 11, 0 );
 
-add_filter( 'rest_nonce_action', function() {
-	return STTV_REST_AUTH;
-});
+if ( has_filter( 'rest_nonce_action' ) ) {
+	add_filter( 'rest_nonce_action', function() {
+		return STTV_REST_AUTH;
+	});
+}
 
 function sttvlimiter() {
 	static $instance;
