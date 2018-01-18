@@ -1,10 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-global $post;
-
-$cpp = get_post_meta($post->ID,'course_product_page',true);
-
 /**
  * Let's check that our current user is logged in. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
 **/
@@ -13,6 +9,10 @@ if (!is_user_logged_in()) :
 	wp_redirect( esc_url( add_query_arg( 'access', time(), get_permalink($cpp) ) ) );
 	exit;
 endif;
+
+global $post;
+
+$cpp = get_post_meta($post->ID,'course_product_page',true);
 
 $section = get_query_var('section');
 $subsec = get_query_var('subsection');
@@ -31,12 +31,13 @@ function sttv_course_js_object() {
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
 var student = {
 	id : <?php echo $student->ID; ?>,
+	userName : '<?php echo $student->user_login; ?>',
 	firstName : '<?php echo $student->first_name; ?>',
 	lastName : '<?php echo $student->last_name; ?>',
 	alerts : {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
-};
+}
 	
 var _st = {
 	request : function(obj) {
@@ -69,7 +70,9 @@ var _st = {
 					if (!d) {
 						throw new Exception('Invalid response from _st.heartBeat.');
 					} else {
-						$(document).dequeue('heartbeat');
+						do {
+							$(document).dequeue('heartbeat')
+						} while ($(document).queue('heartbeat').length)
 					}
 				} catch (e) {
 					console.log(e);
@@ -80,7 +83,8 @@ var _st = {
 				console.log(x,s,r);
 			}
 		});
-	}
+	},
+	fn : function() {}
 }
 
 var courses = {
@@ -138,7 +142,13 @@ var courses = {
 		}
 	},
 	init : function(){
-		$(document).queue('heartbeat',function(){console.log('first heartbeat')});
+		var ctrl = parseInt(localStorage.getItem('__c-update'));
+		var objd = courses.data.get();
+		
+		$(document).queue('heartbeat',()=>{
+			console.log('first heartbeat')
+		})
+		courses.log.access()
 
 		if (student.alerts.dismissed() === null){
 			localStorage.setItem('alertsDismissed',JSON.stringify([]));
@@ -166,13 +176,13 @@ var courses = {
 		} else {
 			courses.modal.init();
 		}
-		
-		var ctrl = parseInt(localStorage.getItem('__c-update'));
 	
-		if (courses.data.get() === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
+		if (objd === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
 			courses.data.reset(
 				courses.data.request()
 			);
+		} else if (objd !== null && objd['version'] !== courses.version) {
+			courses.data.reset(window.location.reload())
 		}
 		
 		function finish_init() {
@@ -319,9 +329,14 @@ var courses = {
 		},
 	},
 	shutdown : function() {
-		var hb = setInterval(_st.heartBeat,3000);
-		this.preloader.fade();
-		$(document).dequeue('shutdown');
+		var hb = setInterval(()=>{
+			if ($(document).queue('heartbeat').length >= 1){
+				_st.heartBeat()
+			}
+		}
+		,3000);
+		this.preloader.fade()
+		$(document).dequeue('shutdown')
 		console.log('Shutdown complete')
 		$(document).dequeue('afterload')
 	},
@@ -355,7 +370,7 @@ var courses = {
 			});
 						
 			$.each(obj.sections,function(k,v){
-				var active = (k === courses.defaultReq.section) ? ' active':'';
+				var active = (k === courses.defaultReq.section) ? ' active' : '' ;
 				var item = $('<li/>').append($('<div/>',{
 					text: v.name,
 					style: "color: "+v.color,
@@ -473,7 +488,7 @@ var courses = {
 								if (!v){
 									div.text("No videos found in this section");
 								} else {
-
+									var time = ~~( v.time / 60 ) + 'm ' + ( v.time % 60 ) + 's'
 									$('<div/>',{
 										"class":"col s4",
 										style: "padding:0px"
@@ -489,7 +504,7 @@ var courses = {
 										text : v.name
 									})).append($('<span/>',{
 										"class":"course-video-duration",
-										text : v.duration
+										text : time
 									})).appendTo(div);
 
 									div.appendTo(a);
@@ -525,7 +540,7 @@ var courses = {
 							if (!v){
 								div.text("No videos found in this section");
 							} else {
-								
+								var time = ~~( v.time / 60 ) + 'm ' + ( v.time % 60 ) + 's'
 								$('<div/>',{
 									"class":"col s4",
 									style: "padding:0px"
@@ -541,7 +556,7 @@ var courses = {
 									text : v.name
 								})).append($('<span/>',{
 									"class":"course-video-duration",
-									text : v.duration
+									text : time
 								})).appendTo(div);
 								
 								/*$('<div/>',{
@@ -559,7 +574,6 @@ var courses = {
 			$('#courses-right-sidebar').empty().append(wrap);
 		},
 		singleVid : function(req) {
-			//console.log(req);
 			courses.render.stage.changeActiveVid(req.object.ID,req.object.name);
 			var txt = '';
 			var obj = courses.data.object;
@@ -569,7 +583,6 @@ var courses = {
 				txt = courses.defaultReq.section+' &raquo; '+courses.defaultReq.subsec+' &raquo; '+req.object.name;
 			}
 			courses.render.title(txt);
-			//courses.render.content();
 		}
 	},
 	pushHist : function(obj,url,cb) {
@@ -597,12 +610,10 @@ var courses = {
 			}
 			$('#course_modal').modal({
 				dismissible : (typeof o.dismissible === 'boolean' && !o.dismissible)?false:true,
-				opacity : .5, // Opacity of modal background
-				inDuration : 300, // Transition in duration
-				outDuration : 200, // Transition out duration
-				startingTop : '4%', // Starting top style attribute
-				endingTop : '10%',
-				ready : o.ready || function(){},
+				opacity : o.opacity || .5,
+				inDuration : o.in || 500,
+				outDuration : o.out || 500,
+				ready : o.ready || _st.fn,
 				complete : o.complete || function(){
 					$('.modal-content',this).empty();
 				}
@@ -719,21 +730,46 @@ var courses = {
 			var obj = courses.data.object;
 			var res = obj.sections[s].resources;
 
+			var inner = $('<div/>',{
+				"class" : "dls-inner"
+			});
+
 			if (res.length === 0) {
-				cont.append($('<div/>',{"class":"col s12",text:"No downloads found"}))
+				inner.append($('<div/>',{"class":"col s12",text:"No downloads found"}))
 			} else {
 				$.each(res,function(k,v){
-					cont.append($('<a/>',{
+					inner.append($('<a/>',{
 						"class" : "dl-link col s6 m4",
 						text : k,
 						href : "<?php echo site_url(); ?>/course-dl.php?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
 					}))
 				})
 			}
-
-			cont.appendTo($('.modal-content','#course_modal'));
+			inner.appendTo(cont)
+			cont.appendTo($('.modal-content','#course_modal'))
 
 			typeof cb === 'function' && cb();
+		}
+	},
+	log : {
+		access : function() {
+			_st.request({
+				route : stajax.rest.url+'/course_log',
+				method : 'POST',
+				headers : {'X-WP-Nonce' : stajax.rest.nonce},
+				cdata : {
+					user : student.userName,
+					UA : navigator.userAgent,
+					uri : location.href
+				},
+				success : function(d){
+					return this
+				},
+				error : function(x) {
+					console.log(x)
+					return this
+				}
+			})
 		}
 	}
 }; //end courses object

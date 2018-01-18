@@ -34,7 +34,7 @@ function sttv_enqueue_all() {
 	wp_enqueue_style('dashicons');
 	
 	//conditionals
-	if (get_page_template_slug() == 'signup.php') :
+	if (get_page_template_slug() === 'sttv_2017/signup.php') :
 		wp_enqueue_script('sttv-checkout', get_stylesheet_directory_uri().'/s/checkout.js','jquery',time(),true);
 		wp_enqueue_script('sttv-checkout-stripe','https://js.stripe.com/v3/','sttv-checkout',null,false);
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
@@ -141,7 +141,7 @@ function stajax_object() {
 		if (is_singular('courses') || is_page('jobs')) {
 			$stajax['rest'] = array(
 				'ID' => $post->ID,
-				'nonce' => wp_create_nonce('wp_rest'), 
+				'nonce' => wp_create_nonce(STTV_REST_AUTH), 
 				'url' => rest_url(STTV_REST_NAMESPACE)
 			);
 		}
