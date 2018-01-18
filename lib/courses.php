@@ -11,12 +11,14 @@ function register_course_meta_endpoint() {
 	);
 
 	register_rest_route( STTV_REST_NAMESPACE , '/course_data/(?P<id>[\d]+)', [
-		'methods' => WP_REST_Server::READABLE,
-		'callback' => 'get_course_meta',
-		'permission_callback' => 'course_permissions_check',
-		'args' => [
-			'id' => [
-				'validate_callback' => 'absint'
+		[
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => 'get_course_meta',
+			'permission_callback' => 'course_permissions_check',
+			'args' => [
+				'alert' => [
+					'required' => false
+				]
 			]
 		]
 	]);
@@ -36,7 +38,7 @@ function get_course_alert_template($data) {
 	$the_post = get_post($data['id']);
 	ob_start();
 	require(dirname(__DIR__).'/templates/courses/update_alert.php');
-	return array('html'=>ob_get_clean(),'hashid'=>sttvhashit($the_post->post_title.'/'.STTV_VERSION.'/'.$the_post->ID));
+	return [ 'html'=>ob_get_clean(),'hashid'=>sttvhashit($the_post->post_title.'/'.STTV_VERSION.'/'.$the_post->ID) ];
 }
 
 function course_permissions_check($data) {
@@ -54,6 +56,10 @@ function course_permissions_check($data) {
 }
 
 function get_course_meta($data) {
+	if ( isset($data['alert']) ){
+		return [ 'html'=>$data['id'], 'hashid'=>'0' ];
+		//return get_course_alert_template($data);
+	}
 	
 	$meta = get_post_meta( $data['id'], 'sttv_course_data' , true );
 	

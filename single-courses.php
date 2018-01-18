@@ -41,9 +41,8 @@ var student = {
 	
 var _st = {
 	request : function(obj) {
-		$.ajax({
+		var ajaxp = {
 			url: obj.route || '',
-			data: JSON.stringify(obj.cdata || {}),
 			method: obj.method || 'GET',
 			headers: obj.headers || {},
 			processData : false,
@@ -54,7 +53,11 @@ var _st = {
 			error: function(x,s,r){
 				typeof obj.error !== 'undefined' && obj.error([x,s,r]);
 			}
-		})
+		}
+		if (ajaxp.method !== 'GET') {
+			ajaxp['data'] = JSON.stringify(obj.cdata || {})
+		}
+		$.ajax(ajaxp)
 	},
 	loadTemplate : function(t) {
 		var part = t.part ? ' '+t.part : '';
@@ -115,7 +118,7 @@ var courses = {
 		},
 		request : function(cdata,method) {
 			$.ajax({
-				url: stajax.rest.url+'/course_data/'+stajax.rest.ID,
+				url: stajax.rest.url+'/course_data/'+stajax.rest.ID+'/',
 				data: cdata || null,
 				type: method || 'GET',
 				headers: {'X-WP-Nonce' : stajax.rest.nonce},
@@ -628,7 +631,7 @@ var courses = {
 			_st.request(
 				{
 					method : 'GET',
-				 	route : stajax.rest.url+'/course_data/'+stajax.rest.ID+'/alert',
+				 	route : stajax.rest.url+'/course_data/'+stajax.rest.ID+'?alert',
 					headers : {'X-WP-Nonce' : stajax.rest.nonce},
 				 	success : function(e){
 						typeof scb === 'function' && scb(e);
