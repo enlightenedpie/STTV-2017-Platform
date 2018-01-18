@@ -25,5 +25,13 @@
   },
   "dependencies": {
     "gulp-sourcemaps": "^2.6.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enlightenedpie/STTV-2017-Platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/enlightenedpie/STTV-2017-Platform/issues"
+  },
+  "homepage": "https://github.com/enlightenedpie/STTV-2017-Platform#readme"
 }
