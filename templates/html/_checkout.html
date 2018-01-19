@@ -19,7 +19,7 @@
                         <td id="coupon_cell">
                             <div class="input-field col s6">
                                 <input id="sttv_coupon" data-error="Invalid coupon" name="sttv_coupon" type="text"/>
-                                <label for="sttv_coupon">Enter coupon code</label>
+                                <label for="sttv_coupon">Coupon Code</label>
                             </div>
                         </td>
                         <td style="text-align:right">Total:</td>
@@ -322,26 +322,19 @@
 		var cEr = true;
 		
 		var sInputs = $('input','#wrapper_line-item');
-		sInputs.each(function() {
-			if ($(this).is(':required') && (!$(this).val() || $(this).hasClass('invalid'))) {
-				if ($(this).hasClass('invalid')) {
-					var msgTag = ' is invalid';
-				} else {
-					//$(this).addClass('invalid');
-					var msgTag = ' is required';
-				}
-				
-				$('.error','#wrapper_line-item').html('&otimes; '+$(this).siblings('label').text()+msgTag);
-				
-				cEr = false;
-				return false;
-			} else {
-				$('.error','#wrapper_line-item').text('');
-				//$(this).removeClass('invalid');
+		sInputs.each(function(k,v) {
+			var msgTag = '';
+			if ( $(this).is(':required') && (!$(this).val() || $(this).hasClass('invalid')) ) {
+				var msgTag = (!$(this).val()) ? ' is required' : ' is invalid'
+				cEr = false
+			} else if ( $(this).hasClass('invalid') ) {
+				var msgTag = ' is invalid'
+				cEr = false
 			}
+			$('.error','#wrapper_line-item').html('&otimes; '+$(v).siblings('label').text()+msgTag);
+			if (!cEr) {return cEr}
 		});
-		
-		if (!cEr) {return false;}
+		if (!cEr) {return cEr}
 		
 		// show 'processing' modal
 		cModal.animate({
