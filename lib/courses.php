@@ -57,8 +57,7 @@ function course_permissions_check($data) {
 
 function get_course_meta($data) {
 	if ( isset($data['alert']) ){
-		return [ 'html'=>$data['id'], 'hashid'=>'0' ];
-		//return get_course_alert_template($data);
+		return get_course_alert_template($data);
 	}
 	
 	$meta = get_post_meta( $data['id'], 'sttv_course_data' , true );
