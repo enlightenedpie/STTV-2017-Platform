@@ -26,7 +26,7 @@ $student = get_user_by('id',get_current_user_id());
 **/
 function sttv_course_js_object() {
 	global $section, $subsec, $video, $q, $post, $student, $cpp;
-	
+
 ?><script>
 	/* ©2017 Supertutor Media, Inc. This code is not for distribution or use on any other website or platform without express written consent from Supertutor Media, Inc., SupertutorTV, or a subsidiary */
 var student = {
@@ -38,7 +38,7 @@ var student = {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
 }
-	
+
 var _st = {
 	request : function(obj) {
 		$.ajax({
@@ -131,7 +131,7 @@ var courses = {
 		reset : function(cb) {
 			localStorage.removeItem('course_data');
 			localStorage.removeItem('__c-update');
-			
+
 			return typeof cb === 'function' && cb()
 		}
 	},
@@ -144,7 +144,7 @@ var courses = {
 	init : function(){
 		var ctrl = parseInt(localStorage.getItem('__c-update'));
 		var objd = courses.data.get();
-		
+
 		$(document).queue('heartbeat',()=>{
 			console.log('first heartbeat')
 		})
@@ -176,7 +176,7 @@ var courses = {
 		} else {
 			courses.modal.init();
 		}
-	
+
 		if (objd === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
 			courses.data.reset(
 				courses.data.request()
@@ -184,7 +184,7 @@ var courses = {
 		} else if (objd !== null && objd['version'] !== courses.version) {
 			courses.data.reset(window.location.reload())
 		}
-		
+
 		function finish_init() {
 			clearInterval(checker);
 			courses.data.objectify(courses.data.get());
@@ -194,9 +194,9 @@ var courses = {
 					window.location.reload()
 				);
 			}
-		
+
 			console.log('Initialized!');
-			
+
 			courses.setup.run();
 		}
 		var checker = setInterval(function(){
@@ -204,10 +204,10 @@ var courses = {
 				console.log('localStorage not set');
 				return;
 			}
-			
+
 			finish_init();
 		},100);
-	
+
 	},
 	setup : {
 		validateRequest : function(request) {
@@ -226,19 +226,19 @@ var courses = {
 			}
 			var obj = courses.data.object;
 			var req;
-			
+
 			var q = r.question,
 				v = r.video,
 				b = r.subsec,
 				s = r.section;
-			
-			
+
+
 			if ((obj.sections[s] != null && obj.sections[s].restricted)) {
 				req = {type:'restricted'}
 				return req;
 			}
-			
-			
+
+
 			if (q) {
 				try {
 					req = {type:'video',object:obj.practice[b].subsec[v].videos[q]};
@@ -368,7 +368,7 @@ var courses = {
 				"data-collapsible": "accordion",
 				id: "coursenav"
 			});
-						
+
 			$.each(obj.sections,function(k,v){
 				var active = (k === courses.defaultReq.section) ? ' active' : '' ;
 				var item = $('<li/>').append($('<div/>',{
@@ -405,14 +405,14 @@ var courses = {
 
 				item.appendTo(nav);
 			});
-			
+
 			$('<li/>').append($('<a/>',{
 				text: 'Practice',
 				href: '#practice',
 				"class": "section-link practice-section-link collapsible-header",
 				"data-req" : JSON.stringify({section:'practice'})
 			})).appendTo(nav);
-			
+
 			nav.appendTo($('#course-nav-container'));
 
 			$(document).queue('shutdown',function(){
@@ -425,7 +425,7 @@ var courses = {
 			});
 			var a;
 			var div;
-			
+
 			if (!courses.defaultReq.section) {
 				return false;
 			} else if (courses.defaultReq.section === 'practice') {
@@ -439,7 +439,7 @@ var courses = {
 									"class" : "row course-subsection-container",
 									"style" : "background-color:white"
 								}).append('<h3><p>'+v.name+'</p></h3>');
-								
+
 								switch (v.subsec) {
 									case undefined:
 										$('<div/>',{
@@ -460,23 +460,23 @@ var courses = {
 										});
 										break;
 								}
-								
+
 								d.appendTo(wrap);
 							});
 							break;
 						default:
 							var pracSec = sub.subsec[courses.defaultReq.video];
-							
+
 							var h = $('<div/>',{
 								"class" : "row course-subsection-container",
 								"style" : "background-color:white"
 							});
 							h.append('<h3><p>'+pracSec.title+'</p></h3>');
-							
+
 							$.each(pracSec.videos,function(k,v){
 								var slug = v.slug;
 								var y = {section:courses.defaultReq.section,subsec:courses.defaultReq.subsec,video:courses.defaultReq.video,question:slug};
-								
+
 								a = $('<a/>',{
 									"class" : 'course-click',
 									href : courses.data.object.link+'/'+y.section+'/'+y.subsec+'/'+y.video+'/'+slug,
@@ -511,14 +511,14 @@ var courses = {
 									a.appendTo(h);
 								}
 							});
-							
+
 							h.appendTo(wrap);
 							break;
 					}
 			} else {
-				
+
 				$.each(courses.data.object.sections[courses.defaultReq.section].subsec, function(key, value){
-					
+
 					var h = $('<div/>',{
 						"class" : "row course-subsection-container",
 						"style" : "background-color:white"
@@ -548,7 +548,7 @@ var courses = {
 									src : v.thumb,
 									style : "width:100%;height:auto;display:block"
 								})).appendTo(div);
-								
+
 								$('<div/>',{
 									"class":"col s8"
 								}).append($('<span/>',{
@@ -558,11 +558,11 @@ var courses = {
 									"class":"course-video-duration",
 									text : time
 								})).appendTo(div);
-								
+
 								/*$('<div/>',{
 									"class":"col s2 m1"
 								}).append('<div class="valign-wrapper"><span>W</span></div>').appendTo(div);*/
-								
+
 							}
 							div.appendTo(a);
 							a.appendTo(h);
@@ -722,7 +722,7 @@ var courses = {
 	downloads : {
 		container : '<div class="modal-downloads-container row"></div>',
 		get : function(s,cb){
-			var cont = $(this.container); 
+			var cont = $(this.container);
 			$('.modal-loading-overlay').fadeIn(250);
 			$('#course_modal').modal('open');
 			cont.append('<h1><span>'+s+'</span> Downloads</h1>')
@@ -819,7 +819,7 @@ $(document).on('click',handlers,function(e){
 			} else {
 				courses.ratings.content = $('#review-content').val()
 			}
-			
+
 			courses.ratings.submit(function(data){
 				if (data.error){
 					$('.modal-error').text(data.error);
@@ -916,7 +916,7 @@ $(document).on('click','.course-click',function(e) {
 		).addClass('z-depth-1 course-active');
 	}
 );
-	
+
 $(document).on({
 	click : function(){
 		var onStar = parseInt($(this).data('value'), 10); // The star currently selected
@@ -928,12 +928,12 @@ $(document).on({
 		for (i = 0; i < onStar; i++) {
 		  $(stars[i]).addClass('selected');
 		}
-		
+
 		courses.ratings.value = onStar;
 	},
 	mouseover: function(){
 		var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
-   
+
 		// Now highlight all the stars that's not after the current hovered star
 		$(this).parent().children('li.star').each(function(e){
 		  if (e < onStar) {
@@ -963,9 +963,9 @@ $(document).ready(function(){
 });
 </script>
 <?php
-	
+
 }
-add_action( 'wp_head', 'sttv_course_js_object', 11 );
+//add_action( 'wp_head', 'sttv_course_js_object', 11 );
 
 /**
  * Let's set the stage, literally... Initializes our iframe in the stage area
@@ -975,13 +975,13 @@ function courses_vid_setup() { ?>
 	<iframe class="sttv-course-player" src="https://player.vimeo.com/video/188703514?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&autoplay=0" width="1920" height="1080" frameborder="0" title="" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 </span>
 <?php }
-add_action('sttv_stage_section','courses_vid_setup');
+//add_action('sttv_stage_section','courses_vid_setup');
 //add_action('sttv_stage_section','courses_apologies',999);
 function courses_apologies() {
 	print '<div class="azure-bg" style="width:100%;padding:1em;color:white;text-align:center">Thank you for your patience. We are still working out some bugs in the system. Apologies if the course acts wonky at any point.</div>';
 }
 
-add_action('sttv_after_body_tag','sttv_course_preloader');
+//add_action('sttv_after_body_tag','sttv_course_preloader');
 function sttv_course_preloader() {
 	print '<div class="course-preloader"><div style="text-align:center"><img src="'.get_stylesheet_directory_uri().'/i/sttv-spinner.gif"><h3 style="text-transform:uppercase;font-weight:700">Loading</h3></div></div>';
 }
@@ -996,6 +996,10 @@ get_template_part('templates/title'); ?>
 	All SupertutorTV courses require Javascript to be enabled. Please enable Javascript in your browser to use this course properly.
 	<style type="text/css">.course-contentarea, .course-preloader { display: none; } </style>
 </noscript>
+<div id ="app">
+
+</div>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/build/bundle.js"></script>
 <div id="course-after-title"><h2>&nbsp;</h2></div>
 <section class="course-contentarea course-<?php the_ID(); ?> row" id="content-wrapper-full">
 <div id="course-content-hitbox-container" class="row">
