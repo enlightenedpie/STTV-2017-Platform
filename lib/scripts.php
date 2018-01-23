@@ -8,7 +8,7 @@ add_action('admin_enqueue_scripts', 'sttv_admin_scripts');
 function sttv_admin_scripts($hook) {
 	wp_dequeue_script('jquery');
 	wp_deregister_script('jquery');
-	
+
 	//jquery scripts
 	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js',false,null);
 	wp_enqueue_script('courses-admin',get_stylesheet_directory_uri().'/s/admin/courses.js','jquery',time(),true);
@@ -19,20 +19,20 @@ function sttv_enqueue_all() {
 	//dequeue
 	wp_dequeue_script('jquery');
 	wp_deregister_script('jquery');
-	
-	
+
+
 	//jquery scripts
 	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js',false,null);
 	wp_enqueue_script('sttv-js', get_stylesheet_directory_uri().'/sttv-js.min.js','jquery',null,true);
 	wp_enqueue_script('materialize-js', get_stylesheet_directory_uri().'/material/materialize.min.js','jquery',null);
 	wp_enqueue_script('jq-validate','https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js','jquery');
-	
+
 	//styles
 	wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize.min.css',false,time());
 	wp_enqueue_style('sttv-main', get_stylesheet_directory_uri().'/styles.min.css', 'materialize', time());
 	wp_enqueue_style('material-icons','https://fonts.googleapis.com/icon?family=Material+Icons','materialize',time());
 	wp_enqueue_style('dashicons');
-	
+
 	//conditionals
 	if (get_page_template_slug() === 'sttv_2017/signup.php') :
 		wp_enqueue_script('sttv-checkout', get_stylesheet_directory_uri().'/s/checkout.js','jquery',time(),true);
@@ -41,7 +41,7 @@ function sttv_enqueue_all() {
 	elseif (is_page('contact')) :
 		//wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
 	endif;
-	
+
 	if (is_singular('courses')) {
 		wp_enqueue_script('courses-gzip',get_stylesheet_directory_uri().'/s/lz-string.js',null,null,true);
 		wp_enqueue_script('vimeo-player','https://player.vimeo.com/api/player.js');
@@ -50,17 +50,17 @@ function sttv_enqueue_all() {
 
 
 add_action( 'login_enqueue_scripts', 'sttv_login_brand' );
-function sttv_login_brand() { 
-?> 
-	<style type="text/css"> 
+function sttv_login_brand() {
+?>
+	<style type="text/css">
 		body.login div#login h1 a {
 			background-image: url(<?php header_image(); ?>);
 			background-size: contain;
 			display: block;
-			width: 100%; 
+			width: 100%;
 		}
 		</style>
-<?php 
+<?php
 }
 ############################
 ##### GOOGLE ANALYTICS #####
@@ -126,13 +126,14 @@ function gtag_report_conversion(url) {
 #########################
 
 add_action( 'wp_print_scripts' , 'stajax_object' );
-function stajax_object() { 
+function stajax_object() {
 	global $post; ?>
 	<script>
 		<?php
 			$stajax = array(
 				'ajaxURL'=>trailingslashit(site_url()).'stajax.php',
 				'contentURL'=>get_stylesheet_directory_uri(),
+				'courseRoot'=>get_permalink(),
 				'rootURL'=>site_url(),
 				'stripe' => array(
 					'public_key' => Spress()->public_key
@@ -142,7 +143,7 @@ function stajax_object() {
 			if (is_singular('courses') || is_page('jobs')) {
 				$stajax['rest'] = array(
 					'ID' => $post->ID,
-					'nonce' => wp_create_nonce( $nonce ), 
+					'nonce' => wp_create_nonce( $nonce ),
 					'url' => rest_url(STTV_REST_NAMESPACE)
 				);
 			}

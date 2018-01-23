@@ -996,10 +996,12 @@ get_template_part('templates/title'); ?>
 	All SupertutorTV courses require Javascript to be enabled. Please enable Javascript in your browser to use this course properly.
 	<style type="text/css">.course-contentarea, .course-preloader { display: none; } </style>
 </noscript>
+<!-- React  -->
 <div id ="app">
 
 </div>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/build/bundle.js"></script>
+
 <div id="course-after-title"><h2>&nbsp;</h2></div>
 <section class="course-contentarea course-<?php the_ID(); ?> row" id="content-wrapper-full">
 <div id="course-content-hitbox-container" class="row">
