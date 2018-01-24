@@ -120,7 +120,11 @@ function sttv_stripe_plan($atts,$content='') {
 	
 	$price = str_replace('.','',str_replace('$','',$atts['price']));
 	
-	$databind = $atts['plan'].'|'.$atts['title'].'|'.(int)$price;
+	$databind = json_encode([
+		'plan' => $atts['plan'],
+		'title' => sanitize_text_field($atts['title']),
+		'price' => (int) $price
+	]);
 	
 	$cols = '';
 	
@@ -145,7 +149,7 @@ function sttv_stripe_plan($atts,$content='') {
 	<div class="row">
 		<div class="col s12 m8 l6 xl4 offset-m2 offset-l3 offset-xl4 sttv-sales-table-wrapper <?php echo ($highlight) ? $highlight.' z-depth-4': ''; ?>">
         	<table id="sttv-sales-table-<?php echo $atts['plan']; ?>" class="sttv-sales-table centered">
-            	<caption class="<?php echo ($highlight) ?: ''; ?>"><a href="javascript:void(0)" class="payment-launcher" data-bind="<?php echo $databind; ?>"><?php _e(str_replace('.00','',$atts['price'])); ?></a></caption>
+            	<caption class="<?php echo ($highlight) ?: ''; ?>"><a href="javascript:void(0)" class="payment-launcher" data-bind='<?php echo $databind; ?>'><?php _e(str_replace('.00','',$atts['price'])); ?></a></caption>
 					<?php /*?><tr>
                     	<td>
                         	<span class="sttv-course-price"><?php echo $atts['price']; ?></span>
@@ -171,7 +175,7 @@ function sttv_stripe_plan($atts,$content='') {
     		?>
             <tr>
             	<td>
-                	<a href="#" class="payment-launcher pmt-button btn  waves-effect waves-light" data-bind="<?php echo $databind; ?>">Sign up now!</a>
+                	<a href="<?php echo get_permalink(); ?>/checkout" class="payment-launcher pmt-button btn waves-effect waves-light" data-bind='<?php echo $databind; ?>'>Sign up now!</a>
                 </td>
             </tr>
             </table>
