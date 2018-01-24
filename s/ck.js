@@ -1,4 +1,5 @@
-var ck = function(){
-    console.log('it works')
+module.exports = {
+    check : function(){
+        console.log('it works')
+    }
 }
-modules.export = ck
