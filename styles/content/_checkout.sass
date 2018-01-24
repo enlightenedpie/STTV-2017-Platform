@@ -1,7 +1,16 @@
+body.page-template-checkout
+	background: -moz-linear-gradient(left, $bodybg 51%, $azure 51%)
+	background: -webkit-linear-gradient(left, $bodybg 51%, $azure 51%)
+	background: linear-gradient(to right, $bodybg 51%, $azure 51%)
+
+	#main-wrapper
+		background: 0
+
 #checkout-left, #checkout-right
 	height: 100%
 
 #checkout-left
+	background: $bodybg
 
 	header#checkoutheader
 		+wfull
@@ -10,6 +19,7 @@
 		top: 0
 
 		#checkout-logo-box
+			padding-top: 1em
 			width: 100%
 			height: $huge
 			text-align: center
@@ -28,8 +38,8 @@
 
 #checkout-right
 	color: white
-	background-color: $azure
-	border-left: 1px solid $ltblack
+	background-color: $smazure
+	border-left: 2px solid $smblack
 	overflow: hidden
 
 #checkout_modal
