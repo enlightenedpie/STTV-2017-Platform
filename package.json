@@ -23,6 +23,7 @@
     "webpack-dev-server": "^2.9.5"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "gulp-sourcemaps": "^2.6.1",
     "materialize-css": "^0.100.2",
     "path": "^0.12.7",
