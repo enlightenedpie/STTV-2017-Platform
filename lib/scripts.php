@@ -34,11 +34,12 @@ function sttv_enqueue_all() {
 	wp_enqueue_style('dashicons');
 	
 	//conditionals
-	if ( is_page_template( 'signup.php' )) :
-		wp_enqueue_script('sttv-checkout', get_stylesheet_directory_uri().'/s/checkout.js','jquery',time(),true);
+	if ( is_page_template( 'checkout.php' ) ) :
+		wp_enqueue_script('sttv-checkout', get_stylesheet_directory_uri().'/s/checkout.min.js','jquery',null,true);
 		wp_enqueue_script('sttv-checkout-stripe','https://js.stripe.com/v3/','sttv-checkout',null,false);
+		//wp_enqueue_script('sttv-checkout-stripe','https://checkout.stripe.com/checkout.js','sttv-checkout',null,false);
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
-	elseif (is_page('contact')) :
+	elseif ( is_page('contact') ) :
 		//wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
 	endif;
 	

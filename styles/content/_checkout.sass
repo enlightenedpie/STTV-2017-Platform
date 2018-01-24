@@ -1,15 +1,36 @@
-header#checkoutheader
-	+wfull
-	height: $headerh
-	position: relative
-	top: 0
+#checkout-left, #checkout-right
+	height: 100%
 
-h4#plan_title
-	font-weight: 700
-	text-transform: uppercase
-	text-align: center
-	margin-top: $tiny
-	margin-bottom: 1em
+#checkout-left
+
+	header#checkoutheader
+		+wfull
+		height: $headerh
+		position: relative
+		top: 0
+
+		#checkout-logo-box
+			width: 100%
+			height: $huge
+			text-align: center
+
+			img
+				display: inline
+				width: auto
+				height: 100%
+
+			h3
+				font-weight: 700
+				text-transform: uppercase
+				padding: 0 0 0 $tiny
+				margin: 0
+				display: inline
+
+#checkout-right
+	color: white
+	background-color: $azure
+	border-left: 1px solid $ltblack
+	overflow: hidden
 
 #checkout_modal
 	min-height: 10em

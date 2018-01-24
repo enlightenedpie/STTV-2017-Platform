@@ -18,7 +18,7 @@ $(document).ready(function() {
 	// end init modal
 
 
-$('.payment-launcher').click(function(e) {
+	$('.payment-launcher').click(function(e) {
 		e.preventDefault();
 		var planData = $(this).attr('data-bind');
 		
