@@ -1,23 +1,4 @@
-var setOutcome = (function() {
-  return {
-    Outcome: function(){
-      var successElement = document.querySelector('.success');
-      var errorElement = document.querySelector('.error');
-      successElement.classList.remove('visible');
-      errorElement.classList.remove('visible');
-
-      fsub.valid = result.complete;
-
-      var validSub = ($('#t_and_c').is(':checked') && result.complete);
-      $('.signup-submit').prop('disabled', !validSub);
-
-      if (typeof result.error !== 'undefined') {
-        $('.error').text(result.error.message);
-      } else {
-        $('.error').text('');
-      };
-    }
-  };
-})();
-
-module.exports = setOutcome;
+module.exports = {
+  valid: false,
+  shipWasChecked: false
+};
