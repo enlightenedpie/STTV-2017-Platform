@@ -7,7 +7,7 @@ const checkout = require('ck');
     $('.payment-launcher').on('click',function(e){
         e.preventDefault()
         var href = $(this).attr('href')
-        c.dataBind(this,function(){
+        c.data('set',this,function(){
             window.location = href
         })
     });
