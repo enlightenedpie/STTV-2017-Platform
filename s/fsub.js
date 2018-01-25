@@ -1,6 +1,6 @@
 var setOutcome = (function() {
   return {
-    setOutcome: function(){
+    Outcome: function(){
       var successElement = document.querySelector('.success');
       var errorElement = document.querySelector('.error');
       successElement.classList.remove('visible');
@@ -16,7 +16,7 @@ var setOutcome = (function() {
       } else {
         $('.error').text('');
       };
-    }    
+    }
   };
 })();
 
