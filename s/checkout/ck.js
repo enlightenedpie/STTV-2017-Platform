@@ -18,7 +18,6 @@ module.exports = (function(){
 
             switch (method) {
                 case 'get':
-                console.log(this)
                     return localStorage.getItem('checkout') || this.getCookie('checkout') || typeof cb === 'function' && cb()
                 case 'set':
                     try {
