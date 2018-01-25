@@ -10,7 +10,7 @@
   "scripts": {
     "babel": "babel --presets es2015 s/checkout.min.js -o main.bundle.js",
     "start": "http-server",
-    "webpack": "webpack"
+    "webpack": "webpack -w"
   },
   "author": "",
   "license": "ISC",

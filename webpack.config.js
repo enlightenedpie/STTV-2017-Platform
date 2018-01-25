@@ -2,9 +2,9 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './s/checkout.min.js',
+    entry: './s/checkout/base.js',
     output: {
-        path: path.resolve(__dirname, ''),
+        path: path.resolve(__dirname, 's/'),
         filename: 'checkout.min.js'
     },
     module: {
@@ -25,6 +25,6 @@ module.exports = {
     context: __dirname,
     resolve: {
         extensions: [ '.js', '.jsx', '.json' ],
-        modules: [ 'node_modules', path.resolve(__dirname, 's') ]
+        modules: [ 'node_modules', path.resolve(__dirname, 's'), path.resolve(__dirname, 's/checkout') ]
     }
 };

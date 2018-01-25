@@ -35,7 +35,7 @@ function sttv_enqueue_all() {
 	
 	//conditionals
 	if ( is_page_template( 'signup.php' ) || is_page_template( 'checkout.php' ) ) :
-		wp_enqueue_script('sttv-checkout', get_stylesheet_directory_uri().'/checkout.min.js','jquery',null,true);
+		wp_enqueue_script('sttv-checkout', get_stylesheet_directory_uri().'/s/checkout.min.js','jquery',null,true);
 		wp_enqueue_script('sttv-checkout-stripe','https://js.stripe.com/v3/','sttv-checkout',null,false);
 		//wp_enqueue_script('sttv-checkout-stripe','https://checkout.stripe.com/checkout.js','sttv-checkout',null,false);
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
