@@ -1,14 +1,14 @@
 const checkout = require('ck');
 
 (function(c){
+    if ( window.location.href.indexOf( 'checkout' ) !== -1 ){
+        c.init()
+    }
     $('.payment-launcher').on('click',function(e){
         e.preventDefault()
-        try {
-            localStorage.setItem('checkout',$(this).attr('data-bind'))
-        } catch (e) {
-            document.cookie = 'checkout='+$(this).attr('data-bind')
-        } finally {
-            return window.location = $(this).attr('href')
-        }
+        var href = $(this).attr('href')
+        c.data('set',this,function(){
+            window.location = href
+        })
     });
 }(checkout));
