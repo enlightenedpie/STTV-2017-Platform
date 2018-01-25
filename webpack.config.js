@@ -25,6 +25,6 @@ module.exports = {
     context: __dirname,
     resolve: {
         extensions: [ '.js', '.jsx', '.json' ],
-        modules: [ 'node_modules', path.resolve(__dirname, 's'), path.resolve(__dirname, 's/checkout') ]
+        modules: [ 'node_modules', path.resolve(__dirname, 's'), path.resolve(__dirname, 's/checkout'), path.resolve(__dirname, 's/checkout/modules') ]
     }
 };

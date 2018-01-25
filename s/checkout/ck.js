@@ -1,32 +1,38 @@
 //let setToken = require('setToken')
 
-var checkout = (function(){
+module.exports = (function(){
     return {
         init: function(){
-            console.log( 'initialized' )
+            var plan = this.data('get','',function(){
+                window.location = window.location.href.replace('checkout', '');
+            })
+        },
+        getCookie : function(name){
+            var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            if (match) {return match[2]} else {return null};
         },
         data : function( method, t, cb ){
-            var data = $(t).attr('data-bind'),
-                method = method || 'get'
-                
-            if (method === 'get') {
+            var t = t || '',
+                method = method || 'get',
+                data = $(t).attr('data-bind')
 
-            } else if (method === 'set') {
-                try {
-                    localStorage.setItem('checkout',data)
-                } catch (e) {
-                    document.cookie = 'checkout='+data
-                } finally {
-                    return typeof cb === 'function' && cb()
-                }
-            } else {
-                return {
-                    error : "Invalid use of 'method'. 'get' and 'set' are the only allowed methods."
-                }
+            switch (method) {
+                case 'get':
+                console.log(this)
+                    return localStorage.getItem('checkout') || this.getCookie('checkout') || typeof cb === 'function' && cb()
+                case 'set':
+                    try {
+                        localStorage.setItem('checkout',data)
+                    } catch (e) {
+                        document.cookie = 'checkout='+data
+                    } finally {
+                        return typeof cb === 'function' && cb()
+                    }
+                default:
+                    return {
+                        error : "Invalid use of 'method'. 'get' and 'set' are the only allowed methods."
+                    }
             }
-           
         }
     }
 })()
-
-module.exports = checkout
