@@ -1,11 +1,9 @@
 var setOutcome = require("setOutcome");
 var setToken = require("setToken");
 
-const fsub = {
-  valid: false,
+module.exports = {
+  valid: true,
   shipWasChecked: false,
   setOutcome: setOutcome,
   setToken: setToken
 }
-
-module.exports = fsub;
