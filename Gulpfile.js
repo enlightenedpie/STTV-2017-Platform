@@ -32,7 +32,7 @@ gulp.task('noform', function() {
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
 		.pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./'));
+    .pipe(gulp.dest('./material'));
 });
 
 // gulp.task('noform', function() {
