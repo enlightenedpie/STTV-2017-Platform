@@ -1,12 +1,12 @@
 $(document).ready(function() {
 	"use strict";
-	
+
 	var loader = '<div id="checkout_modal" class="modal"><div id="checkout_modal_overlay"><img src="'+stajax.contentURL+'/i/sttv-spinner.gif"/><span></span></div><header id="checkoutheader"><div id="logo-box"><img src="https://supertutortv.com/wp-content/uploads/2017/01/sttv_site_logo.png" alt="logo" /></div></header><div class="modal-content"></div></div>';
-		
+
 	$('body').prepend(loader);
 	window.cModal = $('#checkout_modal');
-	
-	// init Modal	
+
+	// init Modal
 			$('.modal').modal({
 			  dismissible : true,
 			  opacity : .8,
@@ -21,27 +21,27 @@ $(document).ready(function() {
 	$('.payment-launcher').click(function(e) {
 		e.preventDefault();
 		var planData = $(this).attr('data-bind');
-		
+
 		cModal.animate({
 			scrollTop: cModal.offset().top
 		}, 1);
 		cModal.css('overflow','hidden');
 		cModal.modal('open');
 		$('#checkout_modal_overlay').fadeIn(500,function() {
-			
+
 			fsub.checkout(planData);
-			
+
 		}).delay(1000).queue(function(next){
 			price_updater();
 			next();
 		}).fadeOut(500,function() {
 			cModal.css('overflow','auto');
 		});
-		
+
 		$('[name=sttv_email],[name=sttv_billing_pcode],input[name=sttv_coupon]').blur();
-		
+
 	});
-	
+
 }); // end document ready
 
 var fsub = {
@@ -52,12 +52,12 @@ var fsub = {
 				var errorElement = document.querySelector('.error');
 				successElement.classList.remove('visible');
 				errorElement.classList.remove('visible');
-				
+
 				fsub.valid = result.complete;
-				
+
 				var validSub = ($('#t_and_c').is(':checked') && result.complete);
 					$('.signup-submit').prop('disabled',!validSub);
-				
+
 				if (typeof result.error !== 'undefined') {
 					$('.error').text(result.error.message);
 				} else {
@@ -65,16 +65,16 @@ var fsub = {
 				}
 			},// end setOutcome
 			setToken : function(result) {
-				
+
 				if (result.error) {
 				  $('#checkout_modal_overlay').fadeOut(1,function() {
 					  $('.error',cModal).text(result.error.message);
 				  });
-				  
+
 				  console.log(result.error);
 				  return false;
 			  	}
-				
+
 				cModal.animate({
 					scrollTop: 0
 				}, 1);
@@ -85,13 +85,13 @@ var fsub = {
 				});
 			  console.log(result,"pre POST");
 				  data.token = result.token.id;
-				  
+
 				  $.post(
 					stajax.ajaxURL,
 					data,
 					function(response) {
 						var action = {};
-						
+
 						if (response.success) {
 							action.ST = function() {
 								window.location.replace(response.data);
@@ -100,7 +100,7 @@ var fsub = {
 							action.color = 'olive';
 							action.msg = 'You will be redirected shortly';
 							action.icon = 'done';
-							
+
 						} else {
 							action.ST = function() {
 								cModal.modal('close');
@@ -116,7 +116,7 @@ var fsub = {
 						appended += action.action+'</div>';
 						appended += '<small>'+action.msg+'</small><br/>';
 						appended += (!response.success)?'<small>err: '+response.data.error+'</small>':'';
-						
+
 						console.log(response);
 						$('.modal-content',cModal).empty();
 						$('.modal-content',cModal).append(appended);
@@ -125,10 +125,10 @@ var fsub = {
 			},//end setToken
 			checkout : function(planData) {
 				var pDt = planData.split('|');
-			
+
 				if (!$('table#totals_table').length) {
 					$('.modal-content',cModal).empty();
-					
+
 					$.get({
 						url: stajax.contentURL+'/templates/html/_checkout.html',
 						cache: false
@@ -139,9 +139,9 @@ var fsub = {
 					.fail(function(){
 						alert('Something went wrong. Please reload the page.');
 					}); // end GET
-					
+
 				} //endif
-				
+
 				if (window.plan == undefined || window.plan.ID !== pDt[0]) {
 					window.plan = {
 						ID : pDt[0],
@@ -153,7 +153,7 @@ var fsub = {
 						discp : 0
 					};
 				} //endif
-				
+
 			}, //end checkout()
 			globalTester : function() {
 				console.log("Success!");
@@ -165,7 +165,7 @@ function price_updater() {
 		var price = parseFloat(plan.price);
 		var taxed = (25*(plan.tax/100))*100;
 		var totals = (((price-(price*(plan.discp/100))-plan.disc)+taxed)+plan.shipping);
-		
+
 		if (0 < totals) {
 			var btnmsg = 'Pay $'+(totals/100).toFixed(2)+' now!';
 		} else {
@@ -174,12 +174,12 @@ function price_updater() {
 		$('button.signup-submit span').fadeOut(100,function() {
 			$(this).text(btnmsg);
 		}).fadeIn(100);
-		
+
 		var table = $('table#totals_table');
-		
+
 		$('tbody',table).fadeOut(100,function() {
 			$(this).empty().append('<tr><td colspan="2">'+plan.name+'</td><td style="text-align:right">'+(price/100).toFixed(2)+'</td></tr>');
-			
+
 			if (0 < plan.disc) {
 				var discprice = plan.disc;
 			} else if (0 < plan.discp) {
@@ -194,11 +194,11 @@ function price_updater() {
 			if (plan.shipping) {
 				$(this).append('<tr><td colspan="2"><small>Priority Shipping</small></td><td style="text-align:right"><small>+'+(plan.shipping/100).toFixed(2)+'</small></td></tr>');
 			}
-			
+
 		}).fadeIn(100);
-		
+
 		$('#signup_total_price span').fadeOut(100,function() {
 			$(this).text('$'+(totals/100).toFixed(2));
 		}).fadeIn(100);
-	
+
 	}

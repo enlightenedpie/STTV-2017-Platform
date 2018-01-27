@@ -21,15 +21,18 @@
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-include": "^2.3.1",
+    "gulp-merge": "^0.1.1",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
+    "materialize-css": "^0.100.2",
     "md5": "^2.2.1",
+    "node-sass": "^4.7.2",
     "rollup": "^0.49.3",
+    "sass-loader": "^6.0.6",
     "stream": "0.0.2",
     "webpack": "^3.10.0"
   },
-  "dependencies": {
-    "gulp-sourcemaps": "^2.6.1"
-  }
+  "dependencies": {}
 }
