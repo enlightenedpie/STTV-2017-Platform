@@ -2,6 +2,7 @@
 
 /* Template Name: Checkout Page */
 
+$countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/888ba7972fa617579c374e951bd7eab9/raw/b987e55ddc4cde75f50298559e3a173a132657af/gistfile1.txt');
 ?>
 <?php get_header('stripped'); ?>
 <div id="content" class="row" style="height:100vh">
@@ -102,6 +103,7 @@
                         <div class="input-field col s6 m3">
                             <select class="country-dd browser-default validate" name="sttv_shipping_country" required>
                                 <option value disabled selected>Country...</option>
+								<?php print $countrydd['body']; ?>
                             </select>
                         </div>
                     </div>
@@ -137,6 +139,7 @@
                         <div class="input-field col s6 m3">
                             <select class="country-dd browser-default" name="sttv_billing_country" required>
                                 <option value disabled selected>Country...</option>
+								<?php print $countrydd['body']; ?>
                             </select>
                         </div>
                     </div>
@@ -167,11 +170,6 @@
     </div>
 
  <script>
-	 $.get('https://gist.githubusercontent.com/enlightenedpie/888ba7972fa617579c374e951bd7eab9/raw/b987e55ddc4cde75f50298559e3a173a132657af/gistfile1.txt', function(data) {
-		 $('.country-dd').append(data);
-	}, 'html');
- 
- 
  	var stripe = Stripe(stajax.stripe.public_key);
 	var elements = stripe.elements();
 	var card = elements.create('card',{
