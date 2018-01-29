@@ -121,7 +121,7 @@ function sttv_stripe_plan($atts,$content='') {
 	$price = str_replace('.','',str_replace('$','',$atts['price']));
 	
 	$databind = json_encode([
-		'plan' => $atts['plan'],
+		'ID' => $atts['plan'],
 		'title' => sanitize_text_field($atts['title']),
 		'price' => (int) $price
 	]);
