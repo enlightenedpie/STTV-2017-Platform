@@ -1,8 +1,10 @@
-//let setToken = require('setToken')
+let stSub = require('subscriptions');
+let stForm = require('form');
+//let priceUpdater = require('priceUpdater');
 
 module.exports = (function(){
     return {
-        init: function(){
+        init : function(){
             var plan = this.data('get','',function(){
                 window.location = window.location.href.replace('checkout', '');
             })
@@ -32,6 +34,11 @@ module.exports = (function(){
                         error : "Invalid use of 'method'. 'get' and 'set' are the only allowed methods."
                     }
             }
-        }
+        },
+        setPlan : function(data){
+            
+        },
+        form : stForm,
+        sub : stSub,
     }
 })()
