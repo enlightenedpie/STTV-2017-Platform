@@ -391,12 +391,29 @@ var courses = {
 				item.appendTo(nav);
 			});
 			
-			$('<li/>').append($('<a/>',{
-				text: 'Practice',
+			var prac = $('<li/>').append($('<a/>',{
+				text: 'Practice Tests',
 				href: '#practice',
 				"class": "section-link practice-section-link collapsible-header",
 				"data-req" : JSON.stringify({section:'practice'})
-			})).appendTo(nav);
+			})).append($('<div/>',{
+				"class": "collapsible-body",
+				html: '<span></span>'
+			}).append($('<div/>',{
+				"class":"collapsible-footer"
+			})));
+
+			$('.collapsible-footer',prac).append(
+				$('<a/>',{
+					"class": "cfooter-dl-link",
+					"data-sec":"practice",
+					href: "",
+					text: "downloads",
+					style: "color:gray"
+				}).prepend('<i class="material-icons">cloud_download</i>&nbsp;')
+			)
+			
+			prac.appendTo(nav);
 			
 			nav.appendTo($('#course-nav-container'));
 
