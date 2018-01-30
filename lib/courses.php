@@ -82,15 +82,19 @@ function get_course_meta($data) {
 			$data['sections'][$sec]['restricted'] = 'Restricted access. This section will be available when you purchase the full course, or your trial period ends.';
 		}
 	}
-	foreach ($meta['practice'] as $sec => $val) {
-		$data['practice'][$sec] = [
+	$data['practice'] = [
+		'description' => $meta['practice']['description'],
+		'resources' => $meta['practice']['resources'],
+		'tests' => []
+	];
+	foreach ($meta['practice']['tests'] as $sec => $val) {
+		$data['practice']['tests'][$sec] = [
 			'name'=> $val['name'],
-			'description'=>$val['desc'],
 			'color'=>'rgba(0,0,0,0.60)'
 		];
 		
 		if (current_user_can($val['cap'])) {
-				$data['practice'][$sec]['subsec'] = $val['sections'];
+				$data['practice']['tests'][$sec]['subsec'] = $val['sections'];
 		} else {
 			$data['practice'][$sec]['restricted'] = 'Restricted access. This practice section will be available when you purchase the full course, or your trial period ends.';
 		}
