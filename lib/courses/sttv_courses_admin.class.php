@@ -300,7 +300,7 @@ class STTV_Courses_Admin {
 	?>
 	</div>
 </div>
-<pre style="display:block;width:100%"><?php //print_r(get_post_meta($post->ID,'course_raw_post_data',true)); ?><?php //print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
+<pre style="display:block;width:100%"><?php //print_r(get_post_meta($post->ID,'course_raw_post_data',true)); ?><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 <?php }
 	
 	public function course_meta_position() {
