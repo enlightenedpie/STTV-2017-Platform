@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class STTV_Courses_Admin {
 	
 	private $alb_cache = [];
+
 	private $introvid_album = false;
 	
 	public function __construct() {
@@ -87,6 +88,7 @@ class STTV_Courses_Admin {
 				 'side', // $context
 				 'low' // $priority
 			);
+
 			add_meta_box(
 				'course_introvid_album', // $id
 				'Course Introvideo Album', // $title
@@ -254,25 +256,28 @@ class STTV_Courses_Admin {
     <div id="practice_wrapper">
     <?php
 		$a = $b = 0;
-		$html = '';
-		if (empty($data['practice'])) {
-			$data['practice'] = [false=>false];
+		$prac = $data['practice'];
+		$html = "<textarea placeholder='Description' rows='5' cols='80' name='courses[practice][description]'>{$prac['description']}</textarea>";
+		if (empty($prac['tests'])) {
+			$prac['tests'] = [
+				'name'=>'placeholder',
+				'sections'=>[]
+			];
 		}
-		foreach ( $data['practice'] as $val ){
+		foreach ( $prac['tests'] as $val ){
 			$html .= "<div class='course_practice'>";
-			$html .= "<label for='courses[practice][{$a}][title]'>Book/Test name: <input size='50' name='courses[practice][{$a}][title]' value='{$val['name']}'/></label>&nbsp;";
+			$html .= "<label for='courses[practice][tests][{$a}][title]'>Book/Test name: <input size='50' name='courses[practice][tests][{$a}][title]' value='{$val['name']}'/></label>&nbsp;";
 			$html .= "<button class='add-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
-			$html .= "<label for='courses[practice][{$a}][description]'>Description: <textarea rows='5' cols='80' name='courses[practice][{$a}][description]'>{$val['desc']}</textarea></label>&nbsp;";
 			$html .= "<div class='course_practice_test'>";
 			
 			if (empty($val['sections'])) {
-				$val['sections'] = [false=>false];
+				$val['sections'] = ['placeholder'=>'placeholder'];
 			}
 			foreach ($val['sections'] as $sec) {
 				
-				$pract_id = "courses[practice][{$a}][sections][{$b}][id]";
-				$pract_title = "courses[practice][{$a}][sections][{$b}][title]";
-				$pract_intro = "courses[practice][{$a}][sections][{$b}][intro_vid]";
+				$pract_id = "courses[practice][tests][{$a}][sections][{$b}][id]";
+				$pract_title = "courses[practice][tests][{$a}][sections][{$b}][title]";
+				$pract_intro = "courses[practice][tests][{$a}][sections][{$b}][intro_vid]";
 				$html .= "<div class='course_practice_test_inner'>";
 				$html .= "<label for='{$pract_title}'>Section name: <input name='{$pract_title}' value='{$sec['title']}'/></label>&nbsp;";
 				$html .= "<label for='{$pract_id}'>Intro video:&nbsp;";
@@ -295,13 +300,14 @@ class STTV_Courses_Admin {
 	?>
 	</div>
 </div>
-<pre style="display:block;width:100%"><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
-		
+<pre style="display:block;width:100%"><?php //print_r(get_post_meta($post->ID,'course_raw_post_data',true)); ?><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 <?php }
 	
 	public function course_meta_position() {
 		global $post, $wp_meta_boxes;
+
 		do_meta_boxes(get_current_screen(), 'top', $post);
+
 		unset($wp_meta_boxes[get_post_type($post)]['top']);
 	}
 	
@@ -309,9 +315,11 @@ class STTV_Courses_Admin {
 		// Stop WP from clearing custom fields on autosave
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
 			return;
+
 		// Prevent quick edit from clearing custom fields
 		if (defined('DOING_AJAX') && DOING_AJAX)
 			return;
+
 		//save course intro album
 		if ($_POST['course_introvid_album']) :
 			update_post_meta($post_id, 'course_introvid_album', sanitize_text_field($_POST['course_introvid_album']));
@@ -323,6 +331,8 @@ class STTV_Courses_Admin {
 		endif;
 		
 		if ($_POST['courses']) :
+			update_post_meta($post_id, 'course_raw_post_data', $_POST['courses']);
+    
 			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
 			$caps = [ //default caps for all courses
 				'course_post_feedback',
@@ -396,8 +406,23 @@ class STTV_Courses_Admin {
 				];
 				$i++;
 			endforeach;
-		
-			foreach ($_POST['courses']['practice'] as $prac) :
+			
+			$rp = STTV_RESOURCE_DIR.strtolower($data['test']).'/practice/';
+			$resc = [];
+			$f = scandir($rp);
+			foreach ($f as $file) {
+				if (is_file($rp.$file)){
+					$resc[$file] = md5_file($rp.$file);
+				}
+			}
+
+			$data['practice'] = [
+				'description' => $_POST['courses']['practice']['description'],
+				'resources' => $resc,
+				'tests' => []
+			];
+
+			foreach ($_POST['courses']['practice']['tests'] as $prac) :
 		
 				$title = sanitize_title_with_dashes($prac['title']);
 		
@@ -416,13 +441,13 @@ class STTV_Courses_Admin {
 						'videos'=>$calb[$v['id']]
 					];
 				}
-		
-				$data['practice'][$title] = [
+
+				$data['practice']['tests'][$title] = [
 					'name'=>$prac['title'],
-					'desc'=>$prac['description'],
 					'cap'=>"course_{$test}_practice_{$title}",
 					'sections'=>$sections
 				];
+
 				$caps[]=$data['practice'][$title]['cap'];
 		
 			endforeach;

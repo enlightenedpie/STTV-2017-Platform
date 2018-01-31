@@ -45,7 +45,7 @@ function course_permissions_check($data) {
 	$thepost = get_post($data['id']);
 		$cap = str_replace(' ','_',strtolower($thepost->post_title));
 
-	$legacy = array('_legacy_value_bundle','_legacy_official_guide','_legacy_red_book');
+	$legacy = ['_legacy_value_bundle','_legacy_official_guide','_legacy_red_book'];
 
 	foreach($legacy as $l) {
 		if (current_user_can($l)){
@@ -93,18 +93,19 @@ function get_course_meta($data) {
 			$data['sections'][$sec]['restricted'] = 'Restricted access. This section will be available when you purchase the full course, or your trial period ends.';
 		}
 	}
-	foreach ($meta['practice'] as $sec => $val) {
-		if ($sec === 'resources'){
-			continue;
-		}
-		$data['practice'][$sec] = [
+	$data['practice'] = [
+		'description' => $meta['practice']['description'],
+		'resources' => $meta['practice']['resources'],
+		'tests' => []
+	];
+	foreach ($meta['practice']['tests'] as $sec => $val) {
+		$data['practice']['tests'][$sec] = [
 			'name'=> $val['name'],
-			'description'=>$val['desc'],
 			'color'=>'rgba(0,0,0,0.60)'
 		];
 		
 		if (current_user_can($val['cap'])) {
-				$data['practice'][$sec]['subsec'] = $val['sections'];
+				$data['practice']['tests'][$sec]['subsec'] = $val['sections'];
 		} else {
 			$data['practice'][$sec]['restricted'] = 'Restricted access. This practice section will be available when you purchase the full course, or your trial period ends.';
 		}
