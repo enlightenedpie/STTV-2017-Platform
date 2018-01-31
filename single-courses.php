@@ -432,7 +432,7 @@ var courses = {
 			} else if (courses.defaultReq.section === 'practice') {
 				var sec = courses.data.object.practice.tests,
 					sub = courses.data.object.practice.tests[courses.defaultReq.subsec];
-					//console.log(sub)
+					
 					switch (sub) {
 						case undefined:
 							$.each(sec,function(k,v){
