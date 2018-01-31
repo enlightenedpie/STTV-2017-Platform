@@ -8,14 +8,13 @@ class STTV_Courses_Admin {
 	private $introvid_album = false;
 	
 	public function __construct() {
-
 		$this->album_cache_ids();
 		
-		add_action( 'init', [ $this, 'sttv_course_init' ], 10, 0);
-		add_action( 'init', [ $this, 'sttv_course_endpoints' ], 10, 0);
-		add_filter( 'query_vars', [ $this, 'sttv_course_query_vars' ], 10, 1);
+		add_action( 'init', [ $this, 'sttv_course_init' ], 10, 0 );
+		add_action( 'init', [ $this, 'sttv_course_endpoints' ], 10, 0 );
+		add_filter( 'query_vars', [ $this, 'sttv_course_query_vars' ], 10, 1 );
 		add_action( 'edit_form_after_title', [ $this, 'course_meta_position' ] );
-		add_action( 'save_post_courses' , [ $this,'save_course_meta' ], 10, 2 );
+		add_action( 'save_post_courses' , [ $this, 'save_course_meta' ], 10, 2 );
 		
 	}
 	
@@ -41,7 +40,7 @@ class STTV_Courses_Admin {
 			],
 			'delete_with_user'		=>	false,
 			'can_export'			=>	true,
-			'supports'				=>	['title', 'editor', 'comments', 'revisions', 'author', 'excerpt', 'thumbnail' ],
+			'supports'				=>	['title', 'editor', 'comments', 'revisions', 'author', 'excerpt', 'thumbnail'],
 			'register_meta_box_cb'	=> [ $this, 'sttv_add_course_meta' ]
 		];
 		
@@ -75,7 +74,7 @@ class STTV_Courses_Admin {
 			add_meta_box(
 				 'course_info', // $id
 				 'Course Information', // $title
-				 [ $this , 'sttv_display_course_meta' ], // $callback
+				 [ $this, 'sttv_display_course_meta' ], // $callback
 				 'courses', // $post_type
 				 'top', // $context
 				 'high' // $priority
@@ -84,7 +83,7 @@ class STTV_Courses_Admin {
 			add_meta_box(
 				 'course_product_page', // $id
 				 'Course Product Page', // $title
-				 [ $this , 'sttv_display_course_product_page' ], // $callback
+				 [ $this, 'sttv_display_course_product_page' ], // $callback
 				 'courses', // $post_type
 				 'side', // $context
 				 'low' // $priority
@@ -93,7 +92,7 @@ class STTV_Courses_Admin {
 			add_meta_box(
 				'course_introvid_album', // $id
 				'Course Introvideo Album', // $title
-				[ $this , 'sttv_display_course_introvid_album' ], // $callback
+				[ $this, 'sttv_display_course_introvid_album' ], // $callback
 				'courses', // $post_type
 				'side', // $context
 				'low' // $priority
@@ -135,7 +134,6 @@ class STTV_Courses_Admin {
 			
 			$data = get_post_meta($post->ID,'sttv_course_data',true);
 			$intro = get_post_meta($post->ID,'course_introvid_album',true);
-
 			//$this->album_video_select($intro);
 ?>
 <style type="text/css" scoped>
@@ -205,7 +203,7 @@ class STTV_Courses_Admin {
 			$html = '';
 		
 			if (empty($data['sections'])) {
-				$data['sections'] = [false=>false];
+				$data['sections'] = [ false => false ];
 			}
 			foreach ( $data['sections'] as $sec => $val ){
 				$html .= "<div class='course_section'>";
@@ -219,7 +217,7 @@ class STTV_Courses_Admin {
 				$html .= "<div class='course_subsec'>";
 				
 				if (empty($val['subsec'])) {
-					$val['subsec'] = [false=>false];
+					$val['subsec'] = [ false => false ];
 				}
 				
 				foreach ($val['subsec'] as $k => $v){
@@ -303,7 +301,6 @@ class STTV_Courses_Admin {
 	</div>
 </div>
 <pre style="display:block;width:100%"><?php //print_r(get_post_meta($post->ID,'course_raw_post_data',true)); ?><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
-		
 <?php }
 	
 	public function course_meta_position() {
@@ -335,6 +332,7 @@ class STTV_Courses_Admin {
 		
 		if ($_POST['courses']) :
 			update_post_meta($post_id, 'course_raw_post_data', $_POST['courses']);
+    
 			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
 			$caps = [ //default caps for all courses
 				'course_post_feedback',
@@ -443,7 +441,7 @@ class STTV_Courses_Admin {
 						'videos'=>$calb[$v['id']]
 					];
 				}
-		
+
 				$data['practice']['tests'][$title] = [
 					'name'=>$prac['title'],
 					'cap'=>"course_{$test}_practice_{$title}",

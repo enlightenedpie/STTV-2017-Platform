@@ -77,7 +77,7 @@ function sttv_youtube_link()
 
 function sttv_display_album_id()
 {
-   echo realpath(get_page_template());
+	global $post; echo get_post_meta( $post->ID, '_wp_page_template', true );
 }
 
 function sttv_display_plan_id()

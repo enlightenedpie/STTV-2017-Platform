@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'init', 'sttv_add_menus');
 
@@ -25,7 +26,7 @@ function sttv_admin_only_link( $items, $menu ) {
 			$items[] = _custom_nav_menu_item( 'The Best ACT Prep Course Ever', get_site_url().'/courses/the-best-act-prep-course-ever', 1, array('menu-item-100') );
 		endif;
 		
-		if (current_user_can('manage_options')) :
+		if ( current_user_can( 'edit_others_posts' ) ) :
 	  		$items[] = @_custom_nav_menu_item( 'Admin', get_admin_url(), 111, array('admin-link') );
 	  		$items[] = @_custom_nav_menu_item( 'Edit '.get_post_type(), get_edit_post_link($post->ID), 120);
 		endif;
