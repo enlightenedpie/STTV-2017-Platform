@@ -1,18 +1,20 @@
 /*jshint strict:false */
 var sections = {
-	count : function(a) {return a.parent().parent().children().length;},
+	count : function(a,selector = '') {console.log(a.parent().parent().children(selector));return a.parent().parent().children(selector).length;},
 	add : function(x) {
 		var b = x.parent().parent();
 		var c = 0;
-		if (b.has('*')) {
-			c = this.count(x);
+		//console.log(b)
+		if (b.length) {
+			c = this.count(x,'.course_practice');
 		}
 		
 		var lc = c-1;
 		var newSe = b.children().last().clone();
+		//console.log([lc,c])
 		newSe.find('input,label,select').each(function() {
 			var theAttr = (this.name) ? 'name' : 'for';
-			$(this).attr(theAttr,$(this).attr(theAttr).replace('['+lc+']', '['+c+']'));
+			$(this).attr(theAttr,$(this).attr(theAttr).replace('[tests]['+lc+']', '[tests]['+c+']'));
 			$(this).val('');
 		});
 		newSe.appendTo(b);
