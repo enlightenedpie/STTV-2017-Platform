@@ -244,8 +244,7 @@ var courses = {
 			
 			if (q) {
 				try {
-					req = {type:'video',object:obj.practice[b].subsec[v].videos[q]};
-					console.log(req);
+					req = {type:'video',object:obj.practice.tests[b].subsec[v].videos[q]};
 				} catch (e) {
 					console.log(e);
 				}
@@ -253,14 +252,14 @@ var courses = {
 				try {
 					req = {type:'video',object:obj.sections[s].subsec[b].videos[v]};
 				} catch (e) {
-					req = {type:'section',object:obj.practice[b].subsec[v]};
+					req = {type:'section',object:obj.practice.tests[b].subsec[v]};
 					console.log(e);
 				}
 			} else if (!v && b) {
 				try {
 					req = {type:'video',object:obj.sections[s].subsec[b]};
 				} catch (e) {
-					req = {type:'section',object:obj.practice[b].subsec};
+					req = {type:'section',object:obj.practice.tests[b].subsec};
 					console.log(e);
 				}
 			} else if (!b && s) {
@@ -409,12 +408,29 @@ var courses = {
 				item.appendTo(nav);
 			});
 			
-			$('<li/>').append($('<a/>',{
-				text: 'Practice',
+			var prac = $('<li/>').append($('<a/>',{
+				text: 'Practice Tests',
 				href: '#practice',
 				"class": "section-link practice-section-link collapsible-header",
 				"data-req" : JSON.stringify({section:'practice'})
-			})).appendTo(nav);
+			})).append($('<div/>',{
+				"class": "collapsible-body",
+				html: '<span>'+obj.practice.description+'</span>'
+			}).append($('<div/>',{
+				"class":"collapsible-footer"
+			})));
+
+			$('.collapsible-footer',prac).append(
+				$('<a/>',{
+					"class": "cfooter-dl-link",
+					"data-sec":"practice",
+					href: "",
+					text: "downloads",
+					style: "color:gray"
+				}).prepend('<i class="material-icons">cloud_download</i>&nbsp;')
+			)
+			
+			prac.appendTo(nav);
 			
 			nav.appendTo($('#course-nav-container'));
 
@@ -432,9 +448,9 @@ var courses = {
 			if (!courses.defaultReq.section) {
 				return false;
 			} else if (courses.defaultReq.section === 'practice') {
-				var sec = courses.data.object.practice,
-					sub = courses.data.object.practice[courses.defaultReq.subsec];
-					//console.log(sub)
+				var sec = courses.data.object.practice.tests,
+					sub = courses.data.object.practice.tests[courses.defaultReq.subsec];
+					
 					switch (sub) {
 						case undefined:
 							$.each(sec,function(k,v){
@@ -477,8 +493,9 @@ var courses = {
 							h.append('<h3><p>'+pracSec.title+'</p></h3>');
 							
 							$.each(pracSec.videos,function(k,v){
-								var slug = v.slug;
-								var y = {section:courses.defaultReq.section,subsec:courses.defaultReq.subsec,video:courses.defaultReq.video,question:slug};
+								var slug = v.slug,
+									y = {section:courses.defaultReq.section,subsec:courses.defaultReq.subsec,video:courses.defaultReq.video,question:slug},
+									dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
 								
 								a = $('<a/>',{
 									"class" : 'course-click',
@@ -491,7 +508,7 @@ var courses = {
 								if (!v){
 									div.text("No videos found in this section");
 								} else {
-									var time = ~~( v.time / 60 ) + 'm ' + ( v.time % 60 ) + 's'
+
 									$('<div/>',{
 										"class":"col s4",
 										style: "padding:0px"
@@ -507,7 +524,7 @@ var courses = {
 										text : v.name
 									})).append($('<span/>',{
 										"class":"course-video-duration",
-										text : time
+										text : dur
 									})).appendTo(div);
 
 									div.appendTo(a);
@@ -531,7 +548,8 @@ var courses = {
 						h.append("<span>No videos found in this section</span>");
 					} else {
 						$.each(value.videos,function(k,v){
-							var z = {section:courses.defaultReq.section,subsec:key,video:v.slug};
+							var z = {section:courses.defaultReq.section,subsec:key,video:v.slug},
+								dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
 							a = $('<a/>',{
 									"class" : 'course-click',
 									href : courses.data.object.link+'/'+z.section+'/'+key+'/'+v.slug,
@@ -543,7 +561,7 @@ var courses = {
 							if (!v){
 								div.text("No videos found in this section");
 							} else {
-								var time = ~~( v.time / 60 ) + 'm ' + ( v.time % 60 ) + 's'
+
 								$('<div/>',{
 									"class":"col s4",
 									style: "padding:0px"
@@ -559,7 +577,7 @@ var courses = {
 									text : v.name
 								})).append($('<span/>',{
 									"class":"course-video-duration",
-									text : time
+									text : dur
 								})).appendTo(div);
 								
 								/*$('<div/>',{
@@ -581,7 +599,7 @@ var courses = {
 			var txt = '';
 			var obj = courses.data.object;
 			if (courses.defaultReq.section === 'practice') {
-				txt = courses.defaultReq.section+' &raquo; '+obj.practice[courses.defaultReq.subsec].name+' &raquo; '+obj.practice[courses.defaultReq.subsec].subsec[courses.defaultReq.video].title+' &raquo; '+req.object.name;
+				txt = courses.defaultReq.section+' &raquo; '+obj.practice.tests[courses.defaultReq.subsec].name+' &raquo; '+obj.practice.tests[courses.defaultReq.subsec].subsec[courses.defaultReq.video].title+' &raquo; '+req.object.name;
 			} else {
 				txt = courses.defaultReq.section+' &raquo; '+courses.defaultReq.subsec+' &raquo; '+req.object.name;
 			}
@@ -730,8 +748,8 @@ var courses = {
 			$('#course_modal').modal('open');
 			cont.append('<h1><span>'+s+'</span> Downloads</h1>')
 
-			var obj = courses.data.object;
-			var res = obj.sections[s].resources;
+			var obj = courses.data.object,
+				res = (typeof obj.sections[s] === 'undefined') ? obj.practice.resources : obj.sections[s].resources;
 
 			var inner = $('<div/>',{
 				"class" : "dls-inner"

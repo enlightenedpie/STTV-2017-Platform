@@ -409,7 +409,7 @@ function sttv_check_zip() {
 	$ca_zips = json_decode(file_get_contents('https://gist.githubusercontent.com/enlightenedpie/99139b054dd9e4ad3f81689e2326d198/raw/69b654b47a01d2dc9e9ac34816c05ab5aa9ad355/ca_zips.json'));
 	$tax = 0;
 	if (in_array($zip,$ca_zips->losangeles)) :
-		$tax = 9;
+		$tax = 9.5;
 	else :
 		foreach ($ca_zips as $array) :
 			if (in_array($zip,$array)) :
