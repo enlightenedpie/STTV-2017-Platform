@@ -1,7 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {die;}
 
-if ( ! defined( 'ABSPATH' ) ) 
-	die;
 add_action('stripepress_events','kill_the_messenger',11,2);
 function kill_the_messenger($event,$object) {
 	
