@@ -9,23 +9,26 @@ class STTV_Setup {
 	
 	public function __construct() {
 		
-		add_action( 'after_setup_theme', array($this,'sttv_declare_themes_support') );
-		add_action( 'init', array($this,'sttv_add_post_type_support') );
-		add_action( 'init', array($this,'sttv_bd') );
-		add_action( 'admin_init', array($this,'sttv_disable_admin_area') );
+		//theme setup
+		add_action( 'after_setup_theme', [ $this,'sttv_declare_themes_support' ] );
+		add_action( 'init', [ $this,'sttv_add_post_type_support'] );
+		add_action( 'init', [ $this,'sttv_bd' ] );
 		
-		add_filter( 'excerpt_length', array($this,'sttv_custom_excerpt_length'), 999 );
-		add_filter( 'author_link', array($this,'sttv_modify_author_link'), 10, 1 );
-		add_filter( 'ls_meta_generator', '__return_false' );
-		add_filter( 'show_admin_bar', '__return_false' );
-		add_filter( 'login_headerurl' , array($this,'sttv_login_url'));
+		add_action( 'admin_init', [ $this,'sttv_disable_admin_area' ] );
+		
+		add_filter( 'excerpt_length', [ $this,'sttv_custom_excerpt_length' ], 999 );
+		add_filter( 'author_link', [ $this,'sttv_modify_author_link' ], 10, 1 );
+		add_filter( 'login_headerurl' , [ $this,'sttv_login_url' ] );
 
 		// REST alterations
-		add_filter( 'rest_url_prefix', array($this,'sttv_rest_prefix') );
-		add_action( 'rest_api_init', array($this,'sttv_rest_cors'), 15 );
+		add_action( 'rest_api_init', [ $this,'sttv_rest_cors' ], 15 );
+		add_filter( 'rest_url_prefix', [ $this,'sttv_rest_prefix' ] );
 
+		//cleanup
 		remove_action( 'wp_head', '_admin_bar_bump_cb' );
 		remove_action( 'wp_head', 'wp_generator' );
+		add_filter( 'ls_meta_generator', '__return_false' );
+		add_filter( 'show_admin_bar', '__return_false' );
 
 		$flushed = get_option('sttv_rest_flush_once');
 		if (!$flushed){
@@ -37,24 +40,24 @@ class STTV_Setup {
 	
 	public function sttv_declare_themes_support() {
 
-		add_theme_support( 'post-thumbnails', array( 'post', 'page' ) );
+		add_theme_support( 'post-thumbnails', [ 'post', 'page' ] );
 		add_theme_support( 'custom-header' );
 		add_theme_support( 'title-tag' );
 		add_theme_support( 'automatic-feed-links' );
 
-		$post_formats = array( 'aside', 'link', 'gallery', 'status', 'quote', 'image', 'video', 'audio', 'chat' );
+		$post_formats = [ 'aside', 'link', 'gallery', 'status', 'quote', 'image', 'video', 'audio', 'chat' ];
 		add_theme_support( 'post-formats',$post_formats );
 
-		$html5 = array( 'comment-list', 'comment-form', 'search-form', 'gallery', 'caption' );
+		$html5 = [ 'comment-list', 'comment-form', 'search-form', 'gallery', 'caption' ];
 		add_theme_support( 'html5', $html5 );
 
-		$scroll_args = array(
+		$scroll_args = [
 			'type'           => 'scroll',
 			'container'      => 'content',
 			'wrapper'        => true,
 			'render'         => false,
 			'posts_per_page' => 8,
-		);
+		];
 		add_theme_support( 'infinite-scroll', $scroll_args );
 
 	}
