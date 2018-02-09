@@ -20,12 +20,18 @@ var common = {
         test: /\.(css|sass|scss)$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader', 'sass-loader'],
+          use: [
+            {
+                loader: 'css-loader',
+                options: {
+                    url: false
+                }
+            },
+            {
+                loader: 'sass-loader'
+            }
+          ],
         })
-      },
-      {
-        test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/,
-        use: 'url-loader?limit=100000'
       }
    ]
  },
@@ -40,7 +46,7 @@ var common = {
   context: __dirname,
   resolve: {
     extensions: [
-      '*','.js', '.jsx', '.json','.sass'
+      '*','.js', '.jsx', '.json','.sass','.woff','ttf'
     ],
     modules: [
       'node_modules',
@@ -50,10 +56,5 @@ var common = {
     ]
   }
 };
-
-// var config = merge(
-//   common,
-//   sassConfig.config()
-// );
 
 module.exports = common;
