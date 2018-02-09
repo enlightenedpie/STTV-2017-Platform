@@ -76,7 +76,7 @@ class STTV_Setup {
             return;
 		}
 		if( ! current_user_can( 'edit_others_posts' ) ) {
-           //Redirect to main page if the user has no "manage_options" capability
+           //Redirect to main page if the user is not an Editor or higher
            wp_redirect( get_site_url( ) );
            wp_die();
 		}
