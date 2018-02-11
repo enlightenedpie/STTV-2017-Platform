@@ -115,4 +115,4 @@ endforeach;
 </div>
 <?php }
 
-print '<div id="logout-btn" style="width:100%;padding:1em;text-align:center"><a style="background-color:#109fda;color:white" href="/logout" class="btn">Logout</a></div>';
+print '<div id="logout-btn" style="width:100%;padding:1em;text-align:center"><a style="background-color:#109fda;color:white" href="'.site_url('/logout').'" class="btn">Logout</a></div>';
