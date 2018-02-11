@@ -28,6 +28,7 @@ add_action( 'rest_api_init', function() use ( $sttvlimiter ) {
 	$sttvlimiter->load();
 }, 5 );
 
+require('sttv_auth.class.php');
 require('sttv_feedback.class.php');
 require('sttv_product_reviews.class.php');
 require('sttv_test_dates.class.php');
