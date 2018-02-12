@@ -118,7 +118,7 @@ class STTV_Setup {
         	header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
 			header( 'Access-Control-Allow-Credentials: true' );
 			header( 'Content-Type: application/sttv.app.data+json' );
-			header( 'Host: supertutortv.com/api/'.STTV_REST_NAMESPACE );
+			header( 'Host: '.rest_url(STTV_REST_NAMESPACE) );
 
 			//remove default headers
 			header_remove( 'Access-Control-Expose-Headers' );
