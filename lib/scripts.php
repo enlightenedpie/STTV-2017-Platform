@@ -132,22 +132,20 @@ function stajax_object() {
 	global $post; ?>
 	<script>
 		<?php
-			$stajax = array(
+			$stajax = [
 				'ajaxURL'=>trailingslashit(site_url()).'stajax.php',
 				'contentURL'=>get_stylesheet_directory_uri(),
 				'rootURL'=>site_url(),
-				'stripe' => array(
+				'stripe' => [
 					'public_key' => Spress()->public_key
-				)
-			);
+				]
+			];
 			$nonce = has_filter( 'rest_nonce_action' ) ? STTV_REST_AUTH : 'wp_rest';
-			if (is_singular('courses') || is_page('jobs')) {
-				$stajax['rest'] = array(
-					'ID' => $post->ID,
-					'nonce' => wp_create_nonce( $nonce ), 
-					'url' => rest_url(STTV_REST_NAMESPACE)
-				);
-			}
+			$stajax['rest'] = [
+				'ID' => $post->ID,
+				'nonce' => wp_create_nonce( $nonce ), 
+				'url' => rest_url(STTV_REST_NAMESPACE)
+			];
 		?>
 		var stajax = <?php echo json_encode($stajax); ?>;
 	</script>
