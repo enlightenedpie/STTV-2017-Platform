@@ -43,16 +43,16 @@ class STTV_Auth extends WP_REST_Controller {
 
         switch ($action) {
             case 'login':
-                return $this->login($auth);
+                return $this->login($auth,site_url('/my-account'));
                 break;
 
             case 'logout':
-                return $this->logout(home_url());
+                return $this->logout(site_url());
                 break;
         }
     }
 
-    private function login( $auth ) {
+    private function login( $auth, $redirect = '' ) {
         if ( null === $auth || empty($auth) ) {
             $data = [
 				'code'    => 'auth_header',
@@ -70,12 +70,18 @@ class STTV_Auth extends WP_REST_Controller {
         unset($auth[0]);
         $pw = implode( ':', $auth);
 
-        return wp_signon([
-            'user_login'=>$user,
-            'user_password'=>$pw,
-            'remember'=>true
-        ],
-        true);
+        $login = wp_signon([
+            'user_login' => $user,
+            'user_password' => $pw,
+            'remember' => true
+        ], true);
+
+        if ( !is_wp_error( $login ) ){
+            unset($login->data->user_pass,$login->data->user_activation_key);
+            return [ 'data' => $login->data, 'redirect' => $redirect ];
+        } else {
+            return $login;
+        }
     }
 
     private function logout( $redirect = '' ){
