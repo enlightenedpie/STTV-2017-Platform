@@ -2,8 +2,7 @@
 	if (!is_user_logged_in()) : ?>
 	<div id="account-block">
 		<div class="sttvmodal"></div>
-	<?php
-		print sttv_login_form();?>
+	<?php print sttv_login_form(); ?>
 	</div>
 	<script>
 		( function ( $ ) { //begin wrapper
