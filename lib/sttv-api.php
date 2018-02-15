@@ -38,7 +38,6 @@ function sttv_login_form() { ?>
 	<div class="loading_overlay"></div>
 	<div id="form-identity">
 		<img src="<?php print get_header_image(); ?>" alt="Login form header" />
-		<p>&nbsp;</p>
 	</div>
 	<form id="sttv_login_form" action="/" method="post">
 		<p class="message"></p>
@@ -52,7 +51,7 @@ function sttv_login_form() { ?>
 				<label for="sttv_pass">Password</label>
 			</div>
 		</div>
-		<button type="submit" class="z-depth-1 submitter" id="login-btn">Login</button>
+		<button type="submit" class="z-depth-1" id="login-btn">Login</button>
 		<input type="hidden" name="whichform" value="login" />
 	</form>
 	<div id="forgot-block"><a class="lostpwd" href="<?php print wp_lostpassword_url(); ?>">Forgot your password?</a></div>
