@@ -26,11 +26,7 @@ class STTV_Auth extends WP_REST_Controller {
                     'action' => [
                         'required' => true,
                         'type' => 'string',
-                        'description' => 'The type of auth action requested',
-                        'enum' => [
-                            'login',
-                            'logout'
-                        ]
+                        'description' => 'The type of auth action requested'
                     ]
                 ]
             ]
@@ -44,29 +40,28 @@ class STTV_Auth extends WP_REST_Controller {
         switch ($action) {
             case 'login':
                 return $this->login($auth,site_url('/my-account'));
-                break;
 
             case 'logout':
                 return $this->logout(site_url());
-                break;
+
+            default:
+                return $this->custom_response( 'action_invalid', 'The action parameter was invalid. Check documentation for allowed actions.', 400 );
         }
     }
 
     private function login( $auth, $redirect = '' ) {
         if ( null === $auth || empty($auth) ) {
-            $data = [
-				'code'    => 'auth_header',
-				'message' => 'You must set the authentication header X-STTV-Auth',
-				'data'    => [ 
-					'status' => 401
-				]
-			];
-			return new WP_REST_Response( $data, 401 );
+            return $this->custom_response( 'auth_header', 'You must set the authentication header X-STTV-Auth', 401 );
         }
 
         $auth = explode( ':', base64_decode($auth) );
 
-        $user = $auth[0];
+        // username validation
+        $user = sanitize_user($auth[0]);
+        if (!validate_username($user)){
+            return $this->custom_response( 'login_fail', 'The username or password you entered is incorrect', 401 );
+        }
+
         unset($auth[0]);
         $pw = implode( ':', $auth);
 
@@ -78,15 +73,29 @@ class STTV_Auth extends WP_REST_Controller {
 
         if ( !is_wp_error( $login ) ){
             unset($login->data->user_pass,$login->data->user_activation_key);
-            return [ 'data' => $login->data, 'redirect' => $redirect ];
+            return $this->custom_response( 'login_success', 'Login successful! Redirecting...', [ 'data' => $login->data, 'redirect' => $redirect ], 200 );
         } else {
-            return $login;
+            return $this->custom_response( 'login_fail', '<strong>ERROR: </strong>The username or password you entered is incorrect', $login, 401 );
         }
     }
 
     private function logout( $redirect = '' ){
         wp_logout();
         return $redirect;
+    }
+
+    private function custom_response( $code = '', $msg = '', $data = [], $status = 200 ) {
+        if ( !is_object($data) && intval($data) > 99 ) {
+            $status = $data;
+            $data = [ 'status' => $status ];
+        }
+
+        $d = [
+            'code'    => $code,
+            'message' => $msg,
+            'data'    => $data
+        ];
+        return new WP_REST_Response( $d, $status );
     }
 }
 new STTV_Auth;
