@@ -69,31 +69,6 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 				endif;
 	}
 	
-	function sttv_ajax_login($usernm,$pass) {
-			$usernm = sanitize_user($usernm,true);
-			
-		if (!empty($usernm) && validate_username($usernm)) {
-				
-				$user = wp_signon( array('user_login' => $usernm, 'user_password' => $pass, 'remember' => true), false );
-				
-				if( is_wp_error($user) ){
-					echo wp_send_json_error(array('message'=> '<strong>ERROR: </strong>The username and/or password is invalid. Please try again.','name'=>$user));
-				} else{
-					echo wp_send_json_success(array('message'=> __('Success!', 'wordpress-seo'),'name' => $user->user_firstname));
-				}
-				
-			} else {
-				if (empty($usernm)) :
-					$themsg = 'Username is empty';
-				else :
-					$themsg = 'The username is invalid';
-				endif;
-				echo wp_send_json_error(array('message'=> __($themsg, 'wordpress-seo'),'name'=>$usernm));
-				
-			}
-		
-	}
-	
 	##################################
 	##### SUBSCRIBE FORM HANDLER #####
 	##################################
