@@ -95,7 +95,7 @@ $('form#sttv_login_form').on('submit',function(e) {
 		},
 		error : function(x) {
 			var data = x[0].responseJSON,
-				msg = ( typeof data.data.errors !== 'undefined') ? data.data.errors.too_many_retries[0] : data.message;
+				msg = ( typeof data.data.errors.too_many_retries !== 'undefined') ? data.data.errors.too_many_retries[0] : data.message;
 
 			$('.message').html(msg)
 			ld.fadeOut(250)

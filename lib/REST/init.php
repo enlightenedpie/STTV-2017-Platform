@@ -9,11 +9,17 @@ require( __DIR__ . '/limiter/Limiter.php' );
 remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
 remove_action( 'template_redirect', 'rest_output_link_header', 11, 0 );
 
-if ( has_filter( 'rest_nonce_action' ) ) {
-	add_filter( 'rest_nonce_action', function() {
-		return STTV_REST_AUTH;
-	});
+function sttv_rest_auth() {
+	if ( has_filter( 'rest_nonce_action' ) ) {
+		$auth = 'sttv:rest:auth';
+		add_filter( 'rest_nonce_action', function() {
+			return $auth;
+		});
+		return $auth;
+	}
+	return 'wp_rest';
 }
+define('STTV_REST_AUTH', sttv_rest_auth());
 
 function sttvlimiter() {
 	static $instance;
