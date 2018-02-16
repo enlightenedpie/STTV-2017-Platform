@@ -22,6 +22,28 @@ function register_course_meta_endpoint() {
 			]
 		]
 	]);
+
+	register_rest_route( STTV_REST_NAMESPACE , '/course_dl', [
+		[
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => 'get_course_download',
+			'permission_callback' => 'course_permissions_check',
+			'args' => [
+				'res' => [
+					'required' => true
+				],
+				'section' => [
+					'required' => true
+				],
+				'test' => [
+					'required' => true
+				],
+				'checksum' => [
+					'required' => true
+				]
+			]
+		]
+	]);
 }
 
 function course_access_log( WP_REST_Request $request ) {
@@ -116,6 +138,32 @@ function get_course_meta($data) {
 	
 	return $data;
 
+}
+
+function get_course_download( WP_REST_Request $req ){
+	$params = array_map( 'trim',$req->get_params() );
+	
+	$root_path = STTV_RESOURCE_DIR.strtolower( $params['test'] ).'/'.$params['section'].'/';
+	$response = new WP_REST_Response;
+
+	if ( is_file($root_path.$params['res']) && $params['checksum'] == md5_file($root_path.$params['res']) ) {
+		$headers = [
+			'Pragma'=>'public',
+			'Expires'=>0,
+			'Cache-Control'=>'must-revalidate, post-check=0, pre-check=0',
+			'Content-Description'=>'File Transfer',
+			'Content-type'=>'application/octet-stream',
+			'Content-disposition'=>'attachment;filename="'.$params['res'].'"',
+			'Content-Length'=>filesize($root_path.$params['res']),
+			'Content-Transfer-Encoding'=>'binary'
+		];
+		$response->set_headers( $headers );
+		readfile($root_path.$params['res']);
+	} else {
+		$response->set_status( 404 );
+	}
+	
+	return $response;
 }
 
 include_once 'courses/sttv_course.class.php';
