@@ -154,7 +154,50 @@ function kill_the_messenger($event,$object) {
 				
 				wp_mail($to,'Test!!!',$body,$headers);
 
+				// revoke access
 				$user->set_role('subscriber');
+
+				// send Goodbye email
+				$cus = \Stripe\Customer::retrieve($obj->data->object->customer);
+				$name = explode(' ',$cus->description);
+				$json =	array(
+					'type'=>'messages',
+					'call'=>'send-template',
+					'template_name'=>'subscription-ended',
+					'template_content'=>array(
+						array(
+							'name'=>'fname',
+							'content'=>$name[0]
+						),
+						array(
+							'name'=>'coursename',
+							'content'=>$obj->data->object->plan->name
+						)
+					),
+					'message'=>array(
+						'from_email'=>$to,
+						'from_name'=>'SupertutorTV',
+						'to'=>array(
+							array(
+								'type'=>'to',
+								'email'=>$cus->email,
+								'name'=>$cus->description
+							)
+						),
+						'headers'=>array(
+							'Reply-To'=>$to,
+						),
+						'metadata'=>array(
+							'website'=>'https://supertutortv.com'
+						),
+						'inline_css'=>true,
+						'track_opens'=>true,
+						'track_clicks'=>true,
+						'bcc_address'=>'dave@supertutortv.com'
+					)
+				);
+				Mandrill::setApiKey(MANDRILL_API_KEY);
+				Mandrill::call((array) $json);
 
 			} catch (Exception $e) {
 				ob_start();
