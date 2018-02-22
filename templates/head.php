@@ -11,19 +11,24 @@
     <?php endif; ?>
     	<script>
 		
-			var siteKey = '6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86';
-			var loginRecap, contactRecap;
-			
+			var siteKey = '<?php echo RECAPTCHA_SITEKEY; ?>',
+				sttvRecap = null
+
+			var recapResponse = function(response){
+				var field = $('#sttv_recap').closest('form')
+				if ($('.submitter',field).prop('disabled')){
+					$('.submitter',field).prop('disabled',false)
+				} else {
+					$('.submitter',field).prop('disabled',true)
+				}
+			}
+
 			var recapOnload = function() {
-				<?php if (is_page('contact')) : ?>
-					contactRecap = grecaptcha.render('contact_recap', {
-						'sitekey' : '<?php echo RECAPTCHA_SITEKEY; ?>'
-					});
-				<?php endif; if (is_page('subscribe')) : ?>
-					grecaptcha.render('subscribe_form', {
-						'sitekey' : '<?php echo RECAPTCHA_SITEKEY; ?>'
-					});
-				<?php endif; ?>
+				sttvRecap = grecaptcha.render('sttv_recap', {
+					'sitekey' : siteKey,
+					'callback' : recapResponse,
+					'expired-callback' : recapResponse
+				});
 			};
 		
 		</script>
