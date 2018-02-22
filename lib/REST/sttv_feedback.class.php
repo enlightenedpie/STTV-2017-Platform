@@ -131,7 +131,6 @@ class STTV_Feedback extends WP_REST_Controller {
 				$headers[] = 'Content-Type: text/html; charset=UTF-8';
 				$headers[] = 'From: '.$user->first_name.' '.$user->last_name.' <'.$user->user_email.'>';
 				$headers[] = 'Sender: SupertutorTV Website <info@supertutortv.com>';
-				//$headers[] = 'Bcc: David Paul <dave@supertutortv.com>';
 
 				wp_mail(
 					get_option('admin_email'),
