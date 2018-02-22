@@ -148,14 +148,15 @@ function kill_the_messenger($event,$object) {
 
 				$user = new WP_User($cus->metadata->wp_id);
 
+				// revoke access
+				$user->remove_all_caps();
+				$user->set_role('subscriber');
+
+				// send email log
 				ob_start();
 				print_r($user);
 				$body = ob_get_clean();
-				
 				wp_mail($to,'Test!!!',$body,$headers);
-
-				// revoke access
-				$user->set_role('subscriber');
 
 				// send Goodbye email
 				$cus = \Stripe\Customer::retrieve($obj->data->object->customer);
