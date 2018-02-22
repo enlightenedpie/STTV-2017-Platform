@@ -1,16 +1,16 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+global $post;
+
 /**
- * Let's check that our current user is logged in. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
+ * Let's check that our current user is logged in and has access capabilities. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
 **/
 // !current_user_can(get_post_meta($post->ID,'course_primary_cap',true))
-if (!is_user_logged_in()) :
+if (!is_user_logged_in() || !current_user_can(get_post_meta($post->ID,'course_primary_cap',true))) :
 	wp_redirect( esc_url( add_query_arg( 'access', time(), get_permalink($cpp) ) ) );
 	exit;
 endif;
-
-global $post;
 
 $cpp = get_post_meta($post->ID,'course_product_page',true);
 
@@ -56,6 +56,9 @@ var _st = {
 		}
 		if (ajaxp.method !== 'GET') {
 			ajaxp['data'] = JSON.stringify(obj.cdata || {})
+		}
+		if (typeof obj.accepts !== 'undefined'){
+			ajaxp['accepts'] = obj.accepts
 		}
 		$.ajax(ajaxp)
 	},
@@ -762,7 +765,7 @@ var courses = {
 					inner.append($('<a/>',{
 						"class" : "dl-link col s6 m4",
 						text : k,
-						href : "<?php echo site_url(); ?>/course-dl.php?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
+						href : stajax.dlURL+"?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
 					}))
 				})
 			}
@@ -1035,4 +1038,5 @@ get_template_part('templates/title'); ?>
 	<div id="course-nav-container" class="col s12 m9"></div>
 </div>
 </section>
+<a id="dwnld" style="display:block;height:1px;width:1px" title=""></a>
 <?php get_footer(); ?>
