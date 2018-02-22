@@ -30,12 +30,11 @@ wp_get_current_user();
         	<label for="sttv_contact_message">Message</label>
         </div>
         <div class="input-field col s12">
-        	<div id="contact_recap" class="g-recaptcha"></div>
+        	<div id="sttv_recap" class="g-recaptcha"></div>
         </div>
         <div class="input-field col s12">
-        	<button type="submit" class="z-depth-1 submitter" id="contact_submit">Send Message</button>
+        	<button type="submit" class="z-depth-1 submitter" id="contact_submit" disabled>Send Message</button>
         </div>
-        <input type="hidden" name="whichform" value="contact" />
       </div>
     </form>
   </div>

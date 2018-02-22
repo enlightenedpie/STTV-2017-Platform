@@ -5,6 +5,18 @@ body
 	font-weight: 400
 	color: $ltblack
 	background-color: $bodybg
+
+	#main-wrapper #not-header-wrapper
+
+		.input-field input:focus + label, .input-field textarea.materialize-textarea:focus + label, .input-field .prefix.active
+			color: $azure
+
+		.input-field input:focus, .input-field textarea.materialize-textarea:focus
+			border-bottom: 1px solid $azure
+			//box-shadow: 0 1px 0 0 $ltblack
+
+		input:-webkit-autofill
+			background-color: inherit
 	
 	a
 		text-decoration: none
@@ -45,7 +57,7 @@ body
 		background-color: rgba(16,159,218,.90)
 		
 	button[disabled]
-		cursor: not-allowed
+		cursor: not-allowed !important
 		background-color: $gray
 		
 	small
@@ -71,16 +83,6 @@ body
 
 	td
 		padding: $ittybitty
-
-	.input-field input[type=text]:focus + label, .input-field input[type=password]:focus + label
-		color: $azure
-
-	.input-field input[type=text]:focus, .input-field input[type=password]:focus
-		border-bottom: 1px solid $azure
-		//box-shadow: 0 1px 0 0 $ltblack
-
-	input:-webkit-autofill
-		background-color: inherit
 	
 /** Mobile **/	
 @include MQ($mq-tablet)

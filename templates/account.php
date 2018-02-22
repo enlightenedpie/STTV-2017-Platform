@@ -1,7 +1,11 @@
 <?php 
 	if (!is_user_logged_in()) : ?>
 	<div id="account-block">
-		<div class="sttvmodal"></div>
+		<div class="sttvmodal">
+			<div class="closer-wrapper">
+				<i class="material-icons login-closer close">clear</i>
+			</div>
+		</div>
 	<?php print sttv_login_form(); ?>
 	</div>
 	<script>
@@ -16,4 +20,3 @@
 		} ( jQuery ) ); //end wrapper
 	</script>
 <?php endif; ?>
-<?php //do_shortcode('[mepr-account-form]') ?>
