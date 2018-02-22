@@ -38,8 +38,6 @@ function sttv_enqueue_all() {
 		wp_enqueue_script('sttv-checkout-stripe','https://js.stripe.com/v3/','sttv-checkout',null,false);
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
 		wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize-noform.css',false,time());
-	elseif ( is_page('contact') ) :
-		//wp_enqueue_script('sttv-validate',get_stylesheet_directory_uri().'/s/sttv-validate.js','jquery',time(),true);
 	else :
 		wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize.min.css',false,time());
 	endif;
@@ -136,6 +134,7 @@ function stajax_object() {
 				'ajaxURL'=>trailingslashit(site_url()).'stajax.php',
 				'contentURL'=>get_stylesheet_directory_uri(),
 				'rootURL'=>site_url(),
+				'dlURL'=>site_url('course-dl.php'),
 				'stripe' => [
 					'public_key' => Spress()->public_key
 				]

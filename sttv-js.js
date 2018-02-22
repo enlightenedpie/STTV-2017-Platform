@@ -42,7 +42,7 @@ $('#main-menu').click(function(e) {
 	}
 });
 
-$('#acctmodal, .close, .sttvmodal').on('click touchstart',function(e) {
+$('#acctmodal, .close').on('click touchstart',function(e) {
 	e.preventDefault();
 	closerFunc();
 });
@@ -63,7 +63,6 @@ thenav.on('click touchstart',function(e) {
 
 $('li.menu-item-has-children>a').click(function(e) {
 	e.preventDefault();
-	//console.log('click happened');
 	$(this).siblings('ul.sub-menu').toggleClass('active').promise().done(function(){
 		$('ul.sub-menu').not(this).removeClass('active');
 	});
@@ -71,6 +70,10 @@ $('li.menu-item-has-children>a').click(function(e) {
 
 $('form#sttv_login_form').on('submit',function(e) {
 	e.preventDefault();
+	if (0 === $('#sttv_user').val().length){
+		$('.message').html('Username is required')
+		return;
+	}
 
 	var loader = '<img src="'+stajax.contentURL+'/i/sttv-spinner.gif" alt="Loading..." />',
 		ld = $('.loading_overlay');
@@ -90,13 +93,13 @@ $('form#sttv_login_form').on('submit',function(e) {
 				ld.empty().html('<p class="sblock"><strong><i class="material-icons">done</i></strong></p>').fadeIn(250)
 				$('.sblock').hide().fadeIn(250)
 				setTimeout(function(){
-					window.location.href = data.data.redirect
+					window.location.href = data.redirect
 				},250);
 			}
 		},
 		error : function(x) {
 			var data = x[0].responseJSON,
-				msg = ( typeof data.data.errors.too_many_retries !== 'undefined') ? data.data.errors.too_many_retries[0] : data.message;
+				msg = ( typeof data.errors.too_many_retries !== 'undefined') ? data.errors.too_many_retries[0] : data.message;
 
 			$('.message').html(msg)
 			ld.fadeOut(250)
@@ -124,7 +127,7 @@ $('form#sttv_login_form').on('submit',function(e) {
 	})
   
   } ( jQuery ) ); //end wrapper
-$('.submitter').click(function(e) {
+$('.suitter').click(function(e) {
 		e.preventDefault();
 		
 		var submitter = {

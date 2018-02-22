@@ -1,4 +1,4 @@
-$('.submitter').click(function(e) {
+$('.suitter').click(function(e) {
 		e.preventDefault();
 		
 		var submitter = {

@@ -7,7 +7,7 @@ $current_user = wp_get_current_user();
 get_header(); ?>
 <?php get_template_part('templates/title'); ?>
 <section id="content-wrapper-full">
-<div id="subscribe_page_form" class="col s12 m6 push-m3 z-depth-5">
+<div id="subscribe_page_form" class="col s12 m6 push-m3 z-depth-1">
 <h4>Join our mailing list to get exclusive news, updates, coupons, and promotions from SupertutorTV!</h4>
 	<form id="subscribe_page_mc" class="col s12" action="/" method="post" style="position:relative">
 		<div class="loading_overlay"></div>
@@ -25,37 +25,46 @@ get_header(); ?>
 			  <label for="sttv_mc_email" data-error="Please enter a valid email address">Email Address (required)</label>
 			</div>
 			<div class="input-field s12">
-				<div id="subscribe_form" class="g-recaptcha"></div>
+				<div id="sttv_recap" class="g-recaptcha"></div>
 			</div>
 			<p class="message"></p>
-			<button class="g-recaptcha z-depth-2 submitter" data-callback="response" data-sitekey="6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86">Submit</button>
-			<input type="hidden" name="whichform" value="subscribe" />
+			<button class="g-recaptcha z-depth-1 submitter" data-callback="response" data-sitekey="6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86" disabled>Submit</button>
 		</div>
 	</form>
 </div>
 <script>
-	var subscribe = {
-		push : function() {
-			$.post(stajax.ajaxURL,{action: 'sttvsubmitter',value: $('#subscribe_page_mc').serialize()})
-				.done(function(key){
-					subscribe.success(key);
-				})
-				.fail(function(){
-					console.log('failed')
-				})
-		},
-		success : function(k) {
-			console.log(k);
-		},
-		fail : function() {
-			
+	_st.subscribe = function(){
+		this.fields : {
+			fname : '',
+			lname : '',
+			email : '',
+			g-recaptcha-response : ''
 		}
+		this.validate : function(cb){
+			var form = $('#subscribe_page_mc')
+			typeof cb === 'function' && cb()
+		},
+		this.push : function() {
+			_st.request({
+				route : stajax.rest.url+'/subscribe',
+				method : 'POST',
+				cdata : this.fields,
+				headers : {'X-WP-Nonce' : stajax.rest.nonce},
+				success : function(d){
+					console.log(d)
+				},
+				error : function(x){
+					console.log(x)
+				}
+			})
+		}
+
+		this.validate(this.push())
 	}
 	
-	$('#subscribe_page_mc').submit(function(e){
+	$('#subscribe_page_mc').on('submit',function(e){
 		e.preventDefault();
-		alert('You\'re doing it wrong');
-		return;
+		var sss = new _st.subscribe()
 	});
 </script>
 <div class="col s12">

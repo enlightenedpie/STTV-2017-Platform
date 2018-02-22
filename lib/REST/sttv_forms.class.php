@@ -1,0 +1,177 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * SupertutorTV Forms handler class.
+ *
+ * Properties, methods, and endpoints for processing the forms on the SupertutorTV website.
+ * This includes, for now, the login/logout process, contact form, and email list subscription form.
+ *
+ * @class 		STTV_Forms
+ * @version		1.4.0
+ * @package		STTV
+ * @category	Class
+ * @author		Supertutor Media, inc.
+ */
+class STTV_Forms extends WP_REST_Controller {
+
+    public function __construct() {
+        add_action( 'rest_api_init', [ $this, 'register_forms_endpoints' ] );
+    }
+
+    public function register_forms_endpoints() {
+        register_rest_route( STTV_REST_NAMESPACE , '/contact', [
+            [
+                'methods' => 'POST',
+                'callback' => [ $this, 'sttv_contact_form_processor' ]
+            ]
+        ]);
+
+        register_rest_route( STTV_REST_NAMESPACE , '/auth', [
+            [
+                'methods' => 'POST',
+                'callback' => [ $this, 'sttv_auth_processor' ],
+                'args' => [
+                    'action' => [
+                        'required' => true,
+                        'type' => 'string',
+                        'description' => 'The type of auth action requested'
+                    ]
+                ]
+            ]
+        ]);
+
+        register_rest_route( STTV_REST_NAMESPACE , '/subscribe', [
+            [
+                'methods' => 'POST',
+                'callback' => [ $this, 'sttv_subscribe_processor' ],
+                'permission_callback' => [ $this, 'verify_form_submit' ]
+            ]
+        ]);
+    }
+
+    public function sttv_contact_form_processor( WP_REST_Request $request ) {
+        $token = $request->get_param('g-recaptcha-response') ?: '';
+        if ( !$this->verify_form_submit( $token ) ){
+            return $this->forms_generic_response( 'authentication_failed', 'Shoo bot, shoo!', 401 );
+        }
+
+        $headers[] = 'Content-Type: text/html; charset=UTF-8';
+        $headers[] = 'From: '.$request->get_param( 'sttv_contact_name' ).' <'.$request->get_param( 'sttv_contact_email' ).'>';
+        $headers[] = 'Sender: SupertutorTV Website <info@supertutortv.com>';
+        $headers[] = 'Bcc: David Paul <dave@supertutortv.com>';
+        
+        $sentmail = wp_mail( get_bloginfo('admin_email'), $request->get_param( 'sttv_contact_subject' ), $request->get_param( 'sttv_contact_message' ), $headers );
+        
+        if ($sentmail) {
+            return $this->forms_generic_response( 'contact_form_success', 'Thanks for contacting us! We\'ll get back to you ASAP!', 200, [ 'sent' => $sentmail ] );
+        } else {
+            return $this->forms_generic_response( 'contact_form_fail', 'There was an issue sending your message. Please try again later.', 200, [ 'sent' => $sentmail ] );
+        }
+
+    }
+
+    public function sttv_auth_processor( WP_REST_Request $request ) {
+        $action = $request->get_param('action');
+        $auth = $request->get_header('X-STTV-Auth');
+
+        switch ($action) {
+            case 'login':
+                return $this->login($auth,site_url('/my-account'));
+
+            case 'logout':
+                return $this->logout(site_url());
+
+            default:
+                return $this->forms_generic_response( 'action_invalid', 'The action parameter was invalid. Check documentation for allowed actions.', 400 );
+        }
+    }
+
+    public function sttv_subscribe_processor( WP_REST_Request $request ) {
+
+        $api_path = 'https://us7.api.mailchimp.com/3.0/lists/df497b5cbd/members/'.md5(strtolower($request->get_param('email')));
+        
+        $response = wp_remote_post( $api_path, [
+            'headers' => [
+                'Authorization' => 'apikey '.MAILCHIMP_API_KEY,
+                'Content-Type' => 'application/json',
+                'X-HTTP-Method-Override' => 'PUT',
+                'User Agent' => STTV_UA
+            ],
+            'body' => [
+                'email_address' => $request->get_param('email'),
+                'status' => 'subscribed',
+                'status_if_new' => 'subscribed',
+                'merge_fields' => [
+                    'FNAME' => $request->get_param('fname'),
+                    'LNAME' => $request->get_param('lname')
+                ],
+                'ip_signup' => $_SERVER['REMOTE_ADDR']
+            ]
+        ]);
+
+        if ( is_wp_error($response) ){
+            return $this->forms_generic_response( 'sub_error', 'There was an error subscribing you to our list. Please try again later.', 403, ['error'=>$response] );
+        } else {
+            return $this->forms_generic_response( 'sub_success', '<h1 style="display:block">Success!</h1> Thank you for subscribing to SupertutorTV!', 200 );
+        }
+    }
+
+    private function login( $auth, $redirect = '' ) {
+        if ( null === $auth || empty($auth) ) {
+            return $this->forms_generic_response( 'auth_header', 'You must set the authentication header X-STTV-Auth', 400 );
+        }
+
+        $auth = explode( ':', base64_decode($auth) );
+
+        // username validation
+        $user = sanitize_user($auth[0]);
+        if (!validate_username($user)){
+            return $this->forms_generic_response( 'login_fail', '<strong>ERROR: </strong>The username or password you entered is incorrect', 401 );
+        }
+
+        unset($auth[0]);
+        $pw = implode( ':', $auth);
+
+        $login = wp_signon([
+            'user_login' => $user,
+            'user_password' => $pw,
+            'remember' => true
+        ], true);
+
+        if ( !is_wp_error( $login ) ){
+            unset($login->data->user_pass,$login->data->user_activation_key);
+            return $this->forms_generic_response( 'login_success', 'Login successful! Redirecting...', 200, [ 'data' => $login->data, 'redirect' => $redirect ] );
+        } else {
+            return $this->forms_generic_response( 'login_fail', '<strong>ERROR: </strong>The username or password you entered is incorrect', 401, $login );
+        }
+    }
+
+    private function logout( $redirect = '' ){
+        wp_logout();
+        return $redirect;
+    }
+
+    public function verify_form_submit( WP_REST_Request $request ){
+        $token = $request->get_param('g-recaptcha-response');
+        $err = new WP_Error( 'recaptcha_failed', 'Shoo bot, shoo!', [ 'status' => 403 ] );
+        if ( empty($token) ) {
+            return $err;
+        }
+        $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".RECAPTCHA_SECRET."&response=".$token."&remoteip=".$_SERVER['REMOTE_ADDR']),true);
+        return $resonse['success'] ?: $err;
+    }
+
+    private function forms_generic_response( $code = '', $msg = '', $status = 200, $extra = [] ) {
+        $data = [
+            'code'    => $code,
+            'message' => $msg,
+            'data'    => [ 
+                'status' => $status
+            ]
+        ];
+        $data = array_merge($data, (array) $extra);
+        return new WP_REST_Response( $data, $status );
+    }
+
+}
+new STTV_Forms;
