@@ -25,15 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 			
 			
 			switch ($output['whichform']) :
-			
-				case 'login' : //checks if this is a login attempt
-					//wp_send_json_error($output);
-					sttv_ajax_login($output['sttv_user'],$output['sttv_pass']);
-					break;
-				
-				case 'contact' : //checks if this is a contact form attempt
-					sttv_send_contact_form(get_bloginfo('admin_email'),$output['sttv_contact_subject'],$output['sttv_contact_message'],$output['sttv_contact_name'],$output['sttv_contact_email']);
-					break;
 					
 				case 'subscribe' :
 					sttv_subscribe_send($output['sttv_mc_fname'],$output['sttv_mc_lname'],$output['sttv_mc_email']);
@@ -46,70 +37,6 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 			
 		else :
 			wp_die('You\'re doing it wrong.');
-		endif;
-	}
-	
-	################################
-	##### CONTACT FORM HANDLER #####
-	################################
-	
-	function sttv_send_contact_form($to,$subject,$message,$name,$email) {
-				
-				$headers[] = 'Content-Type: text/html; charset=UTF-8';
-				$headers[] = 'Reply-to: '.$name.' <'.sanitize_email($email).'>';
-				$headers[] = 'From: SupertutorTV Website <info@supertutortv.com>';
-				//$headers[] = 'Bcc: David Paul <dave@supertutortv.com>';
-				
-				$sentmail = wp_mail($to,$subject,$message,$headers);
-				
-				if ($sentmail) :
-					wp_send_json_success(array('message'=>'Thanks for contacting us! We\'ll get back to you ASAP!','sent'=>$sentmail));
-				else :
-					wp_send_json_error(array('message'=>'There was an issue sending your message. Please try again later.','sent'=>$sentmail));
-				endif;
-	}
-	
-	##################################
-	##### SUBSCRIBE FORM HANDLER #####
-	##################################
-	
-	function sttv_subscribe_send($fname,$lname,$email) {
-		$content = array(
-			'email_address' => $email,
-			'status' => 'subscribed',
-			'status_if_new' => 'subscribed',
-			'merge_fields' => array(
-				'FNAME' => $fname,
-				'LNAME' => $lname
-			),
-			'ip_signup' => $_SERVER['REMOTE_ADDR']
-		);
-		$hashmail = md5(strtolower($email));
-		
-		$list_id = 'df497b5cbd';
-		$api_key = MAILCHIMP_API_KEY;
-		$api_path = 'https://us7.api.mailchimp.com/3.0/lists/'.$list_id.'/members/'.$hashmail;
-		
-		
-		$opts = array(
-		  'http'=>array(
-			'method'=>"POST",
-			'header'=>"Authorization: apikey ".$api_key."\r\n"
-					."Content-Type: application/json \r\n"
-					."X-HTTP-Method-Override: PUT \r\n"
-					."User Agent: SupertutorTV onpage ajax (".$_SERVER['SERVER_SOFTWARE'].")",
-			'content' => json_encode($content)
-		  )
-		);
-		
-		$context = stream_context_create($opts);
-		
-		$subscribe = file_get_contents($api_path,false,$context);
-		
-		if ($subscribe) :
-			echo wp_send_json_success(array('message'=> '<h1 style="display:block">Success!</h1> Thank you for subscribing to SupertutorTV!', 'subscribed' => true, 'sdata' => $subscribe));
-		else :
-			echo wp_send_json_error(array('message'=> 'Something went wrong. Please try again later.', 'subscribed' => false, 'sdata' => $subscribe));
 		endif;
 	}
 	
