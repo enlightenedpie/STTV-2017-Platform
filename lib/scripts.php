@@ -59,7 +59,7 @@ function sttv_login_brand() {
 			display: block;
 			width: 100%; 
 		}
-		</style>
+	</style>
 <?php 
 }
 ############################
