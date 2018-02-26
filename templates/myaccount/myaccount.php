@@ -113,6 +113,15 @@ endforeach;
 		print "<p><span>{$cus['shipping']['address']['city']},&nbsp;</span>&nbsp;<span>{$cus['shipping']['address']['state']}&nbsp;</span><span>{$cus['shipping']['address']['postal_code']}</span></p></address>";
 	?></div>
 </div>
-<?php }
-
-print '<div id="logout-btn" style="width:100%;padding:1em;text-align:center"><a style="background-color:#109fda;color:white" href="'.site_url('/logout').'" class="btn">Logout</a></div>';
+<?php } ?>
+<div id="logout-btn" style="width:100%;padding:1em;text-align:center">
+	<a style="background-color:#109fda;color:white" href="<?php echo site_url('/logout');?>" class="btn">Logout</a>
+</div>
+<script>
+$('#logout-btn a').click(function(e){
+	e.preventDefault()
+	$.post(stajax.rest.url+'/auth?action=logout',function(d){
+		window.location.href = d
+	});
+})
+</script>
