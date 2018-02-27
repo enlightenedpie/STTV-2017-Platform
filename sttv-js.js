@@ -108,92 +108,93 @@ $('form#sttv_login_form').on('submit',function(e) {
 	})
 });
 
+$('form#sttv_contact').on('submit',function(e) {
+	e.preventDefault();
+	var loading = $('.loading_overlay',$(this).parent()).html('<img src="'+stajax.contentURL+'/i/sttv-spinner.gif" alt="Loading..." />')
+
+	loading.fadeIn(250)
+
+	_st.request({
+		route : stajax.rest.url+'/contact',
+		method : 'POST',
+		headers : {
+			'X-WP-Nonce' : stajax.rest.nonce
+		},
+		cdata : {
+			g_recaptcha_response : grecaptcha.getResponse(),
+			sttv_contact_name: this.sttv_contact_name.value,
+			sttv_contact_email: this.sttv_contact_email.value,
+			sttv_contact_subject: this.sttv_contact_subject.value,
+			sttv_contact_message: this.sttv_contact_message.value
+		},
+		success : function(data) {
+			console.log(data)
+			if ( data.sent ) {
+				loading.empty().html('<p class="sblock"><strong><i class="material-icons">done</i></strong></p>').fadeIn(250)
+				var s = $('.sblock');
+				var p = $('<p/>',{"class":"smessage"});
+				p.appendTo(s).append(data.message);
+				$('.sblock').hide().fadeIn(250)
+			} else {
+				$('.message').html(data.message)
+				loading.fadeOut(250)
+			}
+		},
+		error : function(x) {
+			$('.message').html('Something went wrong. Please refresh the page and try again.')
+			loading.fadeOut(250)
+			console.log(x)
+		}
+	})
+	
+  });
+
+	$('#subscribe_page_mc').on('submit',function(e){
+		e.preventDefault();
+		var form = $(this)
+
+		var loading = $('.loading_overlay',$(this).parent()).html('<img src="'+stajax.contentURL+'/i/sttv-spinner.gif" alt="Loading..." />')
+
+		loading.fadeIn(250)
+
+		var fields = {
+			fname : $('#sttv_mc_fname',form).val(),
+			lname : $('#sttv_mc_lname',form).val(),
+			email : $('#sttv_mc_email',form).val(),
+			g_recaptcha_response : grecaptcha.getResponse()
+		}
+		
+		_st.request({
+			route : stajax.rest.url+'/subscribe',
+			method : 'POST',
+			cdata : fields,
+			headers : {'X-WP-Nonce' : stajax.rest.nonce},
+			success : function(d){
+				$('input, button',form).prop('disabled',true)
+				grecaptcha.reset()
+				loading.empty().html('<p class="sblock"><strong><i class="material-icons">done</i></strong></p>').fadeIn(250)
+				var s = $('.sblock');
+				var p = $('<p/>',{"class":"smessage"});
+				p.appendTo(s).append(d.message);
+				$('.sblock').hide().fadeIn(250)
+				console.log(d)
+			},
+			error : function(x){
+				$('.message',form).html('Something went wrong. Please refresh the page and try again.')
+				loading.fadeOut(250)
+				console.log(x)
+			}
+		})
+	});
+
 } ( jQuery ) ); //end wrapper
 
 // =require "handlers.js"
 ( function ( $ ) { //begin wrapper
 	"use strict";
 	
-	
 	$(document).ready(function() {
     	$('select').material_select();
 	  });
-	  
-	$('#logout-btn a').click(function(e){
-		e.preventDefault()
-		$.post(stajax.rest.url+'/auth?action=logout',function(d){
-			window.location.href = d
-		});
-	})
   
   } ( jQuery ) ); //end wrapper
-$('.suitter').click(function(e) {
-		e.preventDefault();
-		
-		var submitter = {
-				form : $(this).closest('form'),
-				token : $('.g-recaptcha-response',this.form).val(),
-				whichForm : $('input[name="whichform"]',this.form).val()
-			};
-		//console.log(submitter.form.attr('id'));
-		submitter.formSer = submitter.form.serialize();
-		submitter.formData = {
-			action : 'sttvsubmitter',
-			value : submitter.formSer
-		};
-		submitter.action = {
-			ld : $('.loading_overlay',submitter.form.parent()),
-			postForm : function() {
-				//var parentThis = this;
-				return $.post(
-					stajax.ajaxURL, 
-					submitter.formData,
-					function(data){
-						//console.log(data);
-				},'json');
-			},
-			beforeSubmit : function() {
-				var loader = '<img src="'+stajax.contentURL+'/i/sttv-spinner.gif" alt="Loading..." />';
-				
-				this.ld.html(loader).promise().done(function(){
-					$(this).fadeIn(500);
-				});
-			},
-			formSuccess : function(data) {
-				var d = data.data;
-				this.ld.empty().html('<p class="sblock"><i class="material-icons">done</i></p>').fadeIn(500);
-				if (d.name) {
-					$('.sblock',this.ld).hide().fadeIn(500,function() {
-						window.location.replace('/my-account');
-							//$('#login .link-text').html(d.name);
-					});
-				} else if (d.sent || d.subscribed) {
-					var s = $('.sblock',this.ld);
-					var p = $('<p/>',{"class":"smessage"});
-					p.appendTo(s).append(d.message);
-					
-					$("#"+submitter.form.attr('id')+" :input").prop("disabled",true);
-				} else {
-					alert("Something went wrong. Please reload the page.");
-				}
-			},
-			formFail : function(data) {
-				this.ld.fadeOut(500);
-				$('p.message',submitter.form).html(data.data.message).css('display','block');
-			}
-		};
-		var sa = submitter.action;
-		
-		/** Let's check the recaptcha response, IF it exists **/
-		if (submitter.token != null && submitter.token.length === 0) {
-			alert('Please prove you\'re not a robot!');
-			return;
-		}
-		
-		sa.beforeSubmit(); /** Loading/Processing overlay **/
-		
-		sa.postForm().done(function(fdata) { //submit the form
-			//console.log(fdata);
-			return (fdata.success) ? sa.formSuccess(fdata) : sa.formFail(fdata);
-		});
-	});

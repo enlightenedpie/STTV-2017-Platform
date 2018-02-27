@@ -22,7 +22,8 @@ class STTV_Forms extends WP_REST_Controller {
         register_rest_route( STTV_REST_NAMESPACE , '/contact', [
             [
                 'methods' => 'POST',
-                'callback' => [ $this, 'sttv_contact_form_processor' ]
+                'callback' => [ $this, 'sttv_contact_form_processor' ],
+                'permission_callback' => [ $this, 'verify_form_submit' ]
             ]
         ]);
 
@@ -50,17 +51,18 @@ class STTV_Forms extends WP_REST_Controller {
     }
 
     public function sttv_contact_form_processor( WP_REST_Request $request ) {
-        $token = $request->get_param('g-recaptcha-response') ?: '';
-        if ( !$this->verify_form_submit( $token ) ){
-            return $this->forms_generic_response( 'authentication_failed', 'Shoo bot, shoo!', 401 );
-        }
-
-        $headers[] = 'Content-Type: text/html; charset=UTF-8';
-        $headers[] = 'From: '.$request->get_param( 'sttv_contact_name' ).' <'.$request->get_param( 'sttv_contact_email' ).'>';
-        $headers[] = 'Sender: SupertutorTV Website <info@supertutortv.com>';
-        $headers[] = 'Bcc: David Paul <dave@supertutortv.com>';
-        
-        $sentmail = wp_mail( get_bloginfo('admin_email'), $request->get_param( 'sttv_contact_subject' ), $request->get_param( 'sttv_contact_message' ), $headers );
+        $body = json_decode($request->get_body(),true);
+        $sentmail = wp_mail(
+            get_bloginfo('admin_email'),
+            $body['sttv_contact_subject'],
+            $body['sttv_contact_message'],
+            [
+                'Content-Type: text/html; charset=UTF-8',
+                'From: '.$body['sttv_contact_name'].' <'.$body['sttv_contact_email'].'>',
+                'Sender: SupertutorTV Website <info@supertutortv.com>',
+                'Bcc: David Paul <dave@supertutortv.com>'
+            ]
+        );
         
         if ($sentmail) {
             return $this->forms_generic_response( 'contact_form_success', 'Thanks for contacting us! We\'ll get back to you ASAP!', 200, [ 'sent' => $sentmail ] );
@@ -87,8 +89,8 @@ class STTV_Forms extends WP_REST_Controller {
     }
 
     public function sttv_subscribe_processor( WP_REST_Request $request ) {
-
-        $api_path = 'https://us7.api.mailchimp.com/3.0/lists/df497b5cbd/members/'.md5(strtolower($request->get_param('email')));
+        $body = json_decode($request->get_body(),true);
+        $api_path = 'https://us7.api.mailchimp.com/3.0/lists/df497b5cbd/members/'.md5(strtolower($body['email']));
         
         $response = wp_remote_post( $api_path, [
             'headers' => [
@@ -98,21 +100,21 @@ class STTV_Forms extends WP_REST_Controller {
                 'User Agent' => STTV_UA
             ],
             'body' => [
-                'email_address' => $request->get_param('email'),
+                'email_address' => $body['email'],
                 'status' => 'subscribed',
                 'status_if_new' => 'subscribed',
                 'merge_fields' => [
-                    'FNAME' => $request->get_param('fname'),
-                    'LNAME' => $request->get_param('lname')
+                    'FNAME' => $body['fname'],
+                    'LNAME' => $body['lname']
                 ],
                 'ip_signup' => $_SERVER['REMOTE_ADDR']
             ]
         ]);
 
         if ( is_wp_error($response) ){
-            return $this->forms_generic_response( 'sub_error', 'There was an error subscribing you to our list. Please try again later.', 403, ['error'=>$response] );
+            return $this->forms_generic_response( 'sub_error', 'There was an error subscribing you to our list. Please try again later.', 400, ['response'=>$response] );
         } else {
-            return $this->forms_generic_response( 'sub_success', '<h1 style="display:block">Success!</h1> Thank you for subscribing to SupertutorTV!', 200 );
+            return $this->forms_generic_response( 'sub_success', '<h1 style="display:block">Success!</h1> Thank you for subscribing to SupertutorTV!', 200, ['response'=>$response] );
         }
     }
 
@@ -152,13 +154,14 @@ class STTV_Forms extends WP_REST_Controller {
     }
 
     public function verify_form_submit( WP_REST_Request $request ){
-        $token = $request->get_param('g-recaptcha-response');
-        $err = new WP_Error( 'recaptcha_failed', 'Shoo bot, shoo!', [ 'status' => 403 ] );
+        $token = json_decode($request->get_body(),true);
+        $token = $token['g_recaptcha_response'];
+
         if ( empty($token) ) {
-            return $err;
+            return new WP_Error( 'no_recaptcha', 'Shoo bot, shoo!', [ 'status' => 403 ] );
         }
         $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".RECAPTCHA_SECRET."&response=".$token."&remoteip=".$_SERVER['REMOTE_ADDR']),true);
-        return $resonse['success'] ?: $err;
+        return $response['success'] ?: new WP_Error( 'recaptcha_failed', 'Shoo bot, shoo!', [ 'status' => 403 ] );
     }
 
     private function forms_generic_response( $code = '', $msg = '', $status = 200, $extra = [] ) {
