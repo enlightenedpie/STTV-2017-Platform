@@ -99,7 +99,7 @@ class STTV_Forms extends WP_REST_Controller {
                 'X-HTTP-Method-Override' => 'PUT',
                 'User Agent' => STTV_UA
             ],
-            'body' => [
+            'body' => json_encode([
                 'email_address' => $body['email'],
                 'status' => 'subscribed',
                 'status_if_new' => 'subscribed',
@@ -108,7 +108,7 @@ class STTV_Forms extends WP_REST_Controller {
                     'LNAME' => $body['lname']
                 ],
                 'ip_signup' => $_SERVER['REMOTE_ADDR']
-            ]
+            ])
         ]);
 
         if ( is_wp_error($response) ){
