@@ -162,7 +162,7 @@ var fsub = {
 function price_updater() {
 		plan.shipping = ($('#sttv_digital_book').is(':checked')) ? 1285 : 0;
 		var price = parseFloat(plan.price);
-		var taxed = (21*(plan.tax/100))*100;
+		var taxed = (2500*(plan.tax/100));
 		var totals = (((price-(price*(plan.discp/100))-plan.disc)+taxed)+plan.shipping);
 
 		if (0 < totals) {
