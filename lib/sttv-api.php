@@ -96,6 +96,13 @@ function sttv_get_template($temp,$dir='',$object=null) {
 	return (include $path.$extension);
 }
 
+function sttv_array_map_recursive($callback, $array) {
+	$func = function ($item) use (&$func, &$callback) {
+		return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
+	};
+  return array_map($func, $array);
+}
+
 function sttvhashit($input,$num = 9) {
 	return base64_encode(substr(md5($input),0,$num));
 }

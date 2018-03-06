@@ -20,7 +20,7 @@ $(document).ready(function() {
 
 	$('.payment-launcher').click(function(e) {
 		e.preventDefault();
-		var planData = $(this).attr('data-bind');
+		var planData = JSON.parse($(this).attr('data-bind'));
 
 		cModal.animate({
 			scrollTop: cModal.offset().top
@@ -123,8 +123,7 @@ var fsub = {
 						setTimeout(function(){action.ST()},3000);
 				});
 			},//end setToken
-			checkout : function(planData) {
-				var pDt = planData.split('|');
+			checkout : function(pDt) {
 
 				if (!$('table#totals_table').length) {
 					$('.modal-content',cModal).empty();
@@ -142,11 +141,11 @@ var fsub = {
 
 				} //endif
 
-				if (window.plan == undefined || window.plan.ID !== pDt[0]) {
+				if (window.plan == undefined || window.plan.ID !== pDt['ID']) {
 					window.plan = {
-						ID : pDt[0],
-						name : pDt[1],
-						price : parseInt(pDt[2]),
+						ID : pDt['ID'],
+						name : pDt['title'],
+						price : parseInt(pDt['price']),
 						tax : 0,
 						shipping : 0,
 						disc : 0,

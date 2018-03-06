@@ -39,3 +39,4 @@ require('sttv_product_reviews.class.php');
 require('sttv_test_dates.class.php');
 require('sttv_jobs.class.php');
 require('sttv_forms.class.php');
+require('sttv_checkout.class.php');

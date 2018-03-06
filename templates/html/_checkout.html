@@ -18,7 +18,7 @@
                     <tr>
                         <td id="coupon_cell">
                             <div class="input-field col s6">
-                                <input id="sttv_coupon" data-error="Invalid coupon" name="sttv_coupon" type="text"/>
+                                <input id="sttv_coupon" data-type="coupon" data-error="Invalid coupon" name="sttv_coupon" type="text"/>
                                 <label for="sttv_coupon">Coupon Code</label>
                             </div>
                         </td>
@@ -51,7 +51,7 @@
                     <label for="sttv_lastname">Last Name</label>
                 </div>
                 <div class="input-field col s12">
-                    <input id="sttv_email" class="validate" name="sttv_email" type="email" required/>
+                    <input id="sttv_email" class="validate" data-type="email" name="sttv_email" type="email" required/>
                     <label data-error="Invalid email address" for="sttv_email">Email Address</label>
                 </div>
                 <div class="input-field col s12">
@@ -117,7 +117,7 @@
                     <label class="active" for="sttv_billing_state">State</label>
                 </div>
                 <div class="input-field col s6 m3">
-                    <input id="sttv_billing_pcode" name="sttv_billing_pcode" type="tel" required/>
+                    <input id="sttv_billing_pcode" data-type="zip" name="sttv_billing_pcode" type="tel" required/>
                     <label class="active" for="sttv_billing_pcode">Postal Code</label>
                 </div>
                 <div class="input-field col s6 m3">
@@ -169,105 +169,61 @@
 	
 	$('[name=sttv_email],[name=sttv_billing_pcode],input[name=sttv_coupon]').blur(function(e) {
 		e.preventDefault();
-		var tThis = $(this);
+		var t = $(this);
+		t.removeClass('valid invalid');
 		
-		if (!tThis.val()) {
-			if (tThis.is('input[name=sttv_coupon]')) {
+		if (!t.val()) {
+			if (t.is('input[name=sttv_coupon]')) {
 				plan.disc = plan.discp = 0;
-				tThis.removeClass('valid invalid');
-				price_updater();
-			} else if (tThis.is('input[name=sttv_billing_pcode]')) {
+			} else if (t.is('input[name=sttv_billing_pcode]')) {
 				plan.tax = 0;
-				price_updater();
 			}
+			price_updater();
 			return;
-		}
-		//console.log(tThis.attr('name'));
-		
-		var data = {
-			action : tThis.attr('name'),
-			value : tThis.val()
 		}
 		
 		setTimeout( function() {
-			$.post(
-			stajax.ajaxURL,
-			data,
-			function(response) {
-		
-				var rd = response.data;
-				var rs = response.success;
-				
-				//console.log(response);
-				
-				switch (rd.field) {
-					case 'testing' :
-						console.log(rd);
-					case 'email' :
-						if (rs) {
-							if (rd.current) {return;}
-							tThis.siblings('label').attr({
-								'data-success':rd.msg
-								
-							});
-							tThis.removeClass('invalid');
-							tThis.addClass('valid');
-						} else {
-							tThis.siblings('label').attr({
-								
-								'data-error':rd.msg
-								
-							});
-							tThis.removeClass('valid');
-							tThis.addClass('invalid');
+
+			$.get(
+			stajax.rest.url+'/checkout?'+t.attr('data-type')+'='+t.val(),
+			function(r) {
+				switch (r.code) {
+					case 'coupon_invalid' :
+						plan.disc = plan.discp = 0;
+						t.addClass('invalid')
+						t.siblings('label').attr({'data-error':r.message});
+						break;
+					case 'coupon_valid' :
+						t.addClass('valid')
+						plan.coupon = r.id
+						if (r.percent_off) {
+							plan.disc = 0;
+							plan.discp = r.percent_off;
+							var msg = String(r.percent_off)+'% off';
+						} else if (r.amount_off) {
+							plan.discp = 0;
+							plan.disc = r.amount_off;
+							var msg = '$'+String(r.amount_off/100)+' off';
 						}
+						t.siblings('label').attr({'data-success':msg});
 						break;
-						
-					case 'zip' :
-						plan.tax = rd.tax;
-						price_updater();
-						console.log(rd);
+					case 'email_taken' :
+						t.addClass('invalid')
+						t.siblings('label').attr({'data-error':r.message})
+					case 'email_available' :
+						t.addClass('valid')
+						t.siblings('label').attr({'data-success':r.message})
 						break;
-						
-					case 'coupon' :
-					
-						
-						if (!rs) {
-							tThis.siblings('label').attr({
-								'data-error':'Invalid coupon'
-								
-							});
-							
-							tThis.removeClass('valid');
-							tThis.addClass('invalid');
-							plan.disc = plan.discp = 0;
-							price_updater();
-							
-						} else {
-							if (rd.obj.percent_off) {
-								plan.disc = 0;
-								plan.discp = rd.obj.percent_off;
-								var msg = String(rd.obj.percent_off)+'% off';
-							} else if (rd.obj.amount_off) {
-								plan.discp = 0;
-								plan.disc = rd.obj.amount_off;
-								var msg = '$'+String(rd.obj.amount_off/100)+' off';
-							}
-							tThis.siblings('label').attr({
-								
-								'data-success': msg
-								
-							});
-							tThis.removeClass('invalid');
-							tThis.addClass('valid');
-							window.plan.coupon = rd.obj.id;
-							price_updater();
-						}
-						//console.log(plan);
+					case 'checkout_tax' :
+						plan.tax = r.tax;
 						break;
-					
-				} 
-			});
+				}
+				price_updater();
+			})
+			.fail(function(){
+				t.addClass('invalid')
+				t.siblings('label').attr({'data-error':'Error: please try again'})
+			})
 		},1);
 		
 	});
