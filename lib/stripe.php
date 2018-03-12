@@ -156,7 +156,7 @@ function kill_the_messenger($event,$object) {
 				ob_start();
 				print_r($user);
 				$body = ob_get_clean();
-				wp_mail($to,'Test!!!',$body,$headers);
+				wp_mail($to,'Subscription expired!!!',$body,$headers);
 
 				// send Goodbye email
 				$cus = \Stripe\Customer::retrieve($obj->data->object->customer);
