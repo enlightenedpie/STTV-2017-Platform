@@ -1,13 +1,3 @@
-// Closer function
-var closerFunc = function(callback) {
-	jQuery('body').removeClass('nav-sidebar-open login-sidebar-open');
-	if (typeof callback == 'undefined') {callback = function(){return true;}}
-	callback();
-};
-
-( function ( $ ) { //begin wrapper
-	"use strict";
-
 var _st = {
 	request : function(obj) {
 		var ajaxp = {
@@ -26,9 +16,42 @@ var _st = {
 		if (ajaxp.method !== 'GET') {
 			ajaxp['data'] = JSON.stringify(obj.cdata || {})
 		}
+		if (typeof obj.accepts !== 'undefined'){
+			ajaxp['accepts'] = obj.accepts
+		}
 		$.ajax(ajaxp)
-	}
-}
+	},
+	closer : function(cb) {
+		jQuery('body').removeClass('nav-sidebar-open login-sidebar-open');
+		typeof cb === 'function' && cb();
+	},
+	heartBeat : function() {
+		_st.request({
+			route : stajax.rootURL+"/ping.php",
+			success : function(d){
+				try {
+					if (!d) {
+						throw new Exception('Invalid response from _st.heartBeat.');
+					} else {
+						do {
+							$(document).dequeue('heartbeat')
+						} while ($(document).queue('heartbeat').length)
+					}
+				} catch (e) {
+					console.log(e);
+				}
+			},
+			error : function(x,s,r){
+				Materialize.toast('Offline', 6000);
+				console.log(x,s,r);
+			}
+		});
+	},
+	fn : function() {}
+};
+
+( function ( $ ) { //begin wrapper
+	"use strict";
 
 // Opener functions
 
@@ -43,7 +66,7 @@ $('#main-menu').click(function(e) {
 
 $('#acctmodal, .close').on('click touchstart',function(e) {
 	e.preventDefault();
-	closerFunc();
+	_st.closer();
 });
 $('.read-more').on('click touchstart',function(e) {
 	e.preventDefault();
@@ -56,7 +79,7 @@ thenav.on('click touchstart',function(e) {
 	if (e.offsetX > thenav.offsetWidth) {
 		alert('Clicked!');
 		e.preventDefault();
-		closerFunc();
+		_st.closer();
 	}
 });
 
