@@ -73,7 +73,7 @@ class STTV_Checkout extends WP_REST_Controller {
         } elseif ( isset( $pars['zip'] ) ) {
             return $this->check_zip( sanitize_text_field($pars['zip']) );
         } elseif ( isset( $pars['uid'] ) ) {
-            return trim( 'sttv_'.base64_encode( uniqid( '' ) ), '=');
+            return $this->_uid();
         } else {
             return $this->checkout_generic_response( 'bad_request', 'Valid parameters are required to use this method/endpoint combination. Only one parameter is allowed per request, and parameters must have value.', 400 );
         }
@@ -345,6 +345,10 @@ class STTV_Checkout extends WP_REST_Controller {
         ];
         $data = array_merge($data, (array) $extra);
         return new WP_REST_Response( $data, $status );
+    }
+
+    private function _uid() {
+        return trim( 'sttv_'.base64_encode( uniqid() ), '=');
     }
 }
 new STTV_Checkout;
