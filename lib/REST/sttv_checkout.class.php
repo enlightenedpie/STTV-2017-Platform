@@ -59,6 +59,11 @@ class STTV_Checkout extends WP_REST_Controller {
                 'methods' => 'POST',
                 'callback' => [ $this, 'sttv_checkout' ],
                 'permission_callback' => [ $this, 'checkout_origin_verify' ],
+            ],
+            [
+                'methods' => 'PATCH',
+                'callback' => [ $this, 'sttv_mu_checkout' ],
+                'permission_callback' => [ $this, 'checkout_origin_verify' ],
             ]
         ]);
     }
@@ -72,8 +77,8 @@ class STTV_Checkout extends WP_REST_Controller {
             return $this->check_coupon( sanitize_text_field($pars['coupon']) );
         } elseif ( isset( $pars['zip'] ) ) {
             return $this->check_zip( sanitize_text_field($pars['zip']) );
-        } elseif ( isset( $pars['uid'] ) ) {
-            return $this->_uid();
+        } elseif ( isset( $pars['sid'] ) ) {
+            return $this->_sid();
         } else {
             return $this->checkout_generic_response( 'bad_request', 'Valid parameters are required to use this method/endpoint combination. Only one parameter is allowed per request, and parameters must have value.', 400 );
         }
@@ -86,6 +91,10 @@ class STTV_Checkout extends WP_REST_Controller {
         }
         $body = sttv_array_map_recursive('sanitize_text_field',$body);
         return $this->_checkout( $body );
+    }
+
+    public function sttv_mu_checkout() {
+        
     }
 
     private function _checkout( $body ){
@@ -347,7 +356,7 @@ class STTV_Checkout extends WP_REST_Controller {
         return new WP_REST_Response( $data, $status );
     }
 
-    private function _uid() {
+    private function _sid() {
         return trim( 'sttv_'.base64_encode( uniqid() ), '=');
     }
 }
