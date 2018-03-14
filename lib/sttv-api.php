@@ -107,8 +107,8 @@ function sttvhashit($input,$num = 9) {
 	return base64_encode(substr(md5($input),0,$num));
 }
 
-function sttv_uid ( $prefix = '' ){
-	return trim( $prefix.base64_encode( uniqid( random_bytes( 4 ) ) ), '=');
+function sttv_uid ( $prefix = '', $random = '' ){
+	return trim( $prefix.base64_encode( uniqid( $random ) ), '=');
 }
 
 add_action('stripepress_events_invalid','sttv_404_redirect');

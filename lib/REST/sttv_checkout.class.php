@@ -78,7 +78,7 @@ class STTV_Checkout extends WP_REST_Controller {
         } elseif ( isset( $pars['zip'] ) ) {
             return $this->check_zip( sanitize_text_field($pars['zip']) );
         } elseif ( isset( $pars['sid'] ) ) {
-            return sttv_uid( 'sttv_' );
+            return sttv_uid( 'sttv_', random_bytes( 4 ) );
         } else {
             return $this->checkout_generic_response( 'bad_request', 'Valid parameters are required to use this method/endpoint combination. Only one parameter is allowed per request, and parameters must have value.', 400 );
         }
