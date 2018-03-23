@@ -21,6 +21,8 @@ require('lib/customizer.php');
 require('lib/stripe.php');
 require('lib/ajax/handlers.php');
 require('lib/ajax/functions.php');
+require('lib/multi-user/muclass.php');
+require('lib/multi-user/mupermissions.php');
 require('lib/REST/init.php');
 
 //end of line, man.
