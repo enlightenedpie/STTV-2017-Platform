@@ -59,11 +59,6 @@ class STTV_Checkout extends WP_REST_Controller {
                 'methods' => 'POST',
                 'callback' => [ $this, 'sttv_checkout' ],
                 'permission_callback' => [ $this, 'checkout_origin_verify' ],
-            ],
-            [
-                'methods' => 'PATCH',
-                'callback' => [ $this, 'sttv_mu_checkout' ],
-                'permission_callback' => [ $this, 'checkout_origin_verify' ],
             ]
         ]);
     }
@@ -78,7 +73,7 @@ class STTV_Checkout extends WP_REST_Controller {
         } elseif ( isset( $pars['zip'] ) ) {
             return $this->check_zip( sanitize_text_field($pars['zip']) );
         } elseif ( isset( $pars['sid'] ) ) {
-            return sttv_uid( 'sttv_', random_bytes( 4 ) );
+            return (new MultiUserPermissions('1c74e69ef1f4f0388bc6da713a599142'))->roll_key()->get_current_key();
         } else {
             return $this->checkout_generic_response( 'bad_request', 'Valid parameters are required to use this method/endpoint combination. Only one parameter is allowed per request, and parameters must have value.', 400 );
         }
@@ -86,15 +81,39 @@ class STTV_Checkout extends WP_REST_Controller {
 
     public function sttv_checkout( WP_REST_Request $request ) {
         $body = json_decode($request->get_body(),true);
+        
         if ( empty($body) ){
             return $this->checkout_generic_response( 'bad_request', 'Request body cannot be empty', 400 );
         }
+
         $body = sttv_array_map_recursive('sanitize_text_field',$body);
+
+        if ( isset($body['muid']) ) {
+            return $this->_mu_checkout( $body );
+        }
+
         return $this->_checkout( $body );
     }
 
-    public function sttv_mu_checkout() {
-        
+    private function _mu_checkout( $body ) {
+        $mu = new MultiUser;
+
+        $key = $mu->validate_key( $body['muid'] );
+
+        if ( false === $key ) {
+            return $this->checkout_generic_response(
+                'invalid_multi-user_token',
+                'This multi-user token is invalid or expired. Please contact purchaser of this token if you have reached this in error.',
+                403
+            );
+        }
+
+        return $this->checkout_generic_response(
+            'subscription_success',
+            'Thank you for subscribing! Your order details are below. Check your email for instructions on setting up your account',
+            200,
+            $mu->activate_key( 1 )
+        );
     }
 
     private function _checkout( $body ){
