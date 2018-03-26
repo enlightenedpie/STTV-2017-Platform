@@ -32,8 +32,8 @@ function sttv_course_js_object() {
 var student = {
 	id : <?php echo $student->ID; ?>,
 	userName : '<?php echo $student->user_login; ?>',
-	firstName : '<?php echo $student->first_name; ?>',
-	lastName : '<?php echo $student->last_name; ?>',
+	firstName : '<?php echo addslashes($student->first_name); ?>',
+	lastName : '<?php echo addslashes($student->last_name); ?>',
 	alerts : {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
