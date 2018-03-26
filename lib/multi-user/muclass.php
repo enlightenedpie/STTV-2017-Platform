@@ -19,12 +19,15 @@ class MultiUser {
 
     private $root_user_id;
 
+    private $course_id;
+
     private $autosave;
 
-    public function __construct( $user_id = 0, $autosave = true ) {
+    public function __construct( $user_id = 0, $course_id = 0, $autosave = true ) {
         $this->autosave = $autosave;
         $this->keys = json_decode( @file_get_contents( MU_FILE_PATH ) ?: '[]', true );
         $this->root_user_id = $user_id;
+        $this->course_id = $course_id;
         $this->start_time = time();
         return $this;
     }
@@ -51,6 +54,7 @@ class MultiUser {
                 'expires' => strtotime( '+1 year', $this->start_time ),
                 'root_user' => $this->root_user_id,
                 'active_user' => 0,
+                'course_id' => $this->course_id,
                 'valid' => true
             ];
 
