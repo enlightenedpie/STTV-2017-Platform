@@ -63,4 +63,4 @@
 		endif; ?>
 			</section><?php
 	endif; ?>
-	<div id="content">
+	<div id="content" class="row">
