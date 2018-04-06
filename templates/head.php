@@ -42,4 +42,4 @@
 <?php do_action('sttv_after_body_tag'); ?>
 <?php do_action('sttv_sale_banner'); ?>
 	<div id="main-wrapper">
-    	<div id="navcloser" class="close"></div>
+    	<div id="navcloser" class="slide-bar"></div>

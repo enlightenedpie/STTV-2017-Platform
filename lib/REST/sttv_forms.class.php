@@ -29,6 +29,11 @@ class STTV_Forms extends WP_REST_Controller {
 
         register_rest_route( STTV_REST_NAMESPACE , '/auth', [
             [
+                'methods' => 'GET',
+                'callback' => [ $this, 'sttv_auth_form' ],
+                'permission_callback' => 'sttv_verify_rest_nonce'
+            ],
+            [
                 'methods' => 'POST',
                 'callback' => [ $this, 'sttv_auth_processor' ],
                 'args' => [
@@ -78,7 +83,7 @@ class STTV_Forms extends WP_REST_Controller {
 
         switch ($action) {
             case 'login':
-                return $this->login($auth,site_url('/my-account'));
+                return $this->login($auth,site_url());
 
             case 'logout':
                 return $this->logout(site_url());
@@ -86,6 +91,12 @@ class STTV_Forms extends WP_REST_Controller {
             default:
                 return $this->forms_generic_response( 'action_invalid', 'The action parameter was invalid. Check documentation for allowed actions.', 400 );
         }
+    }
+
+    public function sttv_auth_form() {
+        ob_start();
+        sttv_get_template('_authform','auth');
+        return ob_get_clean();
     }
 
     public function sttv_subscribe_processor( WP_REST_Request $request ) {
