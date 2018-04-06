@@ -3,7 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class MultiUserPermissions {
 
-    private $dictionary;
+    public $is_valid = false;
+
+    public $output = [];
 
     private $current_key;
 
@@ -30,13 +32,6 @@ class MultiUserPermissions {
             $id = $this->keystore[$key];
         }
 
-        $dict = get_option( 'sttv_crypto_dictionary' );
-        if ( !$dict ){
-            update_option( 'sttv_crypto_dictionary', $this->get_dictionary(), true );
-            $dict = get_option( 'sttv_crypto_dictionary' );
-        }
-        $this->dictionary = $dict;
-
         return $this
             ->set_current_user( get_userdata( $id ) )
             ->set_current_key( $key );
@@ -51,16 +46,31 @@ class MultiUserPermissions {
         }
         unset( $this->keystore[$this->current_key] );
 
+        $dict = get_option( 'sttv_crypto_dictionary' );
+        if ( !$dict ){
+            update_option( 'sttv_crypto_dictionary', $this->get_dictionary(), true );
+            $dict = get_option( 'sttv_crypto_dictionary' );
+        }
+
+        $this->output = [
+            'key_generated' => true
+        ];
+
         return $this
-            ->set_current_key( md5( $this->dictionary[rand(0,9999)] . $this->user->user_email . $this->user->ID ) )
+            ->set_current_key( md5( $dict[rand(0,9999)] . $this->user->user_email . $this->user->ID ) )
             ->store_current_key()
             ->save();
     }
 
     public function usekey() {
         if ( !$this->validate_current_key() ) {
-            return false;
+            return $this->is_valid;
         }
+
+        $this->output = [
+            'used_key' => $this->current_key,
+            'used_key_user' => $this->keystore[$this->current_key]
+        ];
 
         return $this
             ->invalidate_key()
@@ -78,8 +88,12 @@ class MultiUserPermissions {
         return array_search( $id, $this->keystore );
     }
 
-    public function verify_mu_email( $email = '' ){
-        return ( $email === $this->user->user_email );
+    public function verify_key( $email = '' ){
+        if ( !isset( $this->current_key ) || empty( $this->current_key ) ){
+            return false;
+        }
+        $this->is_valid = ( $this->validate_current_key() && ( $this->user && $email === $this->user->user_email ) );
+        return $this;
     }
 
     private function set_current_key( $key ) {
@@ -87,7 +101,12 @@ class MultiUserPermissions {
         return $this;
     }
 
+    public function get_current_user() {
+        return $this->user;
+    }
+
     private function set_current_user( $user ) {
+        wp_set_current_user( $user->ID );
         $this->user = $user;
         return $this;
     }

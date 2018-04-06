@@ -155,53 +155,17 @@ class STTV_Checkout extends WP_REST_Controller {
                 $customer = \Stripe\Customer::retrieve($customerID);
                 $customer->description = $body['first_name'].' '.$body['last_name'];
                 $customer->source = $body['token']['id'];
+                $customer->coupon = $body['coupon'];
                 $customer->save();
             }
 
-            foreach( $body['items'] as $item ) {
-                if ( $item['priority'] ) {
-                    \Stripe\InvoiceItem::create(
-                        [
-                            "customer" => $customerID,
-                            "amount" => 1285,
-                            "currency" => "usd",
-                            "description" => "Priority Shipping",
-                            "discountable" => false
-                        ]
-                    );
-                }
-
-                if ( $this->tax ) {
-                    \Stripe\InvoiceItem::create(
-                        [
-                            "customer" => $customerID,
-                            "amount" => round(self::BOOK_PRICE*($this->tax/100)),
-                            "currency" => "usd",
-                            "description" => "Sales tax",
-                            "discountable" => false
-                        ]
-                    );
-                }
-
-                $sub = \Stripe\Subscription::create(
-                    [
-                        'customer' => $customerID,
-                        'plan' => $item['id'],
-                    ]
-                );
-                if ( !$item['trialing'] ){
-                    $sub->trial_end = 'now';
-                    $sub->save();
-                }
-			    $sub->cancel(['at_period_end' => true]);
-
-            }
+            $order = \STTV\Order::create( $body, $customer );
 
             return $this->checkout_generic_response(
                 'subscription_success',
-                'Thank you for subscribing! Your order details are below. Check your email for instructions on setting up your account',
+                'Thank you for your purchase! Your order details are below. Check your email for instructions on setting up your account',
                 200,
-                $customer
+                $order
             );
 
         } catch(\Stripe\Error\Card $e) {

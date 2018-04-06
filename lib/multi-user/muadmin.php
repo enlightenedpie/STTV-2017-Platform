@@ -1,41 +1,35 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class MultiUserFrontend {
+class MultiUserAdmin {
 
     public function __construct() {
         add_action( 'personal_options', [ $this, 'user_admin_keygen' ] );
-        add_action( 'init', [ $this, 'create_mu_role' ] );
-        add_action( 'rest_api_init', [ $this, 'mukey_endpoint' ] );
-        add_action( 'mu_signup_after_content', [ $this, 'mu_purchase_form' ] );
+        add_action( 'admin_init', [ $this, 'init' ] );
     }
 
-    public function mukey_endpoint() {
-        register_rest_route( STTV_REST_NAMESPACE , '/multi-user', [
-            [
-                'methods' => 'GET',
-                'callback' => function( WP_REST_Request $request ){
-                    $key = $request->get_param( 'key' );
+    public function init() {
+        $this->create_mu_role();
 
-                    return (new MultiUserPermissions( $key ))->keygen()->get_current_key();
-
-                },
-                'permission_callback' => function(){
-                    return current_user_can( 'multi_user' );
-                },
-                'args' => [
-                    'key' => [
-                        'required' => true,
-                        'type' => 'string',
-                        'description' => 'Can be a mukey or user id'
-                    ]
-                ]
-            ]
-        ]);
+        /* $price_table = [
+            10789 => range(0,10)
+        ];
+        $ranges = [
+            21900 => range(3,5),
+            19900 => range(6,30),
+            14900 => range(31,99),
+            11900 => range(100,500)
+        ];
+        foreach ($ranges as $k => $v) {
+            foreach ($v as $i) {
+                $price_table[10789][$i] = $k;
+            }
+        }
+        update_option( 'sttv_mu_pricing_table', $price_table ); */
     }
 
-    public function create_mu_role() {
-        $role = add_role( 'multi_user', 'Multi User', [ 'multi_user'=>true ] );
+    private function create_mu_role() {
+        $role = add_role( 'multi_user', 'Multi User', [ 'multi_user' => true ] );
         if ( null !== $role ){
             $admin = get_role( 'administrator' );
             return $admin->add_cap( 'multi_user', true );
@@ -94,9 +88,5 @@ class MultiUserFrontend {
         </script>
     <?php }
 
-    public function mu_purchase_form(){
-        get_template_part('templates/multi-user/mu_purchase_form');
-    }
-
 }
-new MultiUserFrontend;
+new MultiUserAdmin;

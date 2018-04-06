@@ -1,0 +1,32 @@
+body.sttv-jscart
+    
+    #cart-FAB
+        display: block
+        position: fixed
+        z-index: 996
+        right: $huge
+        bottom: $huge
+
+        div.cart-alert
+            position: absolute
+            display: block
+            opacity: 0
+            z-index: 997
+            top: 0px
+            right: 0px
+            background-color: red
+            color: white
+            width: 1.5em
+            height: 1.5em
+            text-align: center
+            font-size: .75em
+            padding: .25em
+            transform: translate(25%,-25%)
+            -webkit-transition: opacity .25s ease-in-out
+            transition: opacity .25s ease-in-out
+
+        div.cart-alert.show
+            opacity: 1
+
+        a.cart-fab
+            background-color: $sunrise

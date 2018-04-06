@@ -1,3 +1,8 @@
+/*
+ * 
+ * MAIN SITE OBJECT
+ * 
+ */
 var _st = {
 	request : function(obj) {
 		var ajaxp = {
@@ -20,6 +25,10 @@ var _st = {
 			ajaxp['accepts'] = obj.accepts
 		}
 		$.ajax(ajaxp)
+	},
+	menu : function(cb) {
+		$('body').toggleClass('nav-sidebar-open')
+		typeof cb === 'function' && cb();
 	},
 	closer : function(cb) {
 		jQuery('body').removeClass('nav-sidebar-open login-sidebar-open');
@@ -47,31 +56,282 @@ var _st = {
 			}
 		});
 	},
+	login : function(el) {
+		_st.request({
+			route : stajax.rest.url+'/auth',
+			headers : {
+				'X-WP-Nonce' : stajax.rest.nonce,
+			},
+			success : function(d) {
+				el.append(d)
+				_st.modal.loader()
+			},
+			error : function(x) {
+				console.log(x)
+			}
+		})
+	},
+	modal : (function() {
+		$('.loading-spinner').each(function(i){
+			$(this).attr('src',stajax.contentURL+'/i/sttv-spinner.gif')
+		})
+		return {
+			action : '',
+			element : $('.sttvmodal_inner'),
+			init : function(act){
+				if (typeof act === 'undefined'){
+					return
+				}
+				if (this.action === act) {
+					return this.toggle()
+				}
+				
+				var cb;
+				if (act !== 'close') {
+					this.action = act
+					_st.modal.loader(function() {
+						_st.modal.element.empty()
+					})
+				}
+	
+				switch (act) {
+					case 'close':
+						break
+					case 'login':
+						cb = function(el) {
+							_st.login(el)
+						}
+						break
+					case 'account':
+						cb = function(el) {
+							//el.empty()
+							el.append('account template')
+							_st.modal.loader()
+						}
+						break
+					case 'mu-checkout':
+						cb = function(el) {
+							_st.mu.submit(el,'#mu_form_wrapper')
+						}
+						break
+					case 'checkout':
+						break
+				}
+				this.toggle(cb)
+			},
+			toggle : function(cb) {
+				$('body').toggleClass('modal-open')
+				typeof cb === 'function' && cb(_st.modal.element)
+			},
+			loader : function(cb) {
+				$('#sttvmodal').toggleClass('loader-active')
+				typeof cb === 'function' && cb(_st.modal.element)
+			}
+		}
+	})(),
+	cart : (function(){
+		if ( stajax.type === 'courses' ) {
+			return false
+		}
+		var cartObj = JSON.parse(localStorage.getItem('_stcart_'))
+		var initDate = Date.now()
+		if ( cartObj === null || (cartObj.ID / 1000 | 0) + (30) < initDate / 1000 | 0 ) {
+			cartObj = {
+				ID : initDate,
+				signature : btoa(navigator.userAgent+'|'+navigator.platform+'|'+navigator.product).replace(/=/g,''),
+				items : {}
+			}
+		}
+
+		for ( var key in cartObj.items ) {
+			var obj = cartObj.items[key]
+			if ( obj.type === 'multi-user' ) {
+				delete cartObj.items[key]
+			}
+		}
+
+		var currentCount = Object.keys(cartObj.items).length
+	
+		var fabWrap = $('<div/>',{id:'cart-FAB'}),
+			fab = $('<a/>',{"class":'cart-fab btn-floating btn-large z-depth-5'}),
+			fabCon = $('<i/>',{"class":'material-icons',text:'shopping_cart'}),
+			fabAlert = $('<div/>',{"class":'cart-alert circle z-depth-2'})
+	
+		$('body').addClass('sttv-jscart')
+	
+		fabWrap.append(
+			fabAlert.text(currentCount)
+		).append(
+			fab.append(fabCon)
+		).appendTo(document.body)
+
+		if ( currentCount > 0 ) {
+			fabAlert.addClass('show').siblings('.cart-fab').addClass('pulse')
+		}
+
+		localStorage.setItem('_stcart_',JSON.stringify(cartObj))
+	
+		return {
+			cartObj : cartObj,
+			add : function add(item,skipUpdate) {
+				skipUpdate = skipUpdate || false
+				if ( typeof item !== 'object' ) {
+					return false
+				}
+				var cart = this.cartObj.items,
+					msg = ''
+	
+				if ( typeof cart[item.id] === 'undefined' ) {
+					cart[item.id] = item
+					msg = 'Item added'
+				} else {
+					cart[item.id].qty += item.qty
+					msg = 'Quantity updated'
+				}
+	
+				this.save(skipUpdate)
+				return msg
+			},
+			remove : function(item,skipUpdate) {
+				skipUpdate = skipUpdate || false
+				if (typeof item !== 'string' ){
+					return false
+				}
+				delete this.cartObj.items[item]
+				return this.save(skipUpdate)
+			},
+			empty : function(cb) {
+				this.cartObj.items = {}
+				this.save()
+				return typeof cb === 'function' && cb(this)
+			},
+			save : function(skip) {
+				localStorage.setItem('_stcart_',JSON.stringify(this.cartObj))
+				return !skip && this.notifications.update()
+			},
+			get : function() {
+				return this.cartObj.items
+			},
+			notifications : {
+				count : currentCount,
+				element : fabAlert,
+				update : function() {
+					this.count = Object.keys(_st.cart.cartObj.items).length
+					if ( this.count <= 0 ) {
+						$('.cart-alert').removeClass('show').siblings('.cart-fab').removeClass('pulse')
+					} else {
+						$('.cart-alert').addClass('show').siblings('.cart-fab').addClass('pulse')
+					}
+					$('.cart-alert').text(this.count)
+					return this.count
+				}
+			}
+		}
+	})(),
+	checkout : '',
+	mu : {
+		formValid : false,
+		disableForm : function(c) {
+			$('.signup-submit',c).prop('disabled',!this.formValid)
+		},
+		validate : function(el,con) {
+			var inputs = $('input,select',con)
+			inputs.each(function(k,v){
+				if ( $(this).is(':required') && ( ( $(this).val() && !$(this).hasClass('invalid') ) || $(this).hasClass('valid') ) ) {
+					_st.mu.formValid = true
+				} else {
+					_st.mu.formValid = false
+					_st.mu.disableForm(con)
+					return false
+				}
+			})
+			_st.mu.disableForm(con)
+		},
+		submit : function(el,con) {
+			var data = {
+				mukey : $('input[name=mukey]',con).val(),
+				email : $('input[name=email]',con).val(),
+				license : {
+					id : $('select[name=sttv_course_id]',con).val(),
+					title : $('select[name=sttv_course_id] option:selected',con).text(),
+					qty : $('select[name=qty]',con).val()
+				}
+			}
+
+			_st.request({
+				route : stajax.rest.url+'/multi-user',
+				method : 'POST',
+				cdata : data,
+				headers : {
+					'X-WP-Nonce' : stajax.rest.nonce,
+				},
+				success : function(d) {
+					_st.checkout = 'multi-user'
+					_st.cart.empty(function(t) {
+						t.add(d.data,true)
+					})
+					el.append(d.html)
+					_st.modal.loader()
+					console.log(d)
+				},
+				error : function(x) {
+					var d = x[0].responseJSON
+
+					$('.message',con).text(d.message)
+					_st.modal.toggle(function() {
+						_st.modal.loader()
+					})
+					console.log(d)
+				}
+			})
+		}
+	},
 	fn : function() {}
 };
 
+
+/*
+ * 
+ * EVENT HANDLERS
+ * 
+ */
 ( function ( $ ) { //begin wrapper
 	"use strict";
 
 // Opener functions
 
-$('#main-menu').click(function(e) {
-	e.preventDefault();
-	if ( $(this).is( "#login" )) {
-		$('body').addClass('login-sidebar-open');
-	} else {
-		$('body').addClass('nav-sidebar-open');
-	}
-});
+$('input, select','#mu_form_wrapper').on('change',function(e){
+	_st.mu.validate(this,'#mu_form_wrapper')
+	_st.modal.action = ''
+})
 
-$('#acctmodal, .close').on('click touchstart',function(e) {
+var selectors = '.slide-bar, .modal-toggle, .read-more, .mu-submitter, .cart-fab'
+$(document).on('click touchstart',selectors,function(e) {
 	e.preventDefault();
-	_st.closer();
-});
-$('.read-more').on('click touchstart',function(e) {
-	e.preventDefault();
-	$(this).parent().css({'display':'none'});
-	$('#content-wrapper').css({'max-height':'none'});
+	var t = $(this);
+	//var s = e.handleObj.selector.split(/,\s+/);
+	var c = t.attr('class').split(/\s+/);
+
+	var f = {
+		'modal-toggle' : function() {
+			_st.modal.init(t.attr('data-action'));
+		},
+		'slide-bar' : function() {
+			_st.menu()
+		},
+		'read-more' : function() {
+			t.parent().css({'display':'none'});
+			$('#content-wrapper').css({'max-height':'none'});
+		},
+		'mu-submitter' : function() {
+			_st.modal.init('mu-checkout')
+		},
+		'cart-fab' : function() {
+
+		}
+	}
+
+	c.some(function(v){typeof f[v] !== 'undefined' && f[v]()});
 });
 	
 var thenav = $('body.nav-sidebar-open #main-nav');
@@ -90,7 +350,7 @@ $('li.menu-item-has-children>a').click(function(e) {
 	});
 });
 
-$('form#sttv_login_form').on('submit',function(e) {
+$(document).on('submit','form#sttv_login_form',function(e) {
 	e.preventDefault();
 	if (0 === $('#sttv_user').val().length){
 		$('.message').html('Username is required')

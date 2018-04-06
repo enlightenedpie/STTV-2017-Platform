@@ -201,3 +201,38 @@ function price_updater() {
 		}).fadeIn(100);
 
 	}
+
+	_st.checkout = (function(element) {
+		var type = _st.checkout,
+			cart = _st.cart.get(),
+			total = tax = taxRate = shipping = disc = discp = 0,
+			html = ''
+
+			for ( var key in cart ) {
+				var item = cart[key],
+					price = item.price*item.qty
+	
+				if ( item.taxable !== false ) {
+					tax += (price*taxRate)/100
+				}
+				total += price+tax
+
+				html += '<div class="col s12">'+item.qty+'x '+item.name+' | $'+price/100+'</div>'
+			}
+
+		element.html(html)
+
+		return {
+			type : type,
+			items : cart,
+			totals : {
+				total : total,
+				tax : tax,
+				taxRate : taxRate,
+				shipping : shipping,
+				disc : disc,
+				discp : disc
+			},
+			update : ''
+		}
+	})($('#cart-column'))

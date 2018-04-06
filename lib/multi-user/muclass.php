@@ -32,6 +32,14 @@ class MultiUser {
         return $this;
     }
 
+    public static function pricing( $stuff = '[]' ){
+        $stuff = json_decode( $stuff );
+        foreach ( $stuff as $k => $v ){
+            $stuff = $k;
+        }
+        return $stuff;
+    }
+
     public function keygen( $qty = 0 ) {
         if ( $qty < self::MIN_KEYS ){
             return null;
