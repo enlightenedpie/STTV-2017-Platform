@@ -1,0 +1,61 @@
+body.modal-open
+    overflow: hidden
+
+body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
+	opacity: 1
+	visibility: visible
+
+#sttvmodal
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100vw
+    height: 100vh
+    visibility: hidden
+    background: white
+    z-index: 998
+    opacity: 0
+    -webkit-transition: all .25s ease-in-out
+    transition: all .25s ease-in-out
+
+    .closer-wrapper
+        display: block
+        position: absolute
+        right: $huge
+        top: $huge
+        width: $huge
+        height: $huge
+
+        .modal-toggle
+            cursor: pointer
+
+        .material-icons
+            font-size: $huge
+
+    #modal_loading_overlay
+        opacity: 0
+        visibility: hidden
+        position: absolute
+        z-index: 1001
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+        background: white
+        -webkit-transition: all .25s ease-in-out
+        transition: all .25s ease-in-out
+
+        .loading-spinner
+            display: block
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translate(-50%,-50%)
+
+    .sttvmodal_inner
+        display: block
+        width: 60%
+        margin: 0 auto
+        height: 100%
