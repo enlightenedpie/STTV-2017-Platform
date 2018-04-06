@@ -5,8 +5,10 @@
 			<div class="closer-wrapper">
 				<i class="material-icons login-closer close">clear</i>
 			</div>
+			<div class="sttvmodal_inner">
+				<?php print sttv_login_form(); ?>
+			</div>
 		</div>
-	<?php print sttv_login_form(); ?>
 	</div>
 	<script>
 		( function ( $ ) { //begin wrapper
