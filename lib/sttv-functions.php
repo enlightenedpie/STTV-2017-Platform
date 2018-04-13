@@ -82,9 +82,17 @@ function sttvhashit($input,$num = 9) {
 	return base64_encode(substr(md5($input),0,$num));
 }
 
-function sttv_uid ( $prefix = '', $random = '', $entropy = false, $length = 0 ){
+function sttv_ukey ( $prefix = '', $random = '', $entropy = false, $length = 0 ){
 	$string = trim( $prefix . preg_replace('/[^A-Za-z0-9\-]/', '', base64_encode( uniqid( $random, $entropy ) ) ), '=');
 	return substr( $string, 0, ($length ?: strlen($string)) );
+}
+
+function sttv_uid( $length = 7 ) {
+	$str = '';
+	for ($i = 0; $i < $length; $i++) {
+		$str .= base_convert(mt_rand(0,15),10,16);
+	}
+	return strtoupper($str);
 }
 
 function sttv_verify_rest_nonce( WP_REST_Request $request ) {

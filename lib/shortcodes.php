@@ -121,9 +121,12 @@ function sttv_stripe_plan($atts,$content='') {
 	$price = str_replace('.','',str_replace('$','',$atts['price']));
 	
 	$databind = json_encode([
-		'ID' => $atts['plan'],
-		'title' => sanitize_text_field($atts['title']),
-		'price' => (int) $price
+		'id' => $atts['plan'],
+		'name' => sanitize_text_field($atts['title']),
+		'price' => (int) $price,
+		'taxable' => true,
+		'qty' => 1,
+		'type' => 'subscription'
 	]);
 	
 	$cols = '';
@@ -175,7 +178,7 @@ function sttv_stripe_plan($atts,$content='') {
     		?>
             <tr>
             	<td>
-                	<a href="<?php echo get_permalink(); ?>/checkout" class="payment-launcher pmt-button btn waves-effect waves-light" data-bind='<?php echo $databind; ?>'>Sign up now!</a>
+                	<a href="<?php echo get_permalink(); ?>/checkout" class="payment-launcher pmt-button btn waves-effect waves-light" data-action='checkout' data-bind='<?php echo $databind; ?>'>Sign up now!</a>
                 </td>
             </tr>
             </table>

@@ -1,3 +1,5 @@
+$gutter: 1.25em
+	
 body.page-template-checkout
 	background: -moz-linear-gradient(left, $bodybg 51%, $azure 51%)
 	background: -webkit-linear-gradient(left, $bodybg 51%, $azure 51%)
@@ -6,42 +8,119 @@ body.page-template-checkout
 	#main-wrapper
 		background: 0
 
-#checkout-left, #checkout-right
-	height: 100%
+body.modal-open
 
-header#checkoutheader
-	+wfull
-	height: $headerh
-	position: relative
-	top: 0
+	[type="checkbox"].filled-in:checked+label:after
+		border: 2px solid $azure
+		background-color: $azure
 
-	#checkout-logo-box
-		padding-top: 1em
-		width: 100%
-		height: $huge
-		text-align: center
+	.dropdown-content
 
-		img
-			display: inline
-			width: auto
-			height: 100%
+		li>span, li>a
+			color: $azure
 
-		h3
-			font-weight: 700
-			text-transform: uppercase
-			padding: 0 0 0 $tiny
-			margin: 0
-			display: inline
-
-#checkout_modal
-	min-height: 10em
-	width: 40%
-	text-align: center
-	padding: 1em
-
-	.modal-content
+	header#checkoutheader
+		+wfull
+		height: $headerh
 		position: relative
-		padding-top: 0px
+		top: 0
+		padding: 0
+		margin-bottom: $tiny
 
-		label
+		#checkout-logo-box
+			padding-top: 1em
 			width: 100%
+			height: $huge
+			text-align: center
+
+			img
+				display: inline
+				width: auto
+				height: 100%
+
+			h3
+				font-weight: 700
+				text-transform: uppercase
+				padding: 0 0 0 $tiny
+				margin: 0
+				display: inline
+
+	#checkout-left, #checkout-middle, #checkout-right
+		height: 100%
+		padding: 0
+
+		h4
+			margin-top: 0
+
+		.col
+			padding: 0
+
+		.row
+			margin-bottom: $tiny
+
+		input
+			margin: 0 0 1em 0
+
+		.input-field.col
+
+			label
+				left: 0
+
+		.input-field.left-col
+			padding: 0 $small 0 0
+
+		.input-field.coupon
+			padding: 0 $huge 0 0
+
+	#checkout-left
+		padding-right: $gutter
+
+	#checkout-middle
+		padding: 0 $gutter
+		border-left: 1px solid $smblack
+		border-right: 1px solid $smblack
+
+		#shipping_options
+			color: $azure
+			padding: 1em 0
+
+			.shp-msg
+				text-align: center
+				padding: 0 1em
+				font-size: $small
+
+	#checkout-right
+		padding-left: $gutter
+
+		#cart-column
+			padding-top: 1em
+			font-size: $small
+
+			.row
+				margin: 1em 0
+
+			.headings-row
+				font-weight: 700
+
+			.totals-row
+				margin-top: $small
+
+				.input-field
+					margin-top: 0px
+
+				#total
+					color: $ltblack
+					font-weight: 700
+					font-size: $bodytext
+					height: 100%
+
+					#ttltxt
+						position: absolute
+						display: block
+						bottom: 0
+						right: 0
+						margin-bottom: 1em
+
+@include MQ($mq-mobile)
+	#checkout-left, #checkout-middle, #checkout-right
+		padding: 0 1em

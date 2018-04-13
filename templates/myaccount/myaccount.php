@@ -28,6 +28,15 @@ if (current_user_can('manage_options')){
 
 	wp_reset_query();
 	
+} elseif (current_user_can('multi-user_master')) {
+	$keys = get_user_meta( $user->ID, 'mu_keys' );
+	$html = '<div class="row"><h3>Multi-user Keys</h3><div class="col s12">';
+	foreach ( $keys as $key ) {
+		$html .= "{$key}<br/>";
+	}
+	$html .= '</div></div>';
+	print $html;
+
 } else {
 	foreach ($legacy as $l){
 		if (!current_user_can($l)){
@@ -114,11 +123,11 @@ endforeach;
 	?></div>
 </div>
 <?php } ?>
-<div id="logout-btn" style="width:100%;padding:1em;text-align:center">
+<div id="logout-btn" class="logger-outer" style="width:100%;padding:1em;text-align:center">
 	<a style="background-color:#109fda;color:white" href="<?php echo site_url('/logout');?>" class="btn">Logout</a>
 </div>
 <script>
-$('#logout-btn a').click(function(e){
+$('.logger-outer').on('click',function(e){
 	e.preventDefault()
 	$.post(stajax.rest.url+'/auth?action=logout',function(d){
 		window.location.href = d

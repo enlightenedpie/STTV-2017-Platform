@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 	});
 
+	$('select').material_select();
+
 }); // end document ready
 
 var fsub = {
@@ -203,36 +205,67 @@ function price_updater() {
 	}
 
 	_st.checkout = (function(element) {
-		var type = _st.checkout,
-			cart = _st.cart.get(),
-			total = tax = taxRate = shipping = disc = discp = 0,
+		var cart = _st.cart.get(),
+			total = tax = taxRate = taxable = shipping = disc = discp = 0,
 			html = ''
 
-			for ( var key in cart ) {
-				var item = cart[key],
-					price = item.price*item.qty
-	
-				if ( item.taxable !== false ) {
-					tax += (price*taxRate)/100
-				}
-				total += price+tax
-
-				html += '<div class="col s12">'+item.qty+'x '+item.name+' | $'+price/100+'</div>'
-			}
-
-		element.html(html)
-
 		return {
-			type : type,
+			type : _st.checkout,
 			items : cart,
 			totals : {
 				total : total,
 				tax : tax,
 				taxRate : taxRate,
+				taxable : taxable,
 				shipping : shipping,
 				disc : disc,
-				discp : disc
+				discp : disc,
+				msg : ''
 			},
-			update : ''
+			state : {},
+			update : function(obj) {
+				if (obj !== null) {
+					$.extend(this.totals,obj)
+				}
+
+				if ( this.state === this.totals ) {
+					console.log('state unchanged')
+					return false
+					
+				}
+				
+				if ( _st.cart.changed.length > 0 ) {
+					var items = this.items
+					for ( var i = 0, len = _st.cart.changed.length; i < len; i++ ) {
+						var item = items[_st.cart.changed[i]],
+							price = item.price*item.qty
+
+						if ( item.taxable !== false ) {
+							this.totals.taxable += price
+						}
+						this.totals.total += price
+		
+						html += '<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+(price/100).toFixed(2)+'</div></div>'
+					}
+				}
+
+				this.totals.tax += (this.totals.taxable*this.totals.taxRate)/100
+				this.totals.total = this.totals.total+this.totals.tax
+				
+				if (this.totals.tax !== 0) {
+					html += '<div class="row"><div class="col s2"></div><div class="col s8">'+this.totals.msg+'</div><div class="col s2 right-align">'+(this.totals.tax/100).toFixed(2)+'</div></div>'
+				}
+	
+				element.html(html)
+				$('#ttltxt>span').text((this.totals.total/100).toFixed(2))
+
+				this.state = $.extend( true, {}, this.totals );
+				_st.cart.changed = []
+			},
+			fields : function() {
+				return Materialize.updateTextFields()
+			}
 		}
-	})($('#cart-column'))
+	})($('.items-row'))
+
+	_st.checkout.update()

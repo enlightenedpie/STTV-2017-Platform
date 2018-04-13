@@ -16,7 +16,11 @@ class STTV_Checkout extends WP_REST_Controller {
 
     private $zips = [];
 
+    private $countrydd = '';
+
     private $tax = 0;
+
+    private $timestamp;
 
     const BOOK_PRICE = 2500;
 
@@ -24,6 +28,14 @@ class STTV_Checkout extends WP_REST_Controller {
         add_action( 'rest_api_init', [ $this, 'register_checkout_endpoints' ] );
 
         $this->zips = json_decode(file_get_contents('https://gist.githubusercontent.com/enlightenedpie/99139b054dd9e4ad3f81689e2326d198/raw/69b654b47a01d2dc9e9ac34816c05ab5aa9ad355/ca_zips.json'));
+
+        $this->countrydd = get_option('sttv_country_options');
+        if (!$this->countrydd) {
+            $this->countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/888ba7972fa617579c374e951bd7eab9/raw/b987e55ddc4cde75f50298559e3a173a132657af/gistfile1.txt');
+            update_option('sttv_country_options',$this->countrydd);
+        }
+
+        $this->timestamp = time();
     }
 
     public function register_checkout_endpoints() {
@@ -88,6 +100,10 @@ class STTV_Checkout extends WP_REST_Controller {
 
         $body = sttv_array_map_recursive('sanitize_text_field',$body);
 
+        if ( isset($body['init']) && $body['init'] ) {
+            return $this->checkout_init( $body );
+        }
+
         if ( isset($body['muid']) ) {
             return $this->_mu_checkout( $body );
         }
@@ -108,12 +124,58 @@ class STTV_Checkout extends WP_REST_Controller {
             );
         }
 
-        return $this->checkout_generic_response(
-            'subscription_success',
-            'Thank you for subscribing! Your order details are below. Check your email for instructions on setting up your account',
-            200,
-            $mu->activate_key( 1 )
-        );
+        $student = wp_get_current_user();
+        if ( $student->ID === 0 ) {
+            $submitted = [
+                'first_name' => $body['firstName'],
+                'last_name' => $body['lastName'],
+                'user_login' => $body['email'],
+                'user_email' => $body['email'],
+                'user_pass' => $body['password'],
+                'show_admin_bar_front' => false,
+                'role' => 'multi-user_student'
+            ];
+            $student = wp_insert_user( $submitted );
+        } else {
+            $student->add_role('multi-user_student');
+        }
+
+        if ( ! is_wp_error( $student ) ) {
+            if ( $student instanceof stdClass ) {
+                $student = $student->ID;
+            }
+            $meta = [];
+            $activated_key = $mu->activate_key( $student );
+            foreach ( $activated_key as $k => $v ) {
+                $v['id'] = $k;
+                $meta[] = $v;
+            }
+            update_user_meta( $student, 'mu_used_keys', json_encode($meta) );
+
+            wp_set_current_user( $student );
+            wp_signon();
+
+            return $this->checkout_generic_response(
+                'subscription_success',
+                'Thank you for subscribing! You are being redirected to your account page.',
+                200,
+                [
+                    'data' => [
+                        'key' => $activated_key,
+                        'redirect' => site_url().'/my-account'
+                    ],
+                    'html' => '<div style="position:absolute;width:400px;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center"><h4>Thank you for subscribing! You are being redirected to your account page.</h4></div>'
+                ]
+            );
+        } else {
+            return $this->checkout_generic_response(
+                'registration_error',
+                'There was an error setting up your account. If you are an existing user, please log in first and try again..',
+                400,
+                $student
+            );
+        }
+
     }
 
     private function _checkout( $body ){
@@ -265,6 +327,28 @@ class STTV_Checkout extends WP_REST_Controller {
           // END TRY/CATCH
     }
 
+    private function checkout_init( $body ) {
+        // save cart in db
+
+        ob_start();
+
+        sttv_get_template('checkout','checkout',[
+            'countrydd' => $this->countrydd,
+            'user' => wp_get_current_user(),
+            'type' => 'checkout'
+        ]);
+
+        return $this->checkout_generic_response(
+            'checkout',
+            'Here\'s your checkout, bitch!',
+            200,
+            [ 
+                'data' => $body,
+                'html' => ob_get_clean()
+            ]
+        );
+    }
+
     private function check_email( $email = '' ) {
         if ( !is_email( $email ) ) {
             return $this->checkout_generic_response( 'bad_request', 'Email cannot be empty or blank, and must be a valid email address.', 400 );
@@ -311,15 +395,17 @@ class STTV_Checkout extends WP_REST_Controller {
 
         if ( in_array( $zip, $this->zips->losangeles ) ) {
             $tax = 9.5;
+            $msg = "CA tax ($tax%)";
         } else {
             foreach ($this->zips as $array) {
                 if ( in_array( $zip, $array ) ) {
                     $tax = 7.5;
+                    $msg = "CA tax ($tax%)";
                     break;
                 }
             }
         }
-        return $this->checkout_generic_response( 'checkout_tax', 'Tax percentage based on ZIP/Postal code', 200, [ 'tax' => $tax ] );
+        return $this->checkout_generic_response( 'checkout_tax', $msg, 200, [ 'tax' => $tax ] );
     }
 
     public function checkout_origin_verify( WP_REST_Request $request ) {

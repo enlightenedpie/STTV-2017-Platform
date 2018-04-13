@@ -40,7 +40,15 @@ class MultiUser {
         return $stuff;
     }
 
+    public static function getAllKeys() {
+        if ( current_user_can( 'manage_options' ) ) {
+            return @file_get_contents( MU_FILE_PATH ) ?: '[]';
+        }
+    }
+
     public function keygen( $qty = 0 ) {
+        $qty = (int) $qty;
+
         if ( $qty < self::MIN_KEYS ){
             return null;
         }
@@ -49,7 +57,7 @@ class MultiUser {
         array_unshift($prefix,'\t');
         
         for ($i = 1; $i <= $qty;) {
-            $key = sttv_uid( $prefix[date('n')].$prefix[date('y')].'-', openssl_random_pseudo_bytes( 32 ), true, 32 );
+            $key = sttv_ukey( $prefix[date('n')].$prefix[date('y')].'-', openssl_random_pseudo_bytes( 32 ), true, 32 );
             if ( array_key_exists( $key, $this->keys ) || array_key_exists( $key, $this->created_keys ) ){
                 continue;
             }
@@ -70,21 +78,22 @@ class MultiUser {
         }
 
         if ($this->autosave) {
-            $this->add();
+            $this->update($this->created_keys);
         }
 
         return $this->get_tokens();
     }
 
-    public function activate_key( $user_id = 0 ) {
+    public function activate_key( $user_id = 0, $time = MONTH_IN_SECONDS * 6 ) {
         return $this->set_active_user( $user_id )
             ->set_activated_time()
+            ->set_access_expiration( $time )
             ->invalidate_key()
             ->update( $this->current_key )
             ->current_key;
     }
 
-    public function validate_key( $key = '' ){
+    public function validate_key( $key = '' ) {
         if ( !array_key_exists( $key, $this->keys ) ){
             return false;
         }
@@ -100,7 +109,7 @@ class MultiUser {
             return false;
         }
 
-        return $key;
+        return $this->current_key;
     }
 
     public function get_tokens() {
@@ -126,6 +135,11 @@ class MultiUser {
 
     private function set_active_user( $active_user = 0 ){
         $this->current_key[$this->token]['active_user'] = $active_user;
+        return $this;
+    }
+
+    private function set_access_expiration( $exp ) {
+        $this->current_key[$this->token]['course_exp'] = time() + $exp;
         return $this;
     }
 

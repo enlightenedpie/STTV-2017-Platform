@@ -19,7 +19,7 @@
             	<img src="<?php header_image(); ?>" alt="<?php echo bloginfo('name');?>" />
             </a>
         </div>
-        <a href="/" id="login" class="modal-toggle" <?php print ($loggedin) ? 'data-action="account"' : 'data-action="login"'; ?>>
+        <a href="<?php echo site_url(); ?>/my-account" id="login" <?php print ($loggedin) ? 'data-action="account"' : 'class="modal-toggle" data-action="login"'; ?>>
             <div class="icon-block">
                 <span class="dashicons dashicons-admin-users"></span>
                 <span class="link-text"><?php print ($loggedin) ? $firstname : 'Login'; ?></span>

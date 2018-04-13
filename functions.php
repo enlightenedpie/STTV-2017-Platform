@@ -47,8 +47,7 @@ final class STTV {
         //REST API
         $this->define( 'STTV_REST_NAMESPACE', 'v'.STTV_VERSION );
         $this->define( 'STTV_UA', 'STTV-REST/'.STTV_VERSION.' <'.$_SERVER['SERVER_SOFTWARE'].'>' );
-        $this->restauth = ( has_filter( 'rest_nonce_action' ) ) ? STTV_PREFIX.':rest:auth' : $this->restauth;
-        $this->define('STTV_REST_AUTH', $this->restauth);
+        $this->define( 'STTV_REST_AUTH', ( has_filter( 'rest_nonce_action' ) ) ? STTV_PREFIX.':rest:auth' : 'wp_rest');
     }
 
     private function includes() {

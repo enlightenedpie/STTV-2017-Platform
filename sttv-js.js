@@ -80,7 +80,7 @@ var _st = {
 			element : $('.sttvmodal_inner'),
 			init : function(act){
 				if (typeof act === 'undefined'){
-					return
+					return false
 				}
 				if (this.action === act) {
 					return this.toggle()
@@ -114,7 +114,16 @@ var _st = {
 							_st.mu.submit(el,'#mu_form_wrapper')
 						}
 						break
+					case 'mu-signup':
+						cb = function(el) {
+							_st.mu.register(el,'#mu_form_wrapper')
+						}
+						break
+					case 'sttv-cart':
 					case 'checkout':
+						cb = function(el) {
+							_st.cart.submit(true,el)
+						}
 						break
 				}
 				this.toggle(cb)
@@ -135,7 +144,7 @@ var _st = {
 		}
 		var cartObj = JSON.parse(localStorage.getItem('_stcart_'))
 		var initDate = Date.now()
-		if ( cartObj === null || (cartObj.ID / 1000 | 0) + (30) < initDate / 1000 | 0 ) {
+		if ( cartObj === null || (cartObj.ID / 1000 | 0) + (86400) < initDate / 1000 | 0 ) {
 			cartObj = {
 				ID : initDate,
 				signature : btoa(navigator.userAgent+'|'+navigator.platform+'|'+navigator.product).replace(/=/g,''),
@@ -157,7 +166,7 @@ var _st = {
 			fabCon = $('<i/>',{"class":'material-icons',text:'shopping_cart'}),
 			fabAlert = $('<div/>',{"class":'cart-alert circle z-depth-2'})
 	
-		$('body').addClass('sttv-jscart')
+		//$('body').addClass('sttv-jscart')
 	
 		fabWrap.append(
 			fabAlert.text(currentCount)
@@ -173,10 +182,11 @@ var _st = {
 	
 		return {
 			cartObj : cartObj,
+			changed : [],
 			add : function add(item,skipUpdate) {
 				skipUpdate = skipUpdate || false
 				if ( typeof item !== 'object' ) {
-					return false
+					throw 'Item must be an object'
 				}
 				var cart = this.cartObj.items,
 					msg = ''
@@ -185,10 +195,13 @@ var _st = {
 					cart[item.id] = item
 					msg = 'Item added'
 				} else {
-					cart[item.id].qty += item.qty
-					msg = 'Quantity updated'
+					if ( item.type !== 'subscription') {
+						cart[item.id].qty += item.qty
+						msg = 'Quantity updated'
+					}
 				}
 	
+				this.changed.push(item.id)
 				this.save(skipUpdate)
 				return msg
 			},
@@ -225,6 +238,36 @@ var _st = {
 					$('.cart-alert').text(this.count)
 					return this.count
 				}
+			},
+			submit : function(init,el) {
+				var data = {
+					init : init || false,
+					cart : this.get()
+				}
+	
+				_st.request({
+					route : stajax.rest.url+'/checkout',
+					method : 'POST',
+					cdata : data,
+					headers : {
+						'X-WP-Nonce' : stajax.rest.nonce,
+					},
+					success : function(d) {
+						_st.checkout = 'subscription'
+						el.append(d.html)
+						_st.modal.loader()
+						console.log(d)
+					},
+					error : function(x) {
+						var d = x[0].responseJSON
+	
+						$('.message',el).text(d.message)
+						_st.modal.toggle(function() {
+							_st.modal.loader()
+						})
+						console.log(d)
+					}
+				})
 			}
 		}
 	})(),
@@ -256,7 +299,8 @@ var _st = {
 					title : $('select[name=sttv_course_id] option:selected',con).text(),
 					qty : $('select[name=qty]',con).val()
 				}
-			}
+			},
+			type = 'multi-user'
 
 			_st.request({
 				route : stajax.rest.url+'/multi-user',
@@ -266,7 +310,7 @@ var _st = {
 					'X-WP-Nonce' : stajax.rest.nonce,
 				},
 				success : function(d) {
-					_st.checkout = 'multi-user'
+					_st.checkout = type
 					_st.cart.empty(function(t) {
 						t.add(d.data,true)
 					})
@@ -282,6 +326,42 @@ var _st = {
 						_st.modal.loader()
 					})
 					console.log(d)
+				}
+			})
+		},
+		register : function(el,con) {
+
+			var data = {
+				muid : $('input[name=mukey]',con).val(),
+				email : $('input[name=sttv_email]',con).val(),
+				password : $('input[name=sttv_password]',con).val(),
+				firstName : $('input[name=sttv_firstname]',con).val(),
+				lastName : $('input[name=sttv_lastname]',con).val()
+			}
+
+			_st.request({
+				route : stajax.rest.url+'/checkout',
+				method : 'POST',
+				cdata : data,
+				headers : {
+					'X-WP-Nonce' : stajax.rest.nonce,
+				},
+				success : function(d) {
+					el.append(d.html)
+					_st.modal.loader()
+					setTimeout(function(){
+						window.location.href = d.data.redirect
+					},2000) 
+					console.log(d)
+				},
+				error : function(x) {
+					console.log(x)
+					var d = x[0].responseJSON
+
+					$('.message',con).text(d.message)
+					_st.modal.toggle(function() {
+						_st.modal.loader()
+					})
 				}
 			})
 		}
@@ -305,7 +385,7 @@ $('input, select','#mu_form_wrapper').on('change',function(e){
 	_st.modal.action = ''
 })
 
-var selectors = '.slide-bar, .modal-toggle, .read-more, .mu-submitter, .cart-fab'
+var selectors = '.slide-bar, .modal-toggle, .mu-signup, .read-more, .mu-submitter, .cart-fab, .payment-launcher'
 $(document).on('click touchstart',selectors,function(e) {
 	e.preventDefault();
 	var t = $(this);
@@ -313,6 +393,13 @@ $(document).on('click touchstart',selectors,function(e) {
 	var c = t.attr('class').split(/\s+/);
 
 	var f = {
+		'mu-signup' : function() {
+			_st.modal.init('mu-signup')
+		},
+		'payment-launcher' : function() {
+			_st.cart.add(JSON.parse(t.attr('data-bind')))
+			_st.modal.init(t.attr('data-action'));
+		},
 		'modal-toggle' : function() {
 			_st.modal.init(t.attr('data-action'));
 		},
@@ -327,7 +414,7 @@ $(document).on('click touchstart',selectors,function(e) {
 			_st.modal.init('mu-checkout')
 		},
 		'cart-fab' : function() {
-
+			_st.modal.init('sttv-cart')
 		}
 	}
 

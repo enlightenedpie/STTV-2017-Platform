@@ -1,307 +1,177 @@
-<?php /* <div id="checkout-right" class="col s12 m5 push-m7">
-        <div class="card-content row">
-            <div class="col s12">
-                <table id="totals_table" class="highlight responsive-table">
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3"><div class="divider"></div></td>
-                        </tr>
-                        <tr>
-                            <td id="coupon_cell">
-                                <div class="input-field col s6">
-                                    <input id="sttv_coupon" data-error="Invalid coupon" name="sttv_coupon" type="text"/>
-                                    <label for="sttv_coupon">Coupon Code</label>
-                                </div>
-                            </td>
-                            <td style="text-align:right">Total:</td>
-                            <td style="text-align:right" id="signup_total_price"><span style="font-weight:bold"></span></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="col s12">
-                <fieldset id="course_options">
-                    <legend>Shipping Options</legend>
-                    <div class="input-field col s12" style="margin-top:0px">
-                        <!--input class="filled-in" type="checkbox" name="sttv_no_trial" id="sttv_no_trial" checked/><label style="margin-top:1em" for="sttv_no_trial">Skip the trial period and start right away</label><br/-->
-                        <input class="filled-in" type="checkbox" name="sttv_digital_book" id="sttv_digital_book"/><label style="margin-top:1em;margin-bottom:1em" for="sttv_digital_book">I want Priority Shipping (3-4 days)((U.S. Only))</label><br/>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    </div>
-    <div id="checkout-left" class="col s12 m7 pull-m5">
-        <header id="checkoutheader">
-            <div id="checkout-logo-box" class="valign-wrapper">
-                <img src="https://supertutortv.com/wp-content/uploads/2017/01/sttv_site_logo.png" alt="logo" />
-                <h3>Checkout</h3>
-            </div>
-        </header>
-        <div id="wrapper_line-item" class="col s12" style="text-align:left">
-            <div id="customer_info" class="row">
-                <div id="account_info" class="col s12">
-                    <div class="row">
-                        <h4>Your Information</h4>
-                        <div class="input-field col s6">
-                            <input type="text" class="validate" name="sttv_firstname" required/>
-                            <label for="sttv_firstname">First Name</label>
-                        </div>
-                        <div class="input-field col s6">
-                            <input type="text" class="validate" name="sttv_lastname" required/>
-                            <label for="sttv_lastname">Last Name</label>
-                        </div>
-                        <div class="input-field col s12">
-                            <input id="sttv_email" class="validate" name="sttv_email" type="email" required/>
-                            <label data-error="Invalid email address" for="sttv_email">Email Address</label>
-                        </div>
-                        <div class="input-field col s12">
-                            <input id="sttv_password" name="sttv_password" type="password" required/>
-                            <label for="sttv_password">Choose Password</label>
-                        </div>
-                    </div>
-                </div>
-                <div id="shipping_info" class="col s12">
-                    <div class="row">
-                        <div class="col s12">
-                            <h4 style="display:inline">Shipping Address</h4>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input id="sttv_shipping_address1" name="sttv_shipping_address1" type="text" class="validate" required/>
-                            <label for="sttv_shipping_address1" data-error="Invalid format" >Address Line 1</label>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input id="sttv_shipping_address2" name="sttv_shipping_address2" type="text" />
-                            <label for="sttv_shipping_address2">Address Line 2</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_shipping_city" class="validate" name="sttv_shipping_city" type="text" required/>
-                            <label for="sttv_shipping_city">City</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_shipping_state" class="validate" name="sttv_shipping_state" type="text" required/>
-                            <label for="sttv_shipping_state">State</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_shipping_pcode" class="validate" name="sttv_shipping_pcode" type="tel" required/>
-                            <label for="sttv_shipping_pcode">Postal Code</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <select class="country-dd browser-default validate" name="sttv_shipping_country" required>
-                                <option value disabled selected>Country...</option>
-								<?php print $countrydd['body']; ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div id="billing_info" class="col s12">
-                    <div id="billing_fields" class="row">
-                        <div class="col s12 m6">
-                            <h4 style="display:inline">Billing Address</h4>
-                        </div>
-                        <div class="col s12 m6">
-                            <input class="filled-in" type="checkbox" id="same_shipping" /><label style="margin-top:1em" for="same_shipping">Same as shipping</label>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input id="sttv_billing_address1" name="sttv_billing_address1" type="text" class="validate" required/>
-                            <label class="active" for="sttv_billing_address1" data-error="Invalid format" >Address Line 1</label>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input id="sttv_billing_address2" name="sttv_billing_address2" type="text" />
-                            <label class="active" for="sttv_billing_address2">Address Line 2</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_billing_city" name="sttv_billing_city" type="text" required/>
-                            <label class="active" for="sttv_billing_city">City</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_billing_state" name="sttv_billing_state" type="text" required/>
-                            <label class="active" for="sttv_billing_state">State</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_billing_pcode" name="sttv_billing_pcode" type="tel" required/>
-                            <label class="active" for="sttv_billing_pcode">Postal Code</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <select class="country-dd browser-default" name="sttv_billing_country" required>
-                                <option value disabled selected>Country...</option>
-								<?php print $countrydd['body']; ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-content row">
-                <h4>Payment</h4>
-                <div class="input-field col s12">
-                    <input name="sttv_cardname" type="text" required/>
-                    <label class="active" for="sttv_cardname">Name On Card</label>
-                </div>
-                <div class="col s12">
-                    <div id="sttv_card_element"></div>
-                    <p class="success"></p>
-                    <p class="error token"></p>
-                </div>
-                <div class="col s12">
-                    <div class="input-field col s12" style="margin-top:0px">
-                        <input class="filled-in" type="checkbox" name="sttv_mailinglist" id="sttv_mailinglist" checked/><label style="margin-top:1em" for="sttv_mailinglist">Sign me up for future discounts, coupons, and giveaways from SupertutorTV</label><br/>
-                        <input class="filled-in" type="checkbox" name="t_and_c" id="t_and_c" /><label style="margin-top:1em;margin-bottom:1em" for="t_and_c">I have read the Terms and Conditions (required)</label>
-                    </div>
-                </div>
-                <div class="col s12">
-                    <button type="submit" class="signup-submit button-wide z-depth-1 waves-effect waves-light" disabled><span></span></button>
-                </div>
-            </div>
-        </div>
-    </div> */
-    $user = $sgt['user'];
-    ?>
-<section class="row" style="height:100vh">
+<?php 
+
+$user = $sgt['user']; 
+$shipping = '<span>No shipping options available for mutli-user license orders.</span>';
+$disabled = '';
+
+if ( $sgt['type'] === 'checkout' ) {
+$shipping = <<<HTML
+
+HTML;
+} else {
+    $disabled = 'disabled';
+}
+
+?>
+<section class="row">
     <header id="checkoutheader" class="col s12">
-            <div id="checkout-logo-box" class="valign-wrapper">
-				<img src="<?php header_image(); ?>" alt="<?php echo bloginfo('name');?>" />
-                <h3>Checkout</h3>
-            </div>
-        </header>
-	<div id="checkout-right" class="col s12 m5 push-m7 cart-test">
-        <div id="cart-column" class="row">
-            <div class="col s12">
-                <table></table>
-            </div>
+        <div id="checkout-logo-box" class="valign-wrapper">
+            <img src="<?php header_image(); ?>" alt="<?php echo bloginfo('name');?>" />
+            <h3>Checkout</h3>
         </div>
-    </div>
-	<div id="checkout-left" class="col s12 m7 pull-m5 checkout-test">
+    </header>
+	<div id="checkout-left" class="col s12 m4 checkout-test">
         <div id="wrapper_line-item" class="col s12" style="text-align:left">
             <div id="customer_info" class="row">
                 <div id="account_info" class="col s12">
                     <div class="row">
                         <h4>Your Information</h4>
-                        <div class="input-field col s6">
+                        <div class="input-field left-col col s6">
                             <input type="text" class="validate" name="sttv_firstname" value="<?php print $user->first_name; ?>" required/>
                             <label for="sttv_firstname">First Name</label>
                         </div>
-                        <div class="input-field col s6">
+                        <div class="input-field left-col col s6">
                             <input type="text" class="validate" name="sttv_lastname" value="<?php print $user->last_name; ?>" required/>
                             <label for="sttv_lastname">Last Name</label>
                         </div>
-                        <div class="input-field col s6">
+                        <div class="input-field col s12">
                             <input id="sttv_email" class="validate" name="sttv_email" type="email" value="<?php print $user->user_email; ?>" required/>
                             <label data-error="Invalid email address" for="sttv_email">Email Address</label>
                         </div>
-                        <div class="input-field col s6">
+                        <div class="input-field col s12">
                             <input id="sttv_password" name="sttv_password" type="password" value="<?php print $user->user_pass; ?>" required/>
                             <label for="sttv_password">Choose Password</label>
                         </div>
-                    </div>
-                </div>
-                <div id="shipping_info" class="col s12">
-                    <div class="row">
-                        <div class="col s12">
-                            <h4 style="display:inline">Shipping Address</h4>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input id="sttv_shipping_address1" name="sttv_shipping_address1" type="text" class="validate" required/>
-                            <label for="sttv_shipping_address1" data-error="Invalid format" >Address Line 1</label>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input id="sttv_shipping_address2" name="sttv_shipping_address2" type="text" />
-                            <label for="sttv_shipping_address2">Address Line 2</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_shipping_city" class="validate" name="sttv_shipping_city" type="text" required/>
-                            <label for="sttv_shipping_city">City</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_shipping_state" class="validate" name="sttv_shipping_state" type="text" required/>
-                            <label for="sttv_shipping_state">State</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <input id="sttv_shipping_pcode" class="validate" name="sttv_shipping_pcode" type="tel" required/>
-                            <label for="sttv_shipping_pcode">Postal Code</label>
-                        </div>
-                        <div class="input-field col s6 m3">
-                            <select class="country-dd browser-default validate" name="sttv_shipping_country" required>
-                                <option value disabled selected>Country...</option>
-								<?php print $sgt['countrydd']['body']; ?>
-                            </select>
+                        <div class="input-field col s12">
+                            <input id="sttv_phone" class="validate" name="sttv_phone" type="tel" value="" required/>
+                            <label data-error="Invalid phone number" for="sttv_phone">Phone Number</label>
                         </div>
                     </div>
                 </div>
                 <div id="billing_info" class="col s12">
                     <div id="billing_fields" class="row">
-                        <div class="col s12 m6">
-                            <h4 style="display:inline">Billing Address</h4>
-                        </div>
-                        <div class="col s12 m6">
-                            <input class="filled-in" type="checkbox" id="same_shipping" /><label style="margin-top:1em" for="same_shipping">Same as shipping</label>
-                        </div>
-                        <div class="input-field col s12 m6">
+                        <h4>Billing Address</h4>
+                        <div class="input-field col s12">
                             <input id="sttv_billing_address1" name="sttv_billing_address1" type="text" class="validate" required/>
                             <label class="active" for="sttv_billing_address1" data-error="Invalid format" >Address Line 1</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col s12">
                             <input id="sttv_billing_address2" name="sttv_billing_address2" type="text" />
                             <label class="active" for="sttv_billing_address2">Address Line 2</label>
                         </div>
-                        <div class="input-field col s6 m3">
+                        <div class="input-field col s12">
                             <input id="sttv_billing_city" name="sttv_billing_city" type="text" required/>
                             <label class="active" for="sttv_billing_city">City</label>
                         </div>
-                        <div class="input-field col s6 m3">
+                        <div class="input-field left-col col s6">
                             <input id="sttv_billing_state" name="sttv_billing_state" type="text" required/>
                             <label class="active" for="sttv_billing_state">State</label>
                         </div>
-                        <div class="input-field col s6 m3">
+                        <div class="input-field col s6">
                             <input id="sttv_billing_pcode" name="sttv_billing_pcode" type="tel" required/>
                             <label class="active" for="sttv_billing_pcode">Postal Code</label>
                         </div>
-                        <div class="input-field col s6 m3">
-                            <select class="country-dd browser-default" name="sttv_billing_country" required>
+                        <div class="input-field col s12">
+                            <select class="country-dd" name="sttv_billing_country" required>
                                 <option value disabled selected>Country...</option>
 								<?php print $sgt['countrydd']['body']; ?>
                             </select>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="card-content row">
-                <h4>Payment</h4>
-                <div class="input-field col s12">
-                    <input name="sttv_cardname" type="text" required/>
-                    <label class="active" for="sttv_cardname">Name On Card</label>
-                </div>
-                <div class="col s12">
-                    <div id="sttv_card_element"></div>
-                    <p class="success"></p>
-                    <p class="error token"></p>
-                </div>
-                <div class="col s12">
-                    <div class="input-field col s12" style="margin-top:0px">
-                        <input class="filled-in" type="checkbox" name="sttv_mailinglist" id="sttv_mailinglist" checked/><label style="margin-top:1em" for="sttv_mailinglist">Sign me up for future discounts, coupons, and giveaways from SupertutorTV</label><br/>
-                        <input class="filled-in" type="checkbox" name="t_and_c" id="t_and_c" /><label style="margin-top:1em;margin-bottom:1em" for="t_and_c">I have read the Terms and Conditions (required)</label>
-                    </div>
-                </div>
-                <div class="col s12">
-                    <button type="submit" class="signup-submit button-wide z-depth-1 waves-effect waves-light" disabled><span></span></button>
                 </div>
             </div>
         </div>
 	</div>
-</section>
-<?php /*<script>
- 	var stripe = Stripe(stajax.stripe.public_key);
-	var elements = stripe.elements();
-	var card = elements.create('card',{
-		hidePostalCode: true
-	});
-	card.mount('#sttv_card_element');
-	
+    <div id="checkout-middle" class="col s12 m4 cart-test">
+        <div class="col s12">
+            <div class="row">
+                <h4>Shipping Options</h4>
+                <div id="shipping_options" class="col s12">
+                    <div class="shp-msg">
+                        <?php print $shipping; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="shipping_info" class="col s12">
+            <div id="shipping_fields" class="row">
+                <h4>Shipping Address</h4>
+                <div class="col s12">
+                    <input class="filled-in" type="checkbox" id="same_as_billing" /><label style="margin-top:1em" for="same_as_billing">Same as billing address</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="sttv_shipping_address1" name="sttv_shipping_address1" type="text" class="validate" required/>
+                    <label for="sttv_shipping_address1" data-error="Invalid format" >Address Line 1</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="sttv_shipping_address2" name="sttv_shipping_address2" type="text" />
+                    <label for="sttv_shipping_address2">Address Line 2</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="sttv_shipping_city" class="validate" name="sttv_shipping_city" type="text" required/>
+                    <label for="sttv_shipping_city">City</label>
+                </div>
+                <div class="input-field left-col col s6">
+                    <input id="sttv_shipping_state" class="validate" name="sttv_shipping_state" type="text" required/>
+                    <label for="sttv_shipping_state">State</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="sttv_shipping_pcode" class="validate" name="sttv_shipping_pcode" type="tel" required/>
+                    <label for="sttv_shipping_pcode">Postal Code</label>
+                </div>
+                <div class="input-field col s12">
+                    <select class="country-dd validate" name="sttv_shipping_country" required>
+                        <option value disabled selected>Country...</option>
+                        <?php print $sgt['countrydd']['body']; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="checkout-right" class="col s12 m4 cart-test">
+        <div class="row">
+            <h4>Your Order</h4>
+            <div id="cart-column" class="col s12">
+                <div class="row headings-row">
+                    <div class="col s2">Qty</div>
+                    <div class="col s8">Item</div>
+                    <div class="col s2 right-align">Price</div>
+                </div>
+                <div class="items-row"></div>
+                <div class="row totals-row">
+                    <div class="col s8">
+                        <div class="input-field coupon col s12">
+                            <input id="sttv_coupon" data-error="Invalid coupon" name="sttv_coupon" type="text" <?php print $disabled; ?>/>
+                            <label for="sttv_coupon">Coupon Code</label>
+                        </div>
+                    </div>
+                    <div id="total" class="col s4 right-align"><span id="ttltxt">Total: $<span>0</span></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="card-content row">
+            <h4>Payment</h4>
+            <div class="input-field col s12">
+                <input name="sttv_cardname" type="text" required/>
+                <label class="active" for="sttv_cardname">Name On Card</label>
+            </div>
+            <div class="col s12">
+                <div id="sttv_card_element"></div>
+                <p class="success"></p>
+                <p class="error token"></p>
+            </div>
+            <div class="col s12">
+                <div class="input-field col s12" style="margin-top:0px">
+                    <input class="filled-in" type="checkbox" name="sttv_mailinglist" id="sttv_mailinglist" checked/><label style="margin-top:1em" for="sttv_mailinglist">Sign me up for future discounts, coupons, and giveaways from SupertutorTV</label><br/>
+                    <input class="filled-in" type="checkbox" name="t_and_c" id="t_and_c" /><label style="margin-top:1em;margin-bottom:1em" for="t_and_c">I have read the Terms and Conditions</label>
+                </div>
+            </div>
+            <div class="col s12">
+                <button type="submit" class="signup-submit button-wide z-depth-1 waves-effect waves-light" disabled><span>Place Order</span></button>
+            </div>
+        </div>
+    </div>
+</section><?php /*
 	card.on('change', function(event) {
 		fsub.setOutcome(event);
 	});
@@ -435,26 +305,7 @@
 		 }
 		 price_updater();
 	 });
-	$('#same_shipping').change(function() {
-		if ($(this).is(":checked")) {
-			
-			$('input[name=sttv_billing_address1]').val($('input[name=sttv_shipping_address1]').val());
-			$('input[name=sttv_billing_address2]').val($('input[name=sttv_shipping_address2]').val());
-			$('input[name=sttv_billing_city]').val($('input[name=sttv_shipping_city]').val());
-			$('input[name=sttv_billing_state]').val($('input[name=sttv_shipping_state]').val());
-			$('input[name=sttv_billing_pcode]').val($('input[name=sttv_shipping_pcode]').val());
-			$('select[name=sttv_billing_country]').val($('select[name=sttv_shipping_country]').val());
-			
-			Materialize.updateTextFields();
-
-		} else {
-			$("#billing_fields :input").each(function(){
-				$(this).val('');
-			});
-			$("select[name=sttv_billing_country]").prop("selectedIndex", -1);
-		}
-		$('input[name=sttv_billing_pcode]').blur();
-	});
+	
 	
 	$('.signup-submit').click(function(e) {
 		e.preventDefault();
@@ -565,8 +416,7 @@
  <script>
  (function(){
     var mainJS = document.getElementById('sttv-js-main'),
-        checkoutJS = document.getElementById('sttv-checkout-js'),
-        stripeJS = document.getElementById('sttv-stripe-js')
+        checkoutJS = document.getElementById('sttv-checkout-js')
 
     if ( null === checkoutJS ) {
         checkoutJS = document.createElement('script')
@@ -576,14 +426,177 @@
         mainJS.parentNode.insertBefore(checkoutJS, mainJS.nextSibling)
     }
 
-    if ( null === stripeJS ) {
-        stripeJS = document.createElement('script')
-        stripeJS.type = 'text/javascript'
-        stripeJS.src = 'https://js.stripe.com/v3/'
-        stripeJS.id = 'sttv-stripe-js'
-        checkoutJS.parentNode.insertBefore(stripeJS, checkoutJS.nextSibling)
-    }
-
     Materialize.updateTextFields()
  })()
+
+var stripe = Stripe(stajax.stripe.public_key);
+var elements = stripe.elements();
+var card = elements.create('card',{
+    hidePostalCode: true
+});
+card.mount('#sttv_card_element');
+
+$('#same_as_billing').change(function() {
+    if ($(this).is(":checked")) {
+        
+        $('input[name=sttv_shipping_address1]').val($('input[name=sttv_billing_address1]').val());
+        $('input[name=sttv_shipping_address2]').val($('input[name=sttv_billing_address2]').val());
+        $('input[name=sttv_shipping_city]').val($('input[name=sttv_billing_city]').val());
+        $('input[name=sttv_shipping_state]').val($('input[name=sttv_billing_state]').val());
+        $('input[name=sttv_shipping_pcode]').val($('input[name=sttv_billing_pcode]').val());
+        $('select[name=sttv_shipping_country]').val($('select[name=sttv_billing_country]').val());
+        
+        $('select').material_select()
+        _st.checkout.fields()
+
+    } else {
+        $("#shipping_fields :input").each(function(){
+            $(this).val('');
+        });
+        $("select[name=sttv_shipping_country]").prop("selectedIndex", -1);
+    }
+    $('input[name=sttv_billing_pcode]').blur();
+
+    _st.checkout.fields()
+});
+
+$('[name=sttv_email],[name=sttv_billing_pcode],input[name=sttv_coupon]').on('blur',function(e) {
+    e.preventDefault();
+    var tThis = $(this),
+        val = tThis.val(),
+        qstring = ''
+
+    switch (tThis.attr('name')) {
+        case 'sttv_coupon':
+            if (!val) {
+                tThis.removeClass('valid invalid')
+                _st.checkout.update({
+                    disc : 0,
+                    discp : 0
+                })
+                return false
+            }
+            qstring = 'coupon='
+            break
+        case 'sttv_billing_pcode':
+            if (!val) {
+                _st.checkout.update({
+                    tax : 0
+                })
+                return false
+            }
+            qstring = 'zip='
+            break
+        case 'sttv_email':
+            if (!val) {
+                return false
+            }
+            qstring = 'email='
+            break
+        default:
+            return false
+    }
+    
+    setTimeout( function() {
+        _st.request({
+            route : stajax.rest.url+'/checkout?'+qstring+val,
+            headers : {
+				'X-WP-Nonce' : stajax.rest.nonce,
+			},
+			success : function(d) {
+				switch (d.code) {
+                    case 'checkout_tax':
+                        _st.checkout.update({
+                            taxRate : d.tax,
+                            msg : d.message
+                        })
+                        break
+                }
+			},
+			error : function(x) {
+				console.log(x)
+			}
+        })
+
+        /* $.post(
+        stajax.ajaxURL,
+        data,
+        function(response) {
+    
+            var rd = response.data;
+            var rs = response.success;
+            
+            //console.log(response);
+            
+            switch (rd.field) {
+                case 'testing' :
+                    console.log(rd);
+                case 'email' :
+                    if (rs) {
+                        if (rd.current) {return;}
+                        tThis.siblings('label').attr({
+                            'data-success':rd.msg
+                            
+                        });
+                        tThis.removeClass('invalid');
+                        tThis.addClass('valid');
+                    } else {
+                        tThis.siblings('label').attr({
+                            
+                            'data-error':rd.msg
+                            
+                        });
+                        tThis.removeClass('valid');
+                        tThis.addClass('invalid');
+                    }
+                    break;
+                    
+                case 'zip' :
+                    plan.tax = rd.tax;
+                    price_updater();
+                    console.log(rd);
+                    break;
+                    
+                case 'coupon' :
+                
+                    
+                    if (!rs) {
+                        tThis.siblings('label').attr({
+                            'data-error':'Invalid coupon'
+                            
+                        });
+                        
+                        tThis.removeClass('valid');
+                        tThis.addClass('invalid');
+                        plan.disc = plan.discp = 0;
+                        price_updater();
+                        
+                    } else {
+                        if (rd.obj.percent_off) {
+                            plan.disc = 0;
+                            plan.discp = rd.obj.percent_off;
+                            var msg = String(rd.obj.percent_off)+'% off';
+                        } else if (rd.obj.amount_off) {
+                            plan.discp = 0;
+                            plan.disc = rd.obj.amount_off;
+                            var msg = '$'+String(rd.obj.amount_off/100)+' off';
+                        }
+                        tThis.siblings('label').attr({
+                            
+                            'data-success': msg
+                            
+                        });
+                        tThis.removeClass('invalid');
+                        tThis.addClass('valid');
+                        window.plan.coupon = rd.obj.id;
+                        price_updater();
+                    }
+                    //console.log(plan);
+                    break;
+                
+            } 
+        }); */
+    },1);
+    
+});
  </script>

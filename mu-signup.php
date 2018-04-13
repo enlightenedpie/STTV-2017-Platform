@@ -1,6 +1,6 @@
 <?php 
 
-/* Template Name: MU License Purchase */
+/* Template Name: MU Student Signup */
 
 ?>
 <?php get_header(); ?>
@@ -8,60 +8,38 @@
 
 <div id="content-wrapper-signup" class="col s12">
     <?php the_content(); ?>
-</div><?php
-
-    $qty = range(3,100);
-    $qhtml = '';
-    foreach ( $qty as $q ){
-        $qhtml .= '<option value="'.$q.'">'.$q.'</option>';
-    }
-
-?>
+</div>
 <div id="mu_form_wrapper" class="col s12">
     <div class="row">
         <div id="mu_form_inner" class="col s12 m6 l4 offset-m3 offset-l4">
-            <div class="input-field col s12">
-                <input id="mukey" class="validate" data-type="mukey" name="mukey" type="text" required/>
-                <label data-error="Invalid invitation code" for="mukey">Invitation Code</label>
-            </div>
-            <div class="input-field col s12">
-                <input id="email" class="validate" data-type="email" name="email" type="email" required/>
-                <label data-error="Invalid email address" for="email">Email Address</label>
-            </div>
-            <div class="input-field col s12 m9">
-                <select class="browser-default validate" name="sttv_course_id" required>
-                    <option value disabled selected>Course...</option>
-                    <?php
-                        $courses = new WP_Query([
-                            'post_type' => 'courses',
-                            'posts_per_page' => -1
-                        ]);
-                        if ( $courses->have_posts() ) :
-                            while ( $courses->have_posts() ) : $courses->the_post(); ?>
-                                <option value="<?php the_id(); ?>"><?php the_title(); ?></option>
-                            <?php endwhile;
-                        endif;
-                        wp_reset_postdata();
-                    ?>
-                </select>
-            </div>
-            <div class="input-field col s12 m3">
-                <select class="browser-default validate" name="qty" required>
-                    <option value disabled selected>Qty...</option>
-                    <?php print $qhtml; ?>
-                </select>
-            </div>
-            <div class="input-field col s12">
-                <button type="submit" class="mu-submitter signup-submit button-wide z-depth-1 waves-effect waves-light" disabled>Buy Bulk Licenses</button>
-            </div>
-            <div class="input-field col s12">
-                <p class="message"><?php
-                $str = '';
-                for ($i = 0; $i < 7; $i++) {
-                    $str .= base_convert(mt_rand(0,15),10,16);
-                }
-                print strtoupper($str.'-0001');
-                ?></p>
+        <div id="account_info" class="col s12">
+            <div class="row">
+                <div class="input-field left-col col s6">
+                    <input type="text" class="validate" name="sttv_firstname" value="" required/>
+                    <label for="sttv_firstname">First Name</label>
+                </div>
+                <div class="input-field left-col col s6">
+                    <input type="text" class="validate" name="sttv_lastname" value="" required/>
+                    <label for="sttv_lastname">Last Name</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="sttv_email" class="validate" name="sttv_email" type="email" value="" required/>
+                    <label data-error="Invalid email address" for="sttv_email">Email Address</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="sttv_password" name="sttv_password" type="password" value="" required/>
+                    <label for="sttv_password">Choose Password</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="mukey" class="validate" data-type="mukey" name="mukey" type="text" required/>
+                    <label data-error="Invalid license key" for="mukey">License Key</label>
+                </div>
+                <div class="input-field col s12">
+                    <button type="submit" class="mu-signup signup-submit button-wide z-depth-1 waves-effect waves-light" disabled>Sign up now!</button>
+                </div>
+                <div class="input-field col s12">
+                    <p class="message"></p>
+                </div>
             </div>
         </div>
     </div>

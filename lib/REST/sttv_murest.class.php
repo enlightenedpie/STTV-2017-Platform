@@ -44,8 +44,36 @@ class MultiUserREST extends WP_REST_Controller {
                 'methods' => 'POST',
                 'callback' => [ $this, 'multi_user_verify' ],
                 'permission_callback' => [ $this, 'multi_user_auth' ]
+            ],
+            [
+                'methods' => 'PUT',
+                'callback' => [ $this, 'multi_user_keygen' ],
+                'permission_callback' => [ $this, 'multi_user_auth' ]
             ]
         ]);
+    }
+
+    public function multi_user_keygen( WP_REST_Request $req ) {
+        $params = json_decode($req->get_body(),true);
+        $mu = new MultiUser( $params[ 'user' ], $params[ 'course' ] );
+        $keys = $mu->keygen( $params['qty'] );
+        $msg = '\r\n';
+
+        foreach ( $keys as $key ) {
+            $msg .= $key.'\r\n';
+        }
+
+        $saved = get_user_meta( $params[ 'user' ], 'mu_keys' ) ?: [];
+        update_user_meta( $params[ 'user' ], 'mu_keys', array_merge( $saved, $keys ) );
+
+        wp_mail(
+            $params[ 'email' ],
+            'Your generated multi-user keys',
+            'The keys below were generated for you. Thank you for your purchase! Sign into your SupertutorTV account to see more info on the keys, including their active status and expiration dates.'.$msg,
+            ['Bcc: info@supertutortv.com']
+        );
+
+        return $keys;
     }
 
     public function multi_user_verify( WP_REST_Request $req ) {
