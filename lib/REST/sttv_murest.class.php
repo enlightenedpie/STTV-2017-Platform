@@ -57,7 +57,7 @@ class MultiUserREST extends WP_REST_Controller {
         $params = json_decode($req->get_body(),true);
         $mu = new MultiUser( $params[ 'user' ], $params[ 'course' ] );
         $keys = $mu->keygen( $params['qty'] );
-        $msg = '\r\n';
+        $msg = "\r\n";
 
         foreach ( $keys as $key ) {
             $msg .= $key."\r\n";
