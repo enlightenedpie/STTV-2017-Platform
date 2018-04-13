@@ -60,7 +60,7 @@ class MultiUserREST extends WP_REST_Controller {
         $msg = '\r\n';
 
         foreach ( $keys as $key ) {
-            $msg .= $key.'\r\n';
+            $msg .= $key."\r\n";
         }
 
         $saved = get_user_meta( $params[ 'user' ], 'mu_keys' ) ?: [];
@@ -69,7 +69,7 @@ class MultiUserREST extends WP_REST_Controller {
         wp_mail(
             $params[ 'email' ],
             'Your generated multi-user keys',
-            'The keys below were generated for you. Thank you for your purchase! Sign into your SupertutorTV account to see more info on the keys, including their active status and expiration dates.'.$msg,
+            "The keys below were generated for you. Thank you for your purchase! Sign into your SupertutorTV account to see more info on the keys, including their active status and expiration dates.".$msg,
             ['Bcc: info@supertutortv.com']
         );
 
