@@ -153,10 +153,10 @@ class STTV_Checkout extends WP_REST_Controller {
             update_user_meta( $student, 'mu_used_keys', json_encode($meta) );
 
             wp_signon([
-                'user_login' => $student->user_login,
-                'user_password' => $student->user_pass,
+                'user_login' => $body['email'],
+                'user_password' => $body['password'],
                 'remember' => true
-            ], true);
+            ], is_ssl());
 
             return $this->checkout_generic_response(
                 'subscription_success',
