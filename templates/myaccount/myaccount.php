@@ -53,7 +53,7 @@ if (current_user_can('manage_options')){
 			<thead><tr><th>Status</th><th>Course Name</th><th>Expires</th></tr></thead>
 			<tbody>
 <?php
-$invoices = array();
+$invoices = [];
 foreach ($meta['subscriptions'] as $sub):
 	$invoices[] = $sub['inv_ID'];
 	$thepost = get_post($sub['plan_ID']);

@@ -4,6 +4,35 @@
  * 
  */
 var _st = {
+	analytics : function( obj ) {
+		if ( typeof obj === 'undefined' ) {
+			return false
+		}
+
+		var page = obj.page || false,
+			pageview = obj.pageview || false,
+			event = obj.event || false,
+			action = obj.action || obj.data
+			data = obj.data || false
+
+		if (typeof action === 'string' && typeof data === 'object') {
+			//console.log( "ga( "+obj.type+", "+action+", "+data+" )" )
+			ga( obj.type, action, data )
+		} else if (typeof obj.type !== 'undefined') {
+			//console.log( "ga( "+obj.type+", "+action+" )" )
+			ga( obj.type, action )
+		}
+
+		if ( event ) {
+			//console.log( "ga( 'send', 'event', "+event+" )" )
+			ga( 'send', 'event', event.name )
+		}
+
+		return (pageview) ? (page ? ga( 'send', 'pageview', page ) : ga( 'send', 'pageview' ) ) : pageview
+	},
+	parseParams : function(str,regex) {
+		return (str || document.location.search).replace(/(^\?)/,'').replace(regex,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
+	},
 	request : function(obj) {
 		var ajaxp = {
 			url: obj.route || '',
@@ -31,8 +60,27 @@ var _st = {
 		typeof cb === 'function' && cb();
 	},
 	closer : function(cb) {
-		jQuery('body').removeClass('nav-sidebar-open login-sidebar-open');
+		jQuery('body').removeClass('nav-sidebar-open modal-open');
 		typeof cb === 'function' && cb();
+	},
+	form : {
+		valid : false,
+		disableForm : function(c) {
+			$('.signup-submit',c).prop('disabled',!this.valid)
+		},
+		validate : function(con) {
+			var inputs = $('input,select',con)
+			inputs.each(function(k,v){
+				if ( $(this).is(':required') && ( ( $(this).val() && !$(this).hasClass('invalid') ) || $(this).hasClass('valid') ) ) {
+					_st.form.valid = true
+				} else {
+					_st.form.valid = false
+					_st.form.disableForm(con)
+					return false
+				}
+			})
+			this.disableForm(con)
+		},
 	},
 	heartBeat : function() {
 		_st.request({
@@ -77,8 +125,9 @@ var _st = {
 		})
 		return {
 			action : '',
-			element : $('.sttvmodal_inner'),
-			init : function(act){
+			element : $('#sttvmodal'),
+			inner : $('.sttvmodal_inner'),
+			init : function( act ){
 				if (typeof act === 'undefined'){
 					return false
 				}
@@ -90,7 +139,7 @@ var _st = {
 				if (act !== 'close') {
 					this.action = act
 					_st.modal.loader(function() {
-						_st.modal.element.empty()
+						_st.modal.inner.empty()
 					})
 				}
 	
@@ -104,9 +153,7 @@ var _st = {
 						break
 					case 'account':
 						cb = function(el) {
-							//el.empty()
-							el.append('account template')
-							_st.modal.loader()
+
 						}
 						break
 					case 'mu-checkout':
@@ -130,11 +177,11 @@ var _st = {
 			},
 			toggle : function(cb) {
 				$('body').toggleClass('modal-open')
-				typeof cb === 'function' && cb(_st.modal.element)
+				typeof cb === 'function' && cb(_st.modal.inner)
 			},
 			loader : function(cb) {
-				$('#sttvmodal').toggleClass('loader-active')
-				typeof cb === 'function' && cb(_st.modal.element)
+				_st.modal.element.toggleClass('loader-active')
+				typeof cb === 'function' && cb(_st.modal.inner)
 			}
 		}
 	})(),
@@ -203,6 +250,22 @@ var _st = {
 	
 				this.changed.push(item.id)
 				this.save(skipUpdate)
+
+				_st.analytics({
+					type : 'ec:addProduct',
+					data : {
+						'id' : item.id,
+						'name' : item.name,
+						'brand' : 'SupertutorTV',
+						'category' : item.type,
+						'quantity' : item.qty,
+						'price' : (item.price/100).toFixed(2)
+					}
+				})
+				_st.analytics({
+					type : 'ec:setAction',
+					action : 'add'
+				})
 				return msg
 			},
 			remove : function(item,skipUpdate) {
@@ -244,6 +307,12 @@ var _st = {
 					init : init || false,
 					cart : this.get()
 				}
+
+				_st.analytics({
+					type : 'ec:setAction',
+					action : 'click',
+					pageview : true
+				})
 	
 				_st.request({
 					route : stajax.rest.url+'/checkout',
@@ -256,16 +325,39 @@ var _st = {
 						_st.checkout = 'subscription'
 						el.append(d.html)
 						_st.modal.loader()
-						console.log(d)
+						
+						for (var itemID in data.cart) {
+							var item = data.cart[itemID]
+							_st.analytics({
+								type : 'ec:addProduct',
+								data : {
+									'id' : item.id,
+									'name' : item.name,
+									'brand' : 'SupertutorTV',
+									'category' : item.type,
+									'quantity' : item.qty,
+									'price' : (item.price/100).toFixed(2)
+								}
+							})
+						}
+						_st.analytics({
+							type : 'ec:setAction',
+							action : 'checkout',
+							data : {
+								'step' : 1
+							},
+							pageview : true,
+							page : '/checkout'
+						})
 					},
 					error : function(x) {
+						console.log(x)
 						var d = x[0].responseJSON
 	
-						$('.message',el).text(d.message)
+						//$('.message',el).text(d.message)
 						_st.modal.toggle(function() {
 							_st.modal.loader()
 						})
-						console.log(d)
 					}
 				})
 			}
@@ -273,23 +365,6 @@ var _st = {
 	})(),
 	checkout : '',
 	mu : {
-		formValid : false,
-		disableForm : function(c) {
-			$('.signup-submit',c).prop('disabled',!this.formValid)
-		},
-		validate : function(el,con) {
-			var inputs = $('input,select',con)
-			inputs.each(function(k,v){
-				if ( $(this).is(':required') && ( ( $(this).val() && !$(this).hasClass('invalid') ) || $(this).hasClass('valid') ) ) {
-					_st.mu.formValid = true
-				} else {
-					_st.mu.formValid = false
-					_st.mu.disableForm(con)
-					return false
-				}
-			})
-			_st.mu.disableForm(con)
-		},
 		submit : function(el,con) {
 			var data = {
 				mukey : $('input[name=mukey]',con).val(),
@@ -381,16 +456,16 @@ var _st = {
 // Opener functions
 
 $('input, select','#mu_form_wrapper').on('change',function(e){
-	_st.mu.validate(this,'#mu_form_wrapper')
+	_st.form.validate('#mu_form_wrapper')
 	_st.modal.action = ''
 })
 
 var selectors = '.slide-bar, .modal-toggle, .mu-signup, .read-more, .mu-submitter, .cart-fab, .payment-launcher'
 $(document).on('click touchstart',selectors,function(e) {
 	e.preventDefault();
-	var t = $(this);
-	//var s = e.handleObj.selector.split(/,\s+/);
-	var c = t.attr('class').split(/\s+/);
+	var t = $(this),
+		c = t.attr('class').split(/\s+/),
+		tda = t.attr('data-action')
 
 	var f = {
 		'mu-signup' : function() {
@@ -398,10 +473,14 @@ $(document).on('click touchstart',selectors,function(e) {
 		},
 		'payment-launcher' : function() {
 			_st.cart.add(JSON.parse(t.attr('data-bind')))
-			_st.modal.init(t.attr('data-action'));
+			_st.modal.init( tda );
 		},
 		'modal-toggle' : function() {
-			_st.modal.init(t.attr('data-action'));
+			if ( 'account' == tda ) {
+				window.location.href = t.attr('href')
+			} else {
+				_st.modal.init( tda );
+			}
 		},
 		'slide-bar' : function() {
 			_st.menu()

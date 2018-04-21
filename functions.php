@@ -63,6 +63,7 @@ final class STTV {
         require_once STTV_MAIN_DIR . 'lib/shortcodes.php';
         require_once STTV_MAIN_DIR . 'lib/customizer.php';
         require_once STTV_MAIN_DIR . 'lib/stripe.php';
+        require_once STTV_MAIN_DIR . 'lib/sttv_order.class.php';
         require_once STTV_MAIN_DIR . 'lib/ajax/handlers.php';
         require_once STTV_MAIN_DIR . 'lib/ajax/functions.php';
         require_once STTV_MAIN_DIR . 'lib/multi-user/muclass.php';

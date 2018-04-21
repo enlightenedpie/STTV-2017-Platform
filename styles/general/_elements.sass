@@ -14,10 +14,22 @@ body
 
 		.input-field input:focus, .input-field textarea.materialize-textarea:focus
 			border-bottom: 1px solid $azure
-			//box-shadow: 0 1px 0 0 $ltblack
+			box-shadow: 0 1px 0 0 $azure
 
 		input:-webkit-autofill
 			background-color: inherit
+
+		[type="checkbox"].filled-in:checked+label:after, [type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after
+			border: 2px solid $azure
+			background-color: $azure
+
+		.dropdown-content
+
+			li>span, li>a
+				color: $azure
+
+	label
+		width: 100% !important
 	
 	a
 		text-decoration: none

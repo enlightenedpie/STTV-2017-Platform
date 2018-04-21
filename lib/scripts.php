@@ -70,19 +70,36 @@ function sttv_login_brand() {
 	</style>
 <?php 
 }
-############################
-##### GOOGLE ANALYTICS #####
-############################
+
+#################################
+##### FOOTER INLINE SCRIPTS #####
+#################################
+
+add_action( 'wp_footer', 'footer_ga_script', 999 );
+function footer_ga_script() { 
+	?><script>
+		ga('send', 'pageview');
+	</script><?php
+}
+
+
+#################################
+##### HEADER INLINE SCRIPTS #####
+#################################
 
 add_action('wp_head','sttv_ga',99);
-function sttv_ga() { ?>
-<script>
+function sttv_ga() { 
+
+	#################################
+	##### GOOGLE ANALYTICS INIT #####
+	#################################
+
+?><script>
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-69908802-1', 'auto');
-	ga('send', 'pageview');
+	ga('create', '<?php echo GA_PROPERTY_ID; ?>', 'auto');
+	ga('require', 'ec')
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-<?php
+<script async src='https://www.google-analytics.com/analytics.js'></script><?php
 
 ##########################
 ##### FACEBOOK PIXEL #####

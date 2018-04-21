@@ -1,23 +1,12 @@
 $gutter: 1.25em
 	
-body.page-template-checkout
-	background: -moz-linear-gradient(left, $bodybg 51%, $azure 51%)
-	background: -webkit-linear-gradient(left, $bodybg 51%, $azure 51%)
-	background: linear-gradient(to right, $bodybg 51%, $azure 51%)
+body.page-template-signup
+	//background: -moz-linear-gradient(left, $bodybg 51%, $azure 51%)
+	//background: -webkit-linear-gradient(left, $bodybg 51%, $azure 51%)
+	//background: linear-gradient(to right, $bodybg 51%, $azure 51%)
 
 	#main-wrapper
 		background: 0
-
-body.modal-open
-
-	[type="checkbox"].filled-in:checked+label:after
-		border: 2px solid $azure
-		background-color: $azure
-
-	.dropdown-content
-
-		li>span, li>a
-			color: $azure
 
 	header#checkoutheader
 		+wfull
@@ -50,7 +39,7 @@ body.modal-open
 		padding: 0
 
 		h4
-			margin-top: 0
+			margin: 0
 
 		.col
 			padding: 0
@@ -89,8 +78,23 @@ body.modal-open
 				padding: 0 1em
 				font-size: $small
 
+				.input-field
+					text-align: left
+					color: $ltblack
+
 	#checkout-right
 		padding-left: $gutter
+
+		#sttv_card_element
+			margin: 0 0 $large 0
+
+		[type="checkbox"]+label
+			top: 0
+
+		.tandc
+			padding: 0 1em
+			margin: $large 0 1em
+			text-align: center
 
 		#cart-column
 			padding-top: 1em

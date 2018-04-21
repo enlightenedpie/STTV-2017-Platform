@@ -17,8 +17,8 @@ body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
     background: white
     z-index: 998
     opacity: 0
-    -webkit-transition: all .25s ease-in-out
-    transition: all .25s ease-in-out
+    -webkit-transition: all .25s linear
+    transition: all .25s linear
 
     .closer-wrapper
         display: block
@@ -44,18 +44,20 @@ body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
         right: 0
         bottom: 0
         background: white
-        -webkit-transition: all .25s ease-in-out
-        transition: all .25s ease-in-out
+        text-align: center
+        -webkit-transition: all .25s linear
+        transition: all .25s linear
 
         .loading-spinner
             display: block
             position: absolute
+            max-width: 300px
+            height: auto
             top: 50%
             left: 50%
             transform: translate(-50%,-50%)
 
     .sttvmodal_inner
-        display: block
         max-width: $bodyw
         width: 75%
         margin: 0 auto

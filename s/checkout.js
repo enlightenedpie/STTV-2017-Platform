@@ -1,271 +1,194 @@
-$(document).ready(function() {
-	"use strict";
 
-	var loader = '<div id="checkout_modal" class="modal"><div id="checkout_modal_overlay"><img src="'+stajax.contentURL+'/i/sttv-spinner.gif"/><span></span></div><header id="checkoutheader"><div id="logo-box"><img src="https://supertutortv.com/wp-content/uploads/2017/01/sttv_site_logo.png" alt="logo" /></div></header><div class="modal-content"></div></div>';
+_st.checkout = (function(element) {
+	var cart = _st.cart.get(),
+		total = tax = taxRate = taxable = shipping = disc = discp = shipping = 0
 
-	$('body').prepend(loader);
-	window.cModal = $('#checkout_modal');
-
-	// init Modal
-			$('.modal').modal({
-			  dismissible : true,
-			  opacity : .8,
-			  inDuration: 500,
-      		  outDuration: 250,
-			  startingTop: '1%',
-      		  endingTop: '10%'
-			});
-	// end init modal
-
-
-	$('.payment-launcher').click(function(e) {
-		e.preventDefault();
-		var planData = JSON.parse($(this).attr('data-bind'));
-
-		cModal.animate({
-			scrollTop: cModal.offset().top
-		}, 1);
-		cModal.css('overflow','hidden');
-		cModal.modal('open');
-		$('#checkout_modal_overlay').fadeIn(500,function() {
-
-			fsub.checkout(planData);
-
-		}).delay(1000).queue(function(next){
-			price_updater();
-			next();
-		}).fadeOut(500,function() {
-			cModal.css('overflow','auto');
-		});
-
-		$('[name=sttv_email],[name=sttv_billing_pcode],input[name=sttv_coupon]').blur();
-
-	});
-
-	$('select').material_select();
-
-}); // end document ready
-
-var fsub = {
-			valid : false,
-			shipWasChecked : false,
-			setOutcome : function(result) {
-				var successElement = document.querySelector('.success');
-				var errorElement = document.querySelector('.error');
-				successElement.classList.remove('visible');
-				errorElement.classList.remove('visible');
-
-				fsub.valid = result.complete;
-
-				var validSub = ($('#t_and_c').is(':checked') && result.complete);
-					$('.signup-submit').prop('disabled',!validSub);
-
-				if (typeof result.error !== 'undefined') {
-					$('.error').text(result.error.message);
-				} else {
-					$('.error').text('');
-				}
-			},// end setOutcome
-			setToken : function(result) {
-
-				if (result.error) {
-				  $('#checkout_modal_overlay').fadeOut(1,function() {
-					  $('.error',cModal).text(result.error.message);
-				  });
-
-				  console.log(result.error);
-				  return false;
-			  	}
-
-				cModal.animate({
-					scrollTop: 0
-				}, 1);
-				cModal.css('overflow','hidden');
-				$('#checkout_modal_overlay').fadeIn(1,function() {
-					$(this).prepend('<h2 style="margin-top:4em">PROCESSING...</h2>');
-					$('span',this).text('This could take a minute if you have a slow connection.');
-				});
-			  console.log(result,"pre POST");
-				  data.token = result.token.id;
-
-				  $.post(
-					stajax.ajaxURL,
-					data,
-					function(response) {
-						var action = {};
-
-						if (response.success) {
-							action.ST = function() {
-								window.location.replace(response.data);
-							};
-							action.action = 'Success';
-							action.color = 'olive';
-							action.msg = 'You will be redirected shortly';
-							action.icon = 'done';
-
-						} else {
-							action.ST = function() {
-								cModal.modal('close');
-							};
-							action.action = 'Error';
-							action.color = 'red-text text-darken-3';
-							action.msg = response.data.message;
-							action.icon = 'report_problem';
-						}
-						var appended = '<div>';
-						appended += '<h2 class="'+action.color+'">';
-						appended += '<i class="material-icons">'+action.icon+'</i> ';
-						appended += action.action+'</div>';
-						appended += '<small>'+action.msg+'</small><br/>';
-						appended += (!response.success)?'<small>err: '+response.data.error+'</small>':'';
-
-						console.log(response);
-						$('.modal-content',cModal).empty();
-						$('.modal-content',cModal).append(appended);
-						setTimeout(function(){action.ST()},3000);
-				});
-			},//end setToken
-			checkout : function(pDt) {
-
-				if (!$('table#totals_table').length) {
-					$('.modal-content',cModal).empty();
-
-					$.get({
-						url: stajax.contentURL+'/templates/html/_checkout.html',
-						cache: false
-					}).then(function(d){
-						//console.log(d);
-						$('.modal-content',cModal).append(d);
-					},"html")
-					.fail(function(){
-						alert('Something went wrong. Please reload the page.');
-					}); // end GET
-
-				} //endif
-
-				if (window.plan == undefined || window.plan.ID !== pDt['ID']) {
-					window.plan = {
-						ID : pDt['ID'],
-						name : pDt['title'],
-						price : parseInt(pDt['price']),
-						tax : 0,
-						shipping : 0,
-						disc : 0,
-						discp : 0
-					};
-				} //endif
-
-			}, //end checkout()
-			globalTester : function() {
-				console.log("Success!");
-			}
-		}; //end fsub
-
-function price_updater() {
-		plan.shipping = ($('#digital_book').is(':checked')) ? 1285 : 0;
-		var price = parseFloat(plan.price);
-		var taxed = (2500*(plan.tax/100));
-		var totals = (((price-(price*(plan.discp/100))-plan.disc)+taxed)+plan.shipping);
-
-		if (0 < totals) {
-			var btnmsg = 'Pay $'+(totals/100).toFixed(2)+' now!';
-		} else {
-			var btnmsg = 'Sign up for FREE now!';
-		}
-		$('button.signup-submit span').fadeOut(100,function() {
-			$(this).text(btnmsg);
-		}).fadeIn(100);
-
-		var table = $('table#totals_table');
-
-		$('tbody',table).fadeOut(100,function() {
-			$(this).empty().append('<tr><td colspan="2">'+plan.name+'</td><td style="text-align:right">'+(price/100).toFixed(2)+'</td></tr>');
-
-			if (0 < plan.disc) {
-				var discprice = plan.disc;
-			} else if (0 < plan.discp) {
-				var discprice = (price*(plan.discp/100));
-			}
-			if (0 < plan.disc || 0 < plan.discp) {
-				$(this).append('<tr><td colspan="2"><small>Discount ('+plan.coupon+')</small></td><td style="text-align:right"><small>-'+(discprice/100).toFixed(2)+'</small></td></tr>');
-			}
-			if (0 < plan.tax && 0 < price) {
-				$(this).append('<tr><td colspan="2"><small>CA Tax ('+plan.tax+'%)</small></td><td style="text-align:right"><small>+'+(taxed/100).toFixed(2)+'</small></td></tr>');
-			}
-			if (plan.shipping) {
-				$(this).append('<tr><td colspan="2"><small>Priority Shipping</small></td><td style="text-align:right"><small>+'+(plan.shipping/100).toFixed(2)+'</small></td></tr>');
-			}
-
-		}).fadeIn(100);
-
-		$('#signup_total_price span').fadeOut(100,function() {
-			$(this).text('$'+(totals/100).toFixed(2));
-		}).fadeIn(100);
-
-	}
-
-	_st.checkout = (function(element) {
-		var cart = _st.cart.get(),
-			total = tax = taxRate = taxable = shipping = disc = discp = 0,
-			html = ''
-
-		return {
-			type : _st.checkout,
-			items : cart,
-			totals : {
-				total : total,
-				tax : tax,
-				taxRate : taxRate,
-				taxable : taxable,
-				shipping : shipping,
-				disc : disc,
-				discp : disc,
-				msg : ''
+	return {
+		type : _st.checkout,
+		valid : false,
+		items : cart,
+		totals : {
+			total : total,
+			tax : {
+				amt : tax,
+				msg : '',
+				rate : taxRate
 			},
-			state : {},
-			update : function(obj) {
-				if (obj !== null) {
-					$.extend(this.totals,obj)
-				}
+			taxable : taxable,
+			shipping : shipping,
+			disc : disc,
+			discp : discp,
+			shipping : shipping,
+			msg : '',
+			coupon : ''
+		},
+		state : {},
+		pricer : function(price) {
+			return (Math.round(price)/100).toFixed(2)
+		},
+		update : function(obj) {
+			if (obj !== null) {
+				$.extend(this.totals,obj)
+			}
 
-				if ( this.state === this.totals ) {
-					console.log('state unchanged')
-					return false
-					
-				}
-				
-				if ( _st.cart.changed.length > 0 ) {
-					var items = this.items
-					for ( var i = 0, len = _st.cart.changed.length; i < len; i++ ) {
-						var item = items[_st.cart.changed[i]],
-							price = item.price*item.qty
+			if ( this.state === this.totals ) {
+				console.log('state unchanged')
+				return false
+			}
+			var items = this.items,
+				keys = Object.keys(items),
+				tot = this.totals
 
-						if ( item.taxable !== false ) {
-							this.totals.taxable += price
-						}
-						this.totals.total += price
-		
-						html += '<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+(price/100).toFixed(2)+'</div></div>'
+			element.fadeOut(100,function() {
+				$(this).empty()
+
+				for ( var i = 0; i < keys.length; i++ ) {
+					if ( i === 0 ) {
+						tot.total = tot.taxable = tot.tax.amt = 0
 					}
-				}
-
-				this.totals.tax += (this.totals.taxable*this.totals.taxRate)/100
-				this.totals.total = this.totals.total+this.totals.tax
 				
-				if (this.totals.tax !== 0) {
-					html += '<div class="row"><div class="col s2"></div><div class="col s8">'+this.totals.msg+'</div><div class="col s2 right-align">'+(this.totals.tax/100).toFixed(2)+'</div></div>'
-				}
+					var item = items[keys[i]],
+						price = item.price*item.qty
+
+					if ( item.taxable !== false ) {
+						tot.taxable += item.taxableAmt
+					}
+
+					tot.total += price
 	
-				element.html(html)
-				$('#ttltxt>span').text((this.totals.total/100).toFixed(2))
+					$(this).append('<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+_st.checkout.pricer(price)+'</div></div>')
+				}
 
-				this.state = $.extend( true, {}, this.totals );
-				_st.cart.changed = []
-			},
-			fields : function() {
-				return Materialize.updateTextFields()
+				if ( 0 < tot.disc ) {
+					var discprice = tot.disc;
+				} else if ( 0 < tot.discp ) {
+					var discprice = (tot.total*(tot.discp/100));
+				}
+
+				if (0 < tot.disc || 0 < tot.discp) {
+					tot.total -= discprice
+					$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">Discount ('+tot.coupon+')</div><div class="col s2 right-align">-'+_st.checkout.pricer(discprice)+'</div></div>')
+				}
+				
+				if ( tot.tax.rate > 0 ) {
+					tot.tax.amt = (tot.taxable*tot.tax.rate)/100
+					tot.total += tot.tax.amt
+					$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">'+tot.tax.msg+'</div><div class="col s2 right-align">+'+_st.checkout.pricer(tot.tax.amt)+'</div></div>')
+				}
+
+				if ( tot.shipping > 0 ) {
+					tot.total += tot.shipping
+					$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">Priority Shipping</div><div class="col s2 right-align">+'+_st.checkout.pricer(tot.shipping)+'</div></div>')
+				}
+				
+				$('#ttltxt>span').text(_st.checkout.pricer(tot.total))
+			}).fadeIn(100);
+
+			this.state = $.extend( true, {}, this.totals );
+		},
+		setOutcome : function( result, con ) {
+			if ( typeof result.error !== 'undefined' ) {
+				$( '.error', con ).text( result.error.message );
+			} else {
+				$( '.error', con ).text( '' );
 			}
-		}
-	})($('.items-row'))
 
-	_st.checkout.update()
+			var inputs = $( 'input, select', con )
+			_st.checkout.validate( inputs, con, result.complete )
+		},
+		submit : function( data ) {
+			_st.modal.loader(function(){
+				var mo = $('#modal_loading_overlay')
+
+				mo.find('*').not('img').remove()
+				
+				mo.append('<h2 style="margin-top:4em">Authorizing card...</h2>')
+					.append('<span>(This could take some time if you have a slow connection)</span>');
+			})
+			var det = {
+				name: data.cardname,
+				address_line1: data.billing_address1,
+				address_line2: data.billing_address2,
+				address_city: data.billing_city,
+				address_state: data.billing_state,
+				address_zip: data.billing_pcode,
+				address_country: data.billing_country
+			}
+
+			stripe.createToken(card, det).then(function(result){
+				if (result.error) {
+					console.log(result.error)
+					return _st.modal.loader(function(el){
+						$('.error',el).text(result.error.message)
+					})
+				} else {
+					$('#modal_loading_overlay h2').text('Processing order...')
+					data.token = result.token
+					data.cart = _st.cart.cartObj
+					_st.request({
+						route : stajax.rest.url+'/checkout',
+						method : 'POST',
+						cdata : data,
+						headers : {
+							'X-WP-Nonce' : stajax.rest.nonce,
+						},
+						success : function(d) {
+							console.log(d)
+							
+							if ( 'error' === d.code ) {
+								var ecode = d.error.decline_code || d.error.code
+								_st.modal.loader(function(el){
+									$('p.error',el).html('<span class="col s12">We\'re sorry. '+d.error.message+'</span><span class="col s12">err code: '+ecode+'</span>')
+								})
+							} else if ( 'success' === d.code ) {
+								var success = $('<div/>',{
+									id: 'success',
+									'class': 'col s12'
+								}).append('<h2><i class="material-icons">done</i></h2><br/><small>'+d.message+'</small>')
+
+								$('#modal_loading_overlay')
+									.empty()
+									.append(success)
+
+								setTimeout(function(){
+									window.location.href = d.order.redirect
+								},3000)
+							}
+						},
+						error : function(x) {
+							var d = x[0].responseJSON
+							console.log(x,d)
+						}
+					})
+				}
+			})
+		},
+		validate : function( inputs, context, extra ) {
+			if ( typeof extra === 'undefined' ) {
+				extra = true
+			}
+			
+			var cEr = true
+
+			inputs.each( function( k, v ) {
+				var t = $(this),
+					msgTag = ''
+
+				if ( t.is(':required') && ( !t.val() || t.hasClass('invalid') ) ) {
+					var msgTag = ( !t.val() ) ? ' is required' : ' is invalid'
+					cEr = false
+					$( '.error', context ).html( $(v).siblings('label').text()+msgTag );
+				} else if ( t.hasClass('invalid') ) {
+					cEr = false
+					$( '.error', context ).html( $(v).siblings('label').text()+' is invalid' );
+				}
+
+				if ( !cEr ) { return cEr }
+			});
+
+			$( '.signup-submit', context ).prop( 'disabled', !( cEr && extra ) );
+
+			return ( cEr && extra )
+		}
+	}
+})($('.items-row'))
