@@ -84,27 +84,32 @@ endforeach;
 		<table class="bordered highlight responsive-table">
 			<thead><tr><th>Status</th><th>Amt</th><th>Name</th><th>Date of Purchase</th></tr></thead>
 			<tbody><?php if (!empty($invoices)) {
-		foreach ($invoices as $invoice){
-			$inv = \Stripe\Invoice::retrieve($invoice);
-			$status = ($inv['paid'] && $inv['closed']) ?'Paid':'Processing';
-			$c = ($inv['paid'] && $inv['closed']) ?'green':'';
-			$amt = $inv['total']/100;
-			$ps =  date('F d, Y',$inv['date']);
-			$invitems = '';
-			print '<tr>';
-			print "<td style='color:{$c}'>{$status}</td>";
-			print "<td>\${$amt}</td>";
-			print "<td><h4 style='text-transform:uppercase'><a href='{$link}'>{$thepost->post_title}</a></h4>";
-			$disc = $inv['discount']['coupon']['amount_off']/100;
-			print "<div><span>-{$disc}&nbsp;</span><span>coupon: {$item['discount']['coupon']['id']}</span></div>";
-				foreach ($inv['lines']['data'] as $item){
-					$itmamt = $item['amount']/100;
-					print "<div><span>+{$itmamt}&nbsp;</span><span>{$item['description']}</span></div>";
+				foreach ($invoices as $invoice){
+					$inv = \Stripe\Invoice::retrieve($invoice);
+					$status = ( $inv['paid'] && $inv['closed'] ) ? 'Paid' : 'Processing' ;
+					$c = ( $inv['paid'] && $inv['closed'] ) ? 'green' : '' ;
+					$amt = $inv['total']/100;
+					$ps =  date('F d, Y',$inv['date']);
+					$invitems = '';
+					print '<tr>';
+					print "<td style='color:{$c}'>{$status}</td>";
+					print "<td>\${$amt}</td>";
+					print "<td><h4 style='text-transform:uppercase'><a href='{$link}'>{$thepost->post_title}</a></h4>";
+					
+					foreach ($inv['lines']['data'] as $item){
+						$itmamt = $item['amount']/100;
+						print '<div><span>'.$item['description'].'</span> - <span>$'.$itmamt.'</span></div>';
+					}
+
+					if ( $inv['discount']['coupon']['id'] ) {
+						$disc = $inv['discount']['coupon']['amount_off']/100;
+						print "<div><span>-{$disc}&nbsp;</span><span>coupon: {$inv['discount']['coupon']['id']}</span></div>";
+					}
+
+					print "</td>";
+					print "<td>{$ps}</td>";
+					print '</tr>';
 				}
-			print "</td>";
-			print "<td>{$ps}</td>";
-			print '</tr>';
-		}
 			}
 	?></tbody>
 		</table>
@@ -113,7 +118,7 @@ endforeach;
 <div class="row" id="my-account_info">
 	<div class="col s12"><h2>My Info</h2></div>
 	<div class="col s12"><?php
-		$cus = ($meta['cus_ID']) ? \Stripe\Customer::retrieve($meta['cus_ID']):array('description'=>'','email'=>'',);
+		$cus = ($meta['cus_ID']) ? \Stripe\Customer::retrieve( $meta['cus_ID'] ) : ['description'=>'','email'=>''];
 		//print_r(json_encode($cus));
 		print "<div><span>Name: {$cus['description']}</span></div><br/>";
 		print "<div><span>Email: {$cus['email']}</span></div><br/>";
