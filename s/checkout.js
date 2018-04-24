@@ -227,14 +227,6 @@ _st.checkout = (function(element) {
 
 /* Now that the checkout object has been declared, let's run an init */
 
-(function(){
-
-    Materialize.updateTextFields()
-    $('select').material_select();
-    _st.checkout.update()
-
-})()
-
 var stripe = Stripe(stajax.stripe.public_key);
 var elements = stripe.elements();
 var card = elements.create('card',{
@@ -403,3 +395,9 @@ $('.signup-submit').on('click',function(e) {
         _st.checkout.submit( _st.parseParams( inputs.serialize(), /sttv_/gi ) )
     }
 })
+
+/* Final setup of fields and prices */
+
+Materialize.updateTextFields()
+$('select').material_select();
+_st.checkout.update()
