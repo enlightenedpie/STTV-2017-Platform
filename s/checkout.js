@@ -1,4 +1,4 @@
-
+/* Let's define the checkout object with methods and properties */
 _st.checkout = (function(element) {
 	var cart = _st.cart.get(),
 		total = tax = taxRate = taxable = shipping = disc = discp = shipping = 0
@@ -224,3 +224,182 @@ _st.checkout = (function(element) {
 		}
 	}
 })($('.items-row'))
+
+/* Now that the checkout object has been declared, let's run an init */
+
+(function(){
+
+    Materialize.updateTextFields()
+    $('select').material_select();
+    _st.checkout.update()
+
+})()
+
+var stripe = Stripe(stajax.stripe.public_key);
+var elements = stripe.elements();
+var card = elements.create('card',{
+    hidePostalCode: true
+});
+card.mount('#sttv_card_element');
+
+card.on( 'change', function( event ) {
+    _st.checkout.setOutcome( event, '#checkout-wrapper' );
+});
+
+$('#same_as_billing').on('change',function() {
+    if ($(this).is(":checked")) {
+        
+        $('input[name=sttv_shipping_address1]').val($('input[name=sttv_billing_address1]').val());
+        $('input[name=sttv_shipping_address2]').val($('input[name=sttv_billing_address2]').val());
+        $('input[name=sttv_shipping_city]').val($('input[name=sttv_billing_city]').val());
+        $('input[name=sttv_shipping_state]').val($('input[name=sttv_billing_state]').val());
+        $('input[name=sttv_shipping_pcode]').val($('input[name=sttv_billing_pcode]').val());
+        $('select[name=sttv_shipping_country]').val($('select[name=sttv_billing_country]').val());
+        
+        $('select').material_select()
+
+    } else {
+        $("#shipping_fields :input").each(function(){
+            $(this).val('');
+        });
+        $("select[name=sttv_shipping_country]").prop("selectedIndex", -1);
+    }
+
+    Materialize.updateTextFields()
+    $( 'input, select', '#shipping_fields' ).blur()
+});
+
+$('[name=shipping_options]').on({
+    change : function(e) {
+        e.preventDefault()
+        _st.checkout.update({
+            shipping : parseInt($(this).filter(':checked').val())
+        })
+    }
+})
+
+$('[name=sttv_billing_pcode]').on({
+    focusin : function() {
+        $(this).data('val',$(this).val())
+    },
+    change : function(e) {
+        e.preventDefault()
+        var val = $(this).val()
+        if ( $(this).data('val') === val ) {
+            return false
+        } else if ( !val ) {
+            return _st.checkout.update({
+                tax : {
+                    rate : 0
+                }
+            })
+        }
+
+        _st.request({
+            route : stajax.rest.url+'/checkout?zip='+val,
+            headers : {
+				'X-WP-Nonce' : stajax.rest.nonce,
+			},
+			success : function(d) {
+                _st.checkout.update({
+                    tax : {
+                        rate : d.tax,
+                        msg : d.message
+                    }
+                })
+			},
+			error : function(x) {
+				console.log(x)
+			}
+        })
+    }
+})
+
+$('[name=sttv_email],input[name=sttv_coupon]').on({
+    focusout : function(e) {
+        if ( !$(this).val() ) {
+            tThis.removeClass('valid invalid')
+        }
+    },
+    change : function(e) {
+        e.preventDefault();
+        var tThis = $(this),
+            val = tThis.val(),
+            qstring = ''
+
+        switch (tThis.attr('name')) {
+            case 'sttv_coupon':
+                if (!val) {
+                    _st.checkout.update({
+                        disc : 0,
+                        discp : 0
+                    })
+                    return false
+                }
+                qstring = 'coupon='
+                break
+            case 'sttv_email':
+                if (!val) {
+                    return false
+                }
+                qstring = 'email='
+                break
+            default:
+                return false
+        }
+        
+        _st.request({
+            route : stajax.rest.url+'/checkout?'+qstring+val,
+            headers : {
+                'X-WP-Nonce' : stajax.rest.nonce,
+            },
+            success : function(d) {
+                tThis.removeClass('valid invalid')
+                console.log(d)
+
+                var msg = {},
+                    cls = ''
+
+                switch (d.code) {
+                    case 'coupon_valid':
+                    case 'email_available':
+                        cls = 'valid'
+                        msg = { 'data-success' : d.message }
+                        break
+                    case 'coupon_invalid':
+                        cls = 'invalid'
+                        msg = { 'data-error' : d.error.message }
+                        break
+                    case 'coupon_expired':
+                    case 'email_taken':
+                        cls = 'invalid'
+                        msg = { 'data-error' : d.message }
+                        break
+                }
+
+                tThis
+                    .addClass( cls )
+                    .siblings( 'label' )
+                    .attr( msg )
+
+                _st.checkout.update({
+                    discp : d.percent_off,
+                    disc : d.amount_off,
+                    coupon : d.id
+                })
+            },
+            error : function(x) {
+                console.log(x)
+            }
+        })
+    }
+});
+
+$('.signup-submit').on('click',function(e) {
+    e.preventDefault();
+    var inputs = $( 'input, select', '#checkout-wrapper' ),
+        valid = _st.checkout.validate( inputs, '#checkout-wrapper' )
+    if ( valid ) {
+        _st.checkout.submit( _st.parseParams( inputs.serialize(), /sttv_/gi ) )
+    }
+})
