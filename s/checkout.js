@@ -126,7 +126,6 @@ _st.checkout = (function(element) {
 					data.token = result.token
 					data.cart = _st.cart.cartObj
 
-					return console.log(data)
 					_st.request({
 						route : stajax.rest.url+'/checkout',
 						method : 'POST',
