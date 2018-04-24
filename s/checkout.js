@@ -135,35 +135,6 @@ _st.checkout = (function(element) {
 						},
 						success : function(d) {
 							console.log(d)
-
-							var lines = d.order.invoice.data[0].lines.data,
-								tax = shipping = '0',
-								coupon = d.order.invoice.data[0].discount || ''
-
-							for (var i = 0, len = lines.length; i < len; i++) {
-								var line = lines[i]
-
-								if ( line.description === 'Sales tax' ) {
-									tax = (line.amount/100).toFixed(2)
-								} else if ( line.description === 'Priority Shipping' ) {
-									shipping = (line.amount/100).toFixed(2)
-								}
-							}
-
-							_st.analytics({
-								type : 'ec:setAction',
-								action : 'purchase',
-								data : {
-									'id' : d.cart.ID,
-									'revenue' : (d.order.invoice.data[0].amount_paid/100).toFixed(2),
-									'tax' : tax,
-									'shipping' : shipping,
-									'coupon' : coupon,
-									'affiliation' : 'SupertutorTV Online Store'
-								},
-								pageview : true,
-								page : '/checkout'
-							})
 							
 							if ( 'error' === d.code ) {
 								var ecode = d.error.decline_code || d.error.code
@@ -179,6 +150,35 @@ _st.checkout = (function(element) {
 								$('#modal_loading_overlay')
 									.empty()
 									.append(success)
+
+								var lines = d.order.invoice.data[0].lines.data,
+									tax = shipping = '0',
+									coupon = d.order.invoice.data[0].discount || ''
+
+								for (var i = 0, len = lines.length; i < len; i++) {
+									var line = lines[i]
+
+									if ( line.description === 'Sales tax' ) {
+										tax = (line.amount/100).toFixed(2)
+									} else if ( line.description === 'Priority Shipping' ) {
+										shipping = (line.amount/100).toFixed(2)
+									}
+								}
+
+								_st.analytics({
+									type : 'ec:setAction',
+									action : 'purchase',
+									data : {
+										'id' : d.cart.ID,
+										'revenue' : (d.order.invoice.data[0].amount_paid/100).toFixed(2),
+										'tax' : tax,
+										'shipping' : shipping,
+										'coupon' : coupon,
+										'affiliation' : 'SupertutorTV Online Store'
+									},
+									pageview : true,
+									page : '/checkout'
+								})
 
 								_st.cart.unset()
 
