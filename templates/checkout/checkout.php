@@ -175,7 +175,7 @@ HTML;
                     <input class="filled-in" type="checkbox" name="sttv_mailinglist" id="sttv_mailinglist" checked/><label for="sttv_mailinglist">Sign me up for promos, coupons, and giveaways from SupertutorTV</label><br/>
                 </div>
                 <div class="tandc col s12">
-                    <span>By submitting this payment, you agree to SupertutorTV's Terms and Conditions.</span>
+                    <span>By submitting this payment, you agree to SupertutorTV's <a class="azure" href="<?php echo site_url('terms-and-conditions'); ?>" target="blank">Terms and Conditions</a>.</span>
                 </div>
             </div>
             <div class="col s12">

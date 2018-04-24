@@ -103,7 +103,7 @@ _st.checkout = (function(element) {
 				mo.find('*').not('img').remove()
 				
 				mo.append('<h2 style="margin-top:4em">Authorizing card...</h2>')
-					.append('<span>(This could take some time if you have a slow connection)</span>');
+					.append('<span>(Patience, young padawan... This will take a moment.)</span>');
 			})
 			var det = {
 				name: data.cardname,
@@ -125,6 +125,8 @@ _st.checkout = (function(element) {
 					$('#modal_loading_overlay h2').text('Processing order...')
 					data.token = result.token
 					data.cart = _st.cart.cartObj
+
+					return console.log(data)
 					_st.request({
 						route : stajax.rest.url+'/checkout',
 						method : 'POST',
@@ -134,6 +136,35 @@ _st.checkout = (function(element) {
 						},
 						success : function(d) {
 							console.log(d)
+
+							var lines = d.order.invoice.data[0].lines.data,
+								tax = shipping = '0',
+								coupon = d.order.invoice.data[0].discount || ''
+
+							for (var i = 0, len = lines.length; i < len; i++) {
+								var line = lines[i]
+
+								if ( line.description === 'Sales tax' ) {
+									tax = (line.amount/100).toFixed(2)
+								} else if ( line.description === 'Priority Shipping' ) {
+									shipping = (line.amount/100).toFixed(2)
+								}
+							}
+
+							_st.analytics({
+								type : 'ec:setAction',
+								action : 'purchase',
+								data : {
+									'id' : d.cart.ID,
+									'revenue' : (d.order.invoice.data[0].amount_paid/100).toFixed(2),
+									'tax' : tax,
+									'shipping' : shipping,
+									'coupon' : coupon,
+									'affiliation' : 'SupertutorTV Online Store'
+								},
+								pageview : true,
+								page : '/checkout'
+							})
 							
 							if ( 'error' === d.code ) {
 								var ecode = d.error.decline_code || d.error.code
@@ -144,11 +175,13 @@ _st.checkout = (function(element) {
 								var success = $('<div/>',{
 									id: 'success',
 									'class': 'col s12'
-								}).append('<h2><i class="material-icons">done</i></h2><br/><small>'+d.message+'</small>')
+								}).append('<h2><i class="material-icons">done</i></h2><br/><span>'+d.message+'</span>')
 
 								$('#modal_loading_overlay')
 									.empty()
 									.append(success)
+
+								_st.cart.unset()
 
 								setTimeout(function(){
 									window.location.href = d.order.redirect

@@ -281,6 +281,10 @@ var _st = {
 				this.save()
 				return typeof cb === 'function' && cb(this)
 			},
+			unset : function(cb) {
+				localStorage.removeItem('_stcart_')
+				return typeof cb === 'function' && cb(this)
+			},
 			save : function(skip) {
 				localStorage.setItem('_stcart_',JSON.stringify(this.cartObj))
 				return !skip && this.notifications.update()

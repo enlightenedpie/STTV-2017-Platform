@@ -172,7 +172,8 @@ class Order {
 			'first_name' => $obj['firstname'],
 			'last_name' => $obj['lastname'],
 			'display_name' => $obj['firstname'].' '.$obj['lastname'],
-			'show_admin_bar_front' => 'false'
+			'show_admin_bar_front' => 'false',
+			'role' => $sub->plan->metadata->role
 		];
 
 		$user_id = wp_insert_user($userdata);
@@ -211,7 +212,7 @@ class Order {
 		update_user_meta( $user_id, 'show_admin_bar_front', 'false' );
 		update_user_meta( $user_id, 'show_admin_bar_admin', 'false' );
 
-		return [ 'subData' => $sub, 'redirect' => site_url('/my-account') ];
+		return [ 'subData' => $sub, 'invoice' => $inv, 'redirect' => site_url('/my-account') ];
 
 	} // end create() method
 

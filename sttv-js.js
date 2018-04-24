@@ -281,6 +281,10 @@ var _st = {
 				this.save()
 				return typeof cb === 'function' && cb(this)
 			},
+			unset : function(cb) {
+				localStorage.removeItem('_stcart_')
+				return typeof cb === 'function' && cb(this)
+			},
 			save : function(skip) {
 				localStorage.setItem('_stcart_',JSON.stringify(this.cartObj))
 				return !skip && this.notifications.update()
@@ -476,7 +480,7 @@ $(document).on('click touchstart',selectors,function(e) {
 			_st.modal.init( tda );
 		},
 		'modal-toggle' : function() {
-			if ( 'account' == tda ) {
+			if ( 'account' == tda ) { // remove this for 2.0
 				window.location.href = t.attr('href')
 			} else {
 				_st.modal.init( tda );
