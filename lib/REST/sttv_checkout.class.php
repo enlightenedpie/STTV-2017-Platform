@@ -209,16 +209,23 @@ class STTV_Checkout extends WP_REST_Controller {
             return $this->checkout_generic_response(
                 'error',
                 'There was an error. See the error response for more information.',
-                200,
+                420,
                 $order
             );
+        }
+
+        if ( isset( $body['mailinglist'] ) && $body['mailinglist'] == 'on' ) {
+            sttv_mailinglist_subscribe( $body['email'], $body['firstname'], $body['lastname'] );
         }
 
         return $this->checkout_generic_response(
             'success',
             'Success! Thank you for your purchase, you will be redirected to your account shortly.',
             200,
-            [ 'order' => $order ]
+            [
+                'order' => $order,
+                'cart' => $body['cart']
+            ]
         );
         
     }

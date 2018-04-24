@@ -101,26 +101,9 @@ class STTV_Forms extends WP_REST_Controller {
 
     public function sttv_subscribe_processor( WP_REST_Request $request ) {
         $body = json_decode($request->get_body(),true);
-        $api_path = 'https://us7.api.mailchimp.com/3.0/lists/df497b5cbd/members/'.md5(strtolower($body['email']));
         
-        $response = wp_remote_post( $api_path, [
-            'headers' => [
-                'Authorization' => 'apikey '.MAILCHIMP_API_KEY,
-                'Content-Type' => 'application/json',
-                'X-HTTP-Method-Override' => 'PUT',
-                'User Agent' => STTV_UA
-            ],
-            'body' => json_encode([
-                'email_address' => $body['email'],
-                'status' => 'subscribed',
-                'status_if_new' => 'subscribed',
-                'merge_fields' => [
-                    'FNAME' => $body['fname'],
-                    'LNAME' => $body['lname']
-                ],
-                'ip_signup' => $_SERVER['REMOTE_ADDR']
-            ])
-        ]);
+        // use sttv API mailinglist function
+        $response = sttv_mailinglist_subscribe( $body['email'], $body['fname'], $body['lname'] );
 
         if ( is_wp_error($response) ){
             return $this->forms_generic_response( 'sub_error', 'There was an error subscribing you to our list. Please try again later.', 400, ['response'=>$response] );
