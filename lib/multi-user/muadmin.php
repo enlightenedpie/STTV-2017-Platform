@@ -88,6 +88,16 @@ class MultiUserAdmin {
     <?php }
 
     public function mukey_admin_page() {
+        /* remove_menu_page('users.php');
+        add_menu_page(
+            'Users',     // page title
+            'Users',     // menu title
+            'manage_options',   // capability
+            'sttv-users',     // menu slug
+            [ $this, 'mukey_render_admin_page' ], // callback function
+            'dashicons-admin-users', // icon
+            66 // position
+        ); */
         add_menu_page(
             'Multi User Keys',     // page title
             'Multi User Keys',     // menu title
