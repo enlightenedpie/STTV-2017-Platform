@@ -1,16 +1,16 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+global $post;
+
 /**
- * Let's check that our current user is logged in. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
+ * Let's check that our current user is logged in and has access capabilities. If not, we redirect to the sales page with a query variable to be used on the sales page for alerts.
 **/
 // !current_user_can(get_post_meta($post->ID,'course_primary_cap',true))
-if (!is_user_logged_in()) :
+if (!is_user_logged_in() || !current_user_can(get_post_meta($post->ID,'course_primary_cap',true))) :
 	wp_redirect( esc_url( add_query_arg( 'access', time(), get_permalink($cpp) ) ) );
 	exit;
 endif;
-
-global $post;
 
 $cpp = get_post_meta($post->ID,'course_product_page',true);
 
@@ -32,62 +32,11 @@ function sttv_course_js_object() {
 var student = {
 	id : <?php echo $student->ID; ?>,
 	userName : '<?php echo $student->user_login; ?>',
-	firstName : '<?php echo $student->first_name; ?>',
-	lastName : '<?php echo $student->last_name; ?>',
+	firstName : '<?php echo addslashes($student->first_name); ?>',
+	lastName : '<?php echo addslashes($student->last_name); ?>',
 	alerts : {
 		dismissed : function() {return localStorage.getItem('alertsDismissed')}
 	}
-}
-	
-var _st = {
-	request : function(obj) {
-		var ajaxp = {
-			url: obj.route || '',
-			method: obj.method || 'GET',
-			headers: obj.headers || {},
-			processData : false,
-			dataType : obj.dataType || 'json',
-			success: function(data){
-				typeof obj.success !== 'undefined' && obj.success(data);
-			},
-			error: function(x,s,r){
-				typeof obj.error !== 'undefined' && obj.error([x,s,r]);
-			}
-		}
-		if (ajaxp.method !== 'GET') {
-			ajaxp['data'] = JSON.stringify(obj.cdata || {})
-		}
-		$.ajax(ajaxp)
-	},
-	loadTemplate : function(t) {
-		var part = t.part ? ' '+t.part : '';
-		$(t.into).load(t.url+part,t.data,function(r){
-			typeof t.callback === 'function' && t.callback(r);
-		})
-	},
-	heartBeat : function() {
-		_st.request({
-			route : "<?php echo site_url(); ?>/ping.php",
-			success : function(d){
-				try {
-					if (!d) {
-						throw new Exception('Invalid response from _st.heartBeat.');
-					} else {
-						do {
-							$(document).dequeue('heartbeat')
-						} while ($(document).queue('heartbeat').length)
-					}
-				} catch (e) {
-					console.log(e);
-				}
-			},
-			error : function(x,s,r){
-				Materialize.toast('Offline', 6000);
-				console.log(x,s,r);
-			}
-		});
-	},
-	fn : function() {}
 }
 
 var courses = {
@@ -762,7 +711,7 @@ var courses = {
 					inner.append($('<a/>',{
 						"class" : "dl-link col s6 m4",
 						text : k,
-						href : "<?php echo site_url(); ?>/course-dl.php?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
+						href : stajax.dlURL+"?res="+k+"&section="+s+"&test="+obj.test+"&checksum="+v
 					}))
 				})
 			}
@@ -1035,4 +984,5 @@ get_template_part('templates/title'); ?>
 	<div id="course-nav-container" class="col s12 m9"></div>
 </div>
 </section>
+<a id="dwnld" style="display:block;height:1px;width:1px" title=""></a>
 <?php get_footer(); ?>

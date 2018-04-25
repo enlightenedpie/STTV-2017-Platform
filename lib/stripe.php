@@ -1,7 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {die;}
 
-if ( ! defined( 'ABSPATH' ) ) 
-	die;
 add_action('stripepress_events','kill_the_messenger',11,2);
 function kill_the_messenger($event,$object) {
 	
@@ -149,13 +148,57 @@ function kill_the_messenger($event,$object) {
 
 				$user = new WP_User($cus->metadata->wp_id);
 
+				// revoke access
+				$user->remove_all_caps();
+				$user->set_role('subscriber');
+
+				// send email log
 				ob_start();
 				print_r($user);
 				$body = ob_get_clean();
-				
-				wp_mail($to,'Test!!!',$body,$headers);
+				wp_mail($to,'Subscription expired!!!',$body,$headers);
 
-				$user->set_role('subscriber');
+				// send Goodbye email
+				$cus = \Stripe\Customer::retrieve($obj->data->object->customer);
+				$name = explode(' ',$cus->description);
+				$json =	array(
+					'type'=>'messages',
+					'call'=>'send-template',
+					'template_name'=>'subscription-ended',
+					'template_content'=>array(
+						array(
+							'name'=>'fname',
+							'content'=>$name[0]
+						),
+						array(
+							'name'=>'coursename',
+							'content'=>$obj->data->object->plan->name
+						)
+					),
+					'message'=>array(
+						'from_email'=>$to,
+						'from_name'=>'SupertutorTV',
+						'to'=>array(
+							array(
+								'type'=>'to',
+								'email'=>$cus->email,
+								'name'=>$cus->description
+							)
+						),
+						'headers'=>array(
+							'Reply-To'=>$to,
+						),
+						'metadata'=>array(
+							'website'=>'https://supertutortv.com'
+						),
+						'inline_css'=>true,
+						'track_opens'=>true,
+						'track_clicks'=>true,
+						'bcc_address'=>'dave@supertutortv.com'
+					)
+				);
+				Mandrill::setApiKey(MANDRILL_API_KEY);
+				Mandrill::call((array) $json);
 
 			} catch (Exception $e) {
 				ob_start();

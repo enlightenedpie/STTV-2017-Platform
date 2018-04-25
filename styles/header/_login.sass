@@ -24,7 +24,7 @@ form#sttv_login_form
 	
 	#form-identity
 		+wfull
-		padding: 1em
+		padding: 1em 0
 		
 		img
 			+wfull
@@ -34,11 +34,12 @@ form#sttv_login_form
 		p
 			text-align: center
 			padding-top: $small
+			font-size: $small
 	
 	#forgot-block
 		+wfull
-		padding-right: 1em
-		text-align: right
+		padding: 1em
+		text-align: center
 		font-size: $small
 		
 		a
@@ -57,7 +58,7 @@ form#sttv_login_form
 	bottom: 0
 	+wfull
 	height: 100%
-	background-color: $transwht
+	background-color: white
 	
 	p.sblock
 		position: absolute
@@ -84,8 +85,7 @@ form#sttv_login_form
 		+centerpos
 
 p.message
-	display: none
-	padding: $small
-	background-color: $sienna
-	color: white
-	margin-bottom: $tiny
+	padding: 1em 0
+	font-size: $small
+	text-align: center
+	color: red

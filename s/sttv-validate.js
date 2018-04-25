@@ -5,14 +5,15 @@
 		e.preventDefault();
 		
 		var formData = {
-			action: 'sttvcontact',
+			'g-recaptcha-response' : this.g-recaptcha-response.value,
 			sttv_contact_name: this.sttv_contact_name.value,
 			sttv_contact_email: this.sttv_contact_email.value,
 			sttv_contact_subject: this.sttv_contact_subject.value,
 			sttv_contact_message: this.sttv_contact_message.value
 		};
+		console.log(formData);
 		
-		$.post(sttvAjax.ajaxURL, formData, function(data){
+		/* $.post(sttvAjax.ajaxURL, formData, function(data){
 			
 			if(data.success === false){
 				$('.message').html(data.data);
@@ -23,7 +24,7 @@
 				console.log(data);
 			}
 			
-		});
+		}); */
 		
 	});
 	

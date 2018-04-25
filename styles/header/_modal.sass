@@ -1,0 +1,91 @@
+body.modal-open
+    overflow: hidden
+
+body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
+	opacity: 1
+	visibility: visible
+
+#sttvmodal
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100vw
+    height: 100vh
+    visibility: hidden
+    background: white
+    z-index: 998
+    opacity: 0
+    -webkit-transition: all .25s linear
+    transition: all .25s linear
+
+    .closer-wrapper
+        display: block
+        position: absolute
+        right: $huge
+        top: $huge
+        width: $huge
+        height: $huge
+
+        .modal-toggle
+            cursor: pointer
+
+        .material-icons
+            font-size: $huge
+
+    #modal_loading_overlay
+        opacity: 0
+        visibility: hidden
+        position: absolute
+        z-index: 1001
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+        background: white
+        text-align: center
+        -webkit-transition: all .25s linear
+        transition: all .25s linear
+
+        .loading-spinner
+            display: block
+            position: absolute
+            max-width: 300px
+            height: auto
+            top: 50%
+            left: 50%
+            transform: translate(-50%,-50%)
+
+        #success
+            position: absolute
+            width: 100%
+            top: 50%
+            transform: translateY(-50%)
+
+            h2
+                font-size: $huge * 5
+                margin: 0
+                color: green
+
+                i
+                    font-size: inherit
+                    font-weight: 700
+
+    .sttvmodal_inner
+        max-width: $bodyw
+        width: 75%
+        margin: 0 auto
+        height: 100%
+
+@include MQ($mq-desktop)
+    #sttvmodal
+
+        .sttvmodal_inner
+            width: 90%
+
+@include MQ($mq-tablet)
+    #sttvmodal
+
+        .sttvmodal_inner
+            width: 100%

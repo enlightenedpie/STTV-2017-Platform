@@ -105,22 +105,25 @@ function sttv_stripe_plan($atts,$content='') {
 	
 	$contents = explode(',',$content);
 	
-	$highlight = false;
+	$highlight = $taxable = false;
 	if (in_array('highlight',$atts)) {
 		$highlight = 'highlight';
 	}
+	if (in_array('taxable',$atts)) {
+		$taxable = true;
+	}
+
+	$taxableAmt = ( isset( $atts['taxable_amt'] ) ) ? $atts['taxable_amt'] : $atts['price'];
 	
-	$atts = shortcode_atts( array(
-			'plan' => 'oops',
-			'columns' => '2',
-			'title' => 'The Best',
-			'price' => '$5000',
-			'length' => ''
-    ), $atts, 'course-plan' );
-	
-	$price = str_replace('.','',str_replace('$','',$atts['price']));
-	
-	$databind = $atts['plan'].'|'.$atts['title'].'|'.(int)$price;
+	$databind = [
+		'id' => $atts['plan'],
+		'name' => sanitize_text_field($atts['title']),
+		'price' => (int) str_replace('.','',str_replace('$','',$atts['price'])),
+		'taxable' => $taxable,
+		'taxableAmt' => (int) str_replace('.','',str_replace('$','',$taxableAmt)),
+		'qty' => 1,
+		'type' => 'subscription'
+	];
 	
 	$cols = '';
 	
@@ -145,7 +148,7 @@ function sttv_stripe_plan($atts,$content='') {
 	<div class="row">
 		<div class="col s12 m8 l6 xl4 offset-m2 offset-l3 offset-xl4 sttv-sales-table-wrapper <?php echo ($highlight) ? $highlight.' z-depth-4': ''; ?>">
         	<table id="sttv-sales-table-<?php echo $atts['plan']; ?>" class="sttv-sales-table centered">
-            	<caption class="<?php echo ($highlight) ?: ''; ?>"><a href="javascript:void(0)" class="payment-launcher" data-bind="<?php echo $databind; ?>"><?php _e(str_replace('.00','',$atts['price'])); ?></a></caption>
+            	<caption class="<?php echo ($highlight) ?: ''; ?>"><a href="javascript:void(0)" class="payment-launcher" data-bind='<?php echo json_encode($databind); ?>'><?php _e(str_replace('.00','',$atts['price'])); ?></a></caption>
 					<?php /*?><tr>
                     	<td>
                         	<span class="sttv-course-price"><?php echo $atts['price']; ?></span>
@@ -171,13 +174,21 @@ function sttv_stripe_plan($atts,$content='') {
     		?>
             <tr>
             	<td>
-                	<a href="#" class="payment-launcher pmt-button btn  waves-effect waves-light" data-bind="<?php echo $databind; ?>">Sign up now!</a>
+                	<a href="<?php echo get_permalink(); ?>/checkout" class="payment-launcher pmt-button btn waves-effect waves-light" data-action='checkout' data-bind='<?php echo json_encode($databind); ?>'>Sign up now!</a>
                 </td>
             </tr>
             </table>
-            <?php //print_r($atts); ?>
 		</div>
 	</div>
+	<script>
+		ga('ec:addImpression', {
+			'id': '<?php echo $databind['id']; ?>',
+			'name': '<?php echo $databind['name']; ?>',
+			'category': 'Courses/Subscriptions',
+			'brand': 'SupertutorTV',
+			'list': 'Sales Page'
+		});
+	</script>
 	<?php return ob_get_clean();
 }
 

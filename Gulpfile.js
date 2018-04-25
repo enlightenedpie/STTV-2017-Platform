@@ -11,7 +11,7 @@ gulp.task('styles', function() {
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
 		.pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('./'));
-	
+
 	//gulp.watch('styles/styles.min.sass',['styles']);
 });
 
@@ -26,3 +26,20 @@ gulp.task('scripts', function(){
 	.pipe(sourcemaps.write('./'))
 	.pipe(gulp.dest('./'))
 });
+
+gulp.task('noform', function() {
+    gulp.src('material/materialize-src/sass/materialize-noform.scss')
+    .pipe(sourcemaps.init())
+    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+		.pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest('./material'));
+});
+
+// gulp.task('noform', function() {
+//   console.log('gulp compiling');
+//   gulp.src([
+//     './material/materialize-src/sass/components/**',
+//     '!./material/materialize-src/sass/components/{forms,forms/**}'
+//   ])
+//   .pipe(gulp.dest('output'))
+// });

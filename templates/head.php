@@ -10,22 +10,30 @@
         <script type="text/javascript">setTimeout(function() {require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us7.list-manage.com","uuid":"9c9636012d1e5c14f043acabf","lid":"df497b5cbd"}) })},10000);</script>
     <?php endif; ?>
     	<script>
-		
-			var siteKey = '6LdjuA0UAAAAAMBQ0XAQoewK6248ezq5FZVm4T86';
-			var loginRecap, contactRecap;
-			
+			var recap = {
+				field : $('#sttv_recap').closest('form'),
+				siteKey : '<?php echo RECAPTCHA_SITEKEY; ?>',
+				sttvRecap : null,
+				response : function(response){
+					if (typeof response === 'undefined') {
+						$('button[type=submit]',this.field).prop('disabled',true)
+					} else {
+						$('button[type=submit]',this.field).prop('disabled',false)
+					}
+				},
+				onload : function() {
+					if ($('#sttv_recap').length){
+						recap.sttvRecap = grecaptcha.render('sttv_recap', {
+							'sitekey' : recap.siteKey,
+							'callback' : recap.response,
+							'expired-callback' : recap.response
+						})
+					}
+				}
+			}
 			var recapOnload = function() {
-				<?php if (is_page('contact')) : ?>
-					contactRecap = grecaptcha.render('contact_recap', {
-						'sitekey' : '<?php echo RECAPTCHA_SITEKEY; ?>'
-					});
-				<?php endif; if (is_page('subscribe')) : ?>
-					grecaptcha.render('subscribe_form', {
-						'sitekey' : '<?php echo RECAPTCHA_SITEKEY; ?>'
-					});
-				<?php endif; ?>
-			};
-		
+				return recap.onload()
+			}
 		</script>
     	<script src="https://www.google.com/recaptcha/api.js?onload=recapOnload&render=explicit" async defer></script>
 </head>
@@ -34,4 +42,4 @@
 <?php do_action('sttv_after_body_tag'); ?>
 <?php do_action('sttv_sale_banner'); ?>
 	<div id="main-wrapper">
-    	<div id="navcloser" class="close"></div>
+    	<div id="navcloser" class="slide-bar"></div>

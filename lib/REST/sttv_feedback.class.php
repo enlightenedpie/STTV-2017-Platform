@@ -94,7 +94,7 @@ class STTV_Feedback extends WP_REST_Controller {
 		$user = wp_get_current_user();
 		ob_start();
 		require STTV_TEMPLATE_DIR.'courses/feedback_post.php';
-		return array('templateHtml'=>ob_get_clean(),'user'=>$user);
+		return [ 'templateHtml'=>ob_get_clean(),'user'=>$user ];
 	}
 
 	public function post_feedback(WP_REST_Request $req){
@@ -102,13 +102,13 @@ class STTV_Feedback extends WP_REST_Controller {
 		if (get_transient('sttv_cfbrp:'.$body->student)){return false;}
 
 		return !!wp_insert_post(
-			array(
+			[
 				'post_type'=>'feedback',
 				'post_status'=>'publish',
 				'post_author'=>$body->student,
 				'post_content'=>sanitize_text_field($body->content),
 				'post_parent'=>$body->postID
-			)
+			]
 		);
 	}
 
@@ -120,15 +120,24 @@ class STTV_Feedback extends WP_REST_Controller {
 			$title = 'Feedback - '.$parent->post_title.' ('.$uid.')';
 
 			$uu = $wpdb->update('wp_posts',
-				array('post_excerpt'=>$uid,'post_title'=>$title),
-				array('ID'=>$post_ID)
+				[ 'post_excerpt'=>$uid,'post_title'=>$title ],
+				[ 'ID'=>$post_ID ]
 			);
 
 			if ($uu) {
 				$user = get_user_by('ID',$post->post_author);
-				$subj = 'Customer '.$user->first_name.' '.$user->last_name.' has left feedback about '.$parent->post_title;
+				$subj = 'Customer '.$user->first_name.' '.$user->last_name.' left feedback about '.$parent->post_title;
 
-				wp_mail(get_option('admin_email'),$subj,'Login to the admin area of Supertutortv.com to reply<br>'.$uu);
+				$headers[] = 'Content-Type: text/html; charset=UTF-8';
+				$headers[] = 'From: '.$user->first_name.' '.$user->last_name.' <'.$user->user_email.'>';
+				$headers[] = 'Sender: SupertutorTV Website <info@supertutortv.com>';
+
+				wp_mail(
+					get_option('admin_email'),
+					$subj,
+					$post->post_content,
+					$headers
+				);
 				set_transient('sttv_cfbrp:'.$post->post_author,true,DAY_IN_SECONDS);
 			}
 		endif;
