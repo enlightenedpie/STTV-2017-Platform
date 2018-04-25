@@ -32,23 +32,16 @@ a#login
 	right: 0px
 	@include border($gray,1px,left)
 	
-a.close
+a#menu-closer
 	display: block
-	padding: 1em
+	padding: 0 1em
+	text-align: right
 	+wfull
 	@include border($gray,1px,bottom)
 	
-.X
-	color: red
-	font-family: 'dashicons'
-	font-weight: 800
-	font-size: 1.25em
-	width: 1em !important
-	height: 1em !important
-	vertical-align: top
-	
-.X:before
-	content: '\f153 '
+	i
+		color: red
+		
 
 .icon-block
 	position: relative
