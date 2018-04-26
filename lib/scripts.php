@@ -24,23 +24,23 @@ function sttv_enqueue_all() {
 	
 	//jquery scripts
 	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js',false,null);
-	wp_enqueue_script('sttv-js-main', get_stylesheet_directory_uri().'/sttv-js.min.js','jquery',null,true);
-	wp_enqueue_script('materialize-js', get_stylesheet_directory_uri().'/material/materialize.min.js','jquery',null);
+	wp_enqueue_script('sttv-js-main', get_stylesheet_directory_uri().'/sttv-js.min.js','jquery',STTV_VERSION,true);
+	wp_enqueue_script('materialize-js', get_stylesheet_directory_uri().'/material/materialize.min.js','jquery',STTV_VERSION);
 	wp_enqueue_script('sttv-stripe-js', 'https://js.stripe.com/v3/',null,null,false);
 	wp_enqueue_script('jq-validate','https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js','jquery');
 	
 	//styles
-	wp_enqueue_style('sttv-main', get_stylesheet_directory_uri().'/styles.min.css', 'materialize', time());
-	wp_enqueue_style('material-icons','https://fonts.googleapis.com/icon?family=Material+Icons','materialize',time());
+	wp_enqueue_style('sttv-main', get_stylesheet_directory_uri().'/styles.min.css', 'materialize', STTV_VERSION);
+	wp_enqueue_style('material-icons','https://fonts.googleapis.com/icon?family=Material+Icons','materialize',STTV_VERSION);
 	wp_enqueue_style('dashicons');
 	
 	//conditionals
 	if ( is_page_template( 'signup.php' ) || is_page_template( 'mu-signup.php' ) || is_page_template( 'checkout.php' ) ) :
 		wp_enqueue_script('sttv-material', get_stylesheet_directory_uri().'/s/sttv-material.js','jquery');
 		//wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize-noform.css',false,time());
-		wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize.min.css',false,time());
+		wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize.min.css',false,STTV_VERSION);
 	else :
-		wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize.min.css',false,time());
+		wp_enqueue_style('materialize',get_stylesheet_directory_uri().'/material/materialize.min.css',false,STTV_VERSION);
 	endif;
 	
 	if (is_singular('courses')) {
