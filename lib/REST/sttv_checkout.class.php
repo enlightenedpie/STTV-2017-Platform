@@ -315,7 +315,7 @@ class STTV_Checkout extends WP_REST_Controller {
     }
 
     public function checkout_origin_verify( WP_REST_Request $request ) {
-        return true;
+        //return true;
         return !!wp_verify_nonce( $request->get_header('X-WP-Nonce'), STTV_REST_AUTH );
     }
 
