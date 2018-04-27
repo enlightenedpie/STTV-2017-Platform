@@ -95,14 +95,16 @@ body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
 @include MQ($mq-mobile)
     #sttvmodal
 
+        .sttvmodal_inner
+            margin: 0
+            width: 100%
+            padding: 1em
+
         .closer-wrapper
             right: $large
             top: $large
             width: $large
             height: $large
-
-            .modal-toggle
-                cursor: pointer
 
             .material-icons
                 font-size: $large
