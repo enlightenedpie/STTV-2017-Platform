@@ -6,7 +6,7 @@
 <?php get_header(); ?>
 <?php get_template_part('templates/title'); ?>
 
-<div id="content-wrapper-signup" class="col s12">
+<div id="content-wrapper-signup" class="col s12 m6 offset-m3">
     <?php the_content(); ?>
 </div>
 <div id="mu_form_wrapper" class="col s12">
