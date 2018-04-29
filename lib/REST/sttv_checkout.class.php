@@ -132,6 +132,7 @@ class STTV_Checkout extends WP_REST_Controller {
         }
 
         $student = wp_get_current_user();
+        $course = get_post( $key[$body['muid']]['course_id'] );
         if ( $student->ID === 0 ) {
             $submitted = [
                 'first_name' => $body['firstName'],
@@ -139,25 +140,25 @@ class STTV_Checkout extends WP_REST_Controller {
                 'user_login' => $body['email'],
                 'user_email' => $body['email'],
                 'user_pass' => $body['password'],
-                'show_admin_bar_front' => false,
-                'role' => 'multi-user_student'
+                'show_admin_bar_front' => false
             ];
             $student = wp_insert_user( $submitted );
-        } else {
-            $student->add_role('multi-user_student');
-        }
+        }      
 
         if ( ! is_wp_error( $student ) ) {
-            if ( $student instanceof stdClass ) {
-                $student = $student->ID;
+            if ( is_int( $student ) ) {
+                $student = get_userdata( $student );
             }
+            $student->add_role( 'multi-user_student' );
+            $student->add_role( str_replace( ' ', '_', strtolower( $course->post_title ) ) );
+
             $meta = [];
-            $activated_key = $mu->activate_key( $student );
+            $activated_key = $mu->activate_key( $student->ID );
             foreach ( $activated_key as $k => $v ) {
                 $v['id'] = $k;
                 $meta[] = $v;
             }
-            update_user_meta( $student, 'mu_used_keys', json_encode($meta) );
+            update_user_meta( $student->ID, 'mu_used_keys', json_encode( $meta ) );
 
             wp_signon([
                 'user_login' => $body['email'],
