@@ -15,8 +15,6 @@ class Order {
             ];
 		}
 
-        //return $obj;
-
 		/**
 		 * Create new subscription (Stripe)
 		 * IF payments fails, delete customer and return to form

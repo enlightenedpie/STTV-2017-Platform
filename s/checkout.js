@@ -392,7 +392,7 @@ $('.signup-submit').on('click',function(e) {
     var inputs = $( 'input, select', '#checkout-wrapper' ),
         valid = _st.checkout.validate( inputs, '#checkout-wrapper' )
     if ( valid ) {
-        _st.checkout.submit( _st.parseParams( inputs.serialize(), /sttv_/gi ) )
+        _st.checkout.submit( _st.parseParams( decodeURIComponent( inputs.serialize() ), /sttv_/gi ) )
     }
 })
 
