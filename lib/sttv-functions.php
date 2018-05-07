@@ -99,6 +99,26 @@ function sttv_verify_rest_nonce( WP_REST_Request $request ) {
 	return wp_verify_nonce( $request->get_header('X-WP-Nonce'), STTV_REST_AUTH );
 }
 
+function sttv_rest_response( $code = '', $msg = '', $status = 200, $extra = [] ) {
+	$data = [
+		'code'    => $code,
+		'message' => $msg,
+		'data'    => [ 
+			'status' => $status
+		]
+	];
+	$data = array_merge($data, (array) $extra);
+	return new WP_REST_Response( $data, $status );
+}
+
+function sttv_rest_invalid_method( $method ) {
+	return sttv_rest_response( 
+		'method_not_allowed',
+		$method.' method not supported',
+		405
+	 );
+}
+
 function sttv_default_role() {
 	return get_option( 'default_role' );
 }
