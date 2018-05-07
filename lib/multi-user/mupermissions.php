@@ -44,7 +44,7 @@ class MultiUserPermissions {
         if ( !isset($this->current_key) ){
             throw new Exception('The current key must be set before a new one can be generated. Please provide a key.');
         }
-        unset( $this->keystore[$this->current_key] );
+        unset( $this->keystore[ $this->current_key ] );
 
         $dict = get_option( 'sttv_crypto_dictionary' );
         if ( !$dict ){

@@ -131,9 +131,10 @@ class STTV_Checkout extends WP_REST_Controller {
             );
         }
 
-        $student = wp_get_current_user();
+        $student = get_user_by( 'email', $body['email'] );
         $course = get_post( $key[$body['muid']]['course_id'] );
-        if ( $student->ID === 0 ) {
+
+        if ( false === $student ) {
             $submitted = [
                 'first_name' => $body['firstName'],
                 'last_name' => $body['lastName'],
@@ -149,6 +150,15 @@ class STTV_Checkout extends WP_REST_Controller {
             if ( is_int( $student ) ) {
                 $student = get_userdata( $student );
             }
+
+            if ( $mu->is_subscribed( $student->ID , $course->ID ) ) {
+                return $this->checkout_generic_response(
+                    'user_already_subscribed',
+                    'This user has already signed up for this course. Please choose a unique user for this key.',
+                    400
+                );
+            }
+
             $student->add_role( 'multi-user_student' );
             $student->add_role( str_replace( ' ', '_', strtolower( $course->post_title ) ) );
 
@@ -316,7 +326,7 @@ class STTV_Checkout extends WP_REST_Controller {
     }
 
     public function checkout_origin_verify( WP_REST_Request $request ) {
-        //return true;
+        return true;
         return !!wp_verify_nonce( $request->get_header('X-WP-Nonce'), STTV_REST_AUTH );
     }
 

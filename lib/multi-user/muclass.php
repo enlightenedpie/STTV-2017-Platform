@@ -24,11 +24,17 @@ class MultiUser {
     private $autosave;
 
     public function __construct( $user_id = 0, $course_id = 0, $autosave = true ) {
-        $this->autosave = $autosave;
+        $this->start_time = time();
         $this->keys = json_decode( @file_get_contents( MU_FILE_PATH ) ?: '[]', true );
+
+        if ( is_string( $user_id ) ) {
+            $this->set_current_key( $user_id );
+            $user_id = 0;
+        }
+        
         $this->root_user_id = $user_id;
         $this->course_id = $course_id;
-        $this->start_time = time();
+        $this->autosave = $autosave;
         return $this;
     }
 
@@ -57,7 +63,7 @@ class MultiUser {
         array_unshift($prefix,'\t');
         
         for ($i = 1; $i <= $qty;) {
-            $key = sttv_ukey( $prefix[date('n')].$prefix[date('y')].'-', openssl_random_pseudo_bytes( 32 ), true, 32 );
+            $key = sttv_ukey( $prefix[ date( 'n' ) ].$prefix[ date( 'y' ) ].'-', openssl_random_pseudo_bytes( 32 ), true, 32 );
             if ( array_key_exists( $key, $this->keys ) || array_key_exists( $key, $this->created_keys ) ){
                 continue;
             }
@@ -112,6 +118,22 @@ class MultiUser {
         return $this->current_key;
     }
 
+    public function is_subscribed( $active_user = 0, $course_id = 0 ) {
+        foreach ( $this->keys as $k => $v ) {
+            if ( $v['active_user'] === $active_user && $v['course_id'] == $course_id ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function reset_key( $key = '' ) {
+        if ( !empty( $key ) ) {
+            $this->set_current_key( $key );
+        }
+        return $this->_reset();
+    }
+
     public function get_tokens() {
         return $this->tokens;
     }
@@ -131,6 +153,21 @@ class MultiUser {
     private function invalidate_key(){
         $this->current_key[$this->token]['valid'] = false;
         return $this;
+    }
+
+    private function _reset() {
+        if ( is_null( $this->current_key[ $this->token ][ 'activated' ] ) ) {
+            return null;
+        }
+        unset( $this->current_key[ $this->token ][ 'course_exp' ] );
+        $this->current_key[ $this->token ] = array_merge( $this->current_key[ $this->token ], [
+            'activated' => null,
+            'valid' => true,
+            'active_user' => 0
+        ] );
+
+        return $this->update( $this->current_key )
+            ->get_current_key();
     }
 
     private function set_active_user( $active_user = 0 ){
