@@ -49,7 +49,7 @@ class STTV_Checkout extends WP_REST_Controller {
             [
                 'methods' => 'GET',
                 'callback' => [ $this, 'sttv_parameter_checker' ],
-                'permission_callback' => [ $this, 'checkout_origin_verify' ],
+                'permission_callback' => 'sttv_verify_rest_nonce',
                 'args' => [
                     'email' => [
                         'required' => false,
@@ -76,7 +76,7 @@ class STTV_Checkout extends WP_REST_Controller {
             [
                 'methods' => 'POST',
                 'callback' => [ $this, 'sttv_checkout' ],
-                'permission_callback' => [ $this, 'checkout_origin_verify' ],
+                'permission_callback' => 'sttv_verify_rest_nonce',
             ]
         ]);
     }

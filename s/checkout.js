@@ -343,7 +343,7 @@ $('[name=sttv_email],input[name=sttv_coupon]').on({
         _st.request({
             route : stajax.rest.url+'/checkout?'+qstring+val,
             headers : {
-                'X-WP-Nonce' : stajax.rest.nonce,
+                //'X-WP-Nonce' : stajax.rest.nonce,
             },
             success : function(d) {
                 tThis.removeClass('valid invalid')
