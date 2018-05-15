@@ -165,11 +165,10 @@ function stajax_object() {
 					'public_key' => Spress()->public_key
 				]
 			];
-			$nonce = has_filter( 'rest_nonce_action' ) ? STTV_REST_AUTH : 'wp_rest';
 			$stajax['rest'] = [
 				'ID' => $post->ID ?? $user_id,
-				'nonce' => wp_create_nonce( $nonce ), 
-				'url' => rest_url(STTV_REST_NAMESPACE)
+				'nonce' => wp_create_nonce( STTV_REST_AUTH ), 
+				'url' => rest_url( STTV_REST_NAMESPACE )
 			];
 		?>
 		var stajax = <?php echo json_encode($stajax); ?>;

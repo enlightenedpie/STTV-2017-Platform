@@ -13,6 +13,8 @@ final class STTV {
 
     public $restauth = 'wp_rest';
 
+    public $timestamp = 0;
+
     public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
@@ -21,6 +23,8 @@ final class STTV {
 	}
 
     public function __construct() {
+
+        $this->timestamp = time();
 
         $this->define_constants();
 		$this->includes();
@@ -89,6 +93,9 @@ final class STTV {
         } );
         add_action( 'stripepress_events_invalid', 'sttv_404_redirect' );
 
+        // login logger
+        add_action( 'wp_login', [ $this, 'sttv_user_login_action' ], 10, 2 );
+
         add_action( 'sttv_loaded', [ $this, 'finally' ], 999 );
 
 		//cleanup
@@ -134,6 +141,12 @@ final class STTV {
 		add_theme_support( 'html5', $html5 );
 		add_theme_support( 'infinite-scroll', $scroll_args );
 
+    }
+
+    public function sttv_user_login_action( $username, $user ) {
+        $times = get_user_meta( $user->ID, 'login_timestamps', true ) ?: ['SOR'];
+        $times[] = $this->timestamp;
+        update_user_meta( $user->ID, 'login_timestamps', $times );
     }
     
     public function emergency_access() {

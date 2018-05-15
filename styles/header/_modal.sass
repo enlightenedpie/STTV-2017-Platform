@@ -77,6 +77,7 @@ body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
         width: 75%
         margin: 0 auto
         height: 100%
+        overflow: auto
 
 @include MQ($mq-desktop)
     #sttvmodal
@@ -89,3 +90,22 @@ body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
 
         .sttvmodal_inner
             width: 100%
+
+
+@include MQ($mq-mobile)
+    #sttvmodal
+
+        .sttvmodal_inner
+            margin: 0
+            width: 100%
+            padding: 1em
+
+        .closer-wrapper
+            right: $large
+            top: $large
+            width: $large
+            height: $large
+            z-index: 99999
+
+            .material-icons
+                font-size: $large

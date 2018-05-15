@@ -465,7 +465,7 @@ $('input, select','#mu_form_wrapper').on('change',function(e){
 })
 
 var selectors = '.slide-bar, .modal-toggle, .mu-signup, .read-more, .mu-submitter, .cart-fab, .payment-launcher'
-$(document).on('click touchstart',selectors,function(e) {
+$(document).on('click',selectors,function(e) {
 	e.preventDefault();
 	var t = $(this),
 		c = t.attr('class').split(/\s+/),

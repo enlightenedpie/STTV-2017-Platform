@@ -1,28 +1,16 @@
 <?php
-
-$timestamp = time();
+if (!is_user_logged_in()) {
+	wp_redirect('/');
+	die;
+}
 
 $user = wp_get_current_user();
-$umeta = get_user_meta( $user->ID, '', true );
-$stripe_meta = get_user_meta( $user->ID, 'stripe_meta', true );
-$visited = get_user_meta( $user->ID, 'acct_visited', true ) ?: 0;
-$logins = get_user_meta( $user->ID, 'login_timestamps', true );
+$meta = get_user_meta($user->ID,'stripe_meta',true);
+$visited = get_user_meta($user->ID,'acct_visited',true) ?: 0;
+$welcome = ($visited > 0) ? "Welcome back,":"Welcome,";
+$legacy = array('_legacy_value_bundle','_legacy_official_guide','_legacy_red_book');
 
-if ( !empty( $logins ) ) {
-	$lastlogin = end( $logins ); prev( $logins );
-}
-
-$legacy = [ '_legacy_value_bundle', '_legacy_official_guide', '_legacy_red_book' ];
-$welcome = "Welcome back,";
-
-if ( !$visited ) {
-	$welcome = "Welcome,";
-	update_user_meta( $user->ID, 'acct_visited', $timestamp );
-}
-
-if ( $lastlogin == 'SOR' ) {
-	$lastlogin = end( $logins );
-}
+update_user_meta($user->ID,'acct_visited',$visited++);
 
 if (current_user_can('manage_options')){
 	$query = new WP_Query(array(
@@ -49,47 +37,7 @@ if (current_user_can('manage_options')){
 	$html .= '</div></div>';
 	print $html;
 
-} elseif ( current_user_can('multi-user_student') ) {
-	$courses = $keys = '';
-	foreach ( json_decode( $umeta['mu_used_keys'][0], true ) as $key ) {
-		$course = get_post( $key['course_id'] );
-
-		$courses .= '<a href="'.site_url( '/courses/'.$course->post_name ).'"><span class="smaller">'.$course->post_title.'</span></a>';
-		$keys .= '<span class="smaller">'.$key['id'].'</span><br/>';
-	}
-	$date = 'date';
-	$html = <<<HTML
-	<div class="row">
-		<div id="acct-col-wrapper" class="col s12 m6 offset-m3 z-depth-4">
-			<div id="acct-name" class="col s12">
-				<h2>{$welcome} {$umeta['first_name'][0]}!</h2>
-			</div>
-			<div id="acct-courses" class="col s12 m6 acct-sqr">
-				My Courses
-				<span class="content">{$courses}</span>
-			</div>
-			<div id="acct-type" class="col s12 m6 acct-sqr">
-				Account type
-				<span class="content">Multi-user</span>
-			</div>
-			<div id="acct-access" class="col s12 m6 acct-sqr">
-				Last login
-				<span class="content">{$date( 'F, j Y<\b\r>g:ia', $lastlogin )}</span>
-			</div>
-			<div id="acct-status" class="col s12 m6 acct-sqr">
-				Account status
-				<span class="content"><i class="material-icons">mood</i></span>
-			</div>
-			<div id="acct-mukeys" class="col s12 acct-sqr">
-				Used keys
-				<span class="content">{$keys}</span>
-			</div>
-		</div>
-	</div>
-HTML;
-	print $html;
-	//print_r($lastlogin);
-}else {
+} else {
 	foreach ($legacy as $l){
 		if (!current_user_can($l)){
 			continue;
@@ -106,7 +54,7 @@ HTML;
 			<tbody>
 <?php
 $invoices = [];
-foreach ($stripe_meta['subscriptions'] as $sub):
+foreach ($meta['subscriptions'] as $sub):
 	$invoices[] = $sub['inv_ID'];
 	$thepost = get_post($sub['plan_ID']);
 	$active = $link = '';
@@ -170,7 +118,7 @@ endforeach;
 <div class="row" id="my-account_info">
 	<div class="col s12"><h2>My Info</h2></div>
 	<div class="col s12"><?php
-		$cus = ($stripe_meta['cus_ID']) ? \Stripe\Customer::retrieve( $stripe_meta['cus_ID'] ) : ['description'=>'','email'=>''];
+		$cus = ($meta['cus_ID']) ? \Stripe\Customer::retrieve( $meta['cus_ID'] ) : ['description'=>'','email'=>''];
 		//print_r(json_encode($cus));
 		print "<div><span>Name: {$cus['description']}</span></div><br/>";
 		print "<div><span>Email: {$cus['email']}</span></div><br/>";
