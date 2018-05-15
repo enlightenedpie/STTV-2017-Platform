@@ -26,7 +26,7 @@ function sttv_rest_cors() {
 		}
 		header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
 		header( 'Access-Control-Allow-Credentials: true' );
-		header( 'Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-WP-Nonce, X-STTV-Auth' );
+		//header( 'Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-WP-Nonce, X-STTV-Auth' );
 		header( 'Content-Type: application/sttv.app.data+json' );
 		header( 'Host: '.rest_url(STTV_REST_NAMESPACE) );
 
