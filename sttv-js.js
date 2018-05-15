@@ -213,9 +213,9 @@ var _st = {
 			fabCon = $('<i/>',{"class":'material-icons',text:'shopping_cart'}),
 			fabAlert = $('<div/>',{"class":'cart-alert circle z-depth-2'})
 	
-		//$('body').addClass('sttv-jscart')
+		$('body').addClass('sttv-jscart')
 	
-		fabWrap.append(
+		/* fabWrap.append(
 			fabAlert.text(currentCount)
 		).append(
 			fab.append(fabCon)
@@ -223,7 +223,7 @@ var _st = {
 
 		if ( currentCount > 0 ) {
 			fabAlert.addClass('show').siblings('.cart-fab').addClass('pulse')
-		}
+		} */
 
 		localStorage.setItem('_stcart_',JSON.stringify(cartObj))
 	
