@@ -108,7 +108,7 @@ var _st = {
 		_st.request({
 			route : stajax.rest.url+'/auth',
 			headers : {
-				'X-WP-Nonce' : stajax.rest.nonce,
+				//'X-WP-Nonce' : stajax.rest.nonce,
 			},
 			success : function(d) {
 				el.append(d)
