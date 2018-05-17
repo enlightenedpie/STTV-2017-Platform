@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 <?php get_template_part('templates/title'); ?>
-	<section id="content-wrapper" class="col s12 m9">
+	<section id="content-wrapper" class="archive-page col s12">
 		<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
         <article id="post-<?php the_ID(); ?>" class="post category-post">
             <a href="<?php the_permalink(); ?>">
@@ -16,5 +16,4 @@
         <?php endwhile; endif; ?>
     <?php /* ?><div class="sttv-pag" id="pagination_post"><?php sttv_pagination(); ?></div><?php */ ?>
     </section>
-    	<?php get_sidebar(); ?>
 <?php get_footer(); ?>

@@ -2,9 +2,10 @@ header#siteheader
 	+wfull
 	height: $headerh
 	position: absolute
+	background-color: $bodybg
 	z-index: 399
 	top: 0
-	background-color: $bodybg
+	@include border($qtrblack,1px,bottom)
 	
 #logo-box
 	width: auto
@@ -26,18 +27,18 @@ a#main-menu, a#login
 	
 a#main-menu
 	left: 0px
-	@include border($gray,1px,right)
+	@include border($qtrblack,1px,right)
 	
 a#login
 	right: 0px
-	@include border($gray,1px,left)
+	@include border($qtrblack,1px,left)
 	
 a#menu-closer
 	display: block
 	padding: 0 1em
 	text-align: right
 	+wfull
-	@include border($gray,1px,bottom)
+	@include border($qtrblack,1px,bottom)
 	
 	i
 		color: red
@@ -65,5 +66,6 @@ a#menu-closer
 		position: -o-sticky
 		position: sticky !important
 		
+@include MQ($mq-tportrait)
 	.icon-block span.link-text
 		display: none

@@ -1,24 +1,29 @@
 /* CATEGORY STYLES */
 
-.category-post
-	+whalf
-	float: left
-	
-	figure
-		+wfull
-		display: block
+#content-wrapper.archive-page
+	border-top: 2px solid $seafoam
+	border-image: url(i/sttv-border.png) 100
+	padding-top: $large
+
+	.category-post
+		+whalf
+		float: left
 		
-		img
-			display: block
+		figure
 			+wfull
-			height: auto
+			display: block
 			
-	h5
-		text-align: center
-	
-	figure, h5
-		margin: 0
-		margin-bottom: 1em
+			img
+				display: block
+				+wfull
+				height: auto
+				
+		h5
+			text-align: center
+		
+		figure, h5
+			margin: 0
+			margin-bottom: 1em
 
 /** Mobile **/	
 @include MQ($mq-tablet)

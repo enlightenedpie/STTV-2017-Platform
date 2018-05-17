@@ -1,7 +1,6 @@
 #stage
 	padding: 0
-	margin-bottom: 3em
-	height: 540px
+	margin-bottom: $large * 2
 
 	.col
 		padding: 0
@@ -11,22 +10,14 @@
 		max-width: $bodyw
 		margin: 0 auto
 	
-	span.sttv-embed-video, #cover-img
-		height: 100%
-		background: black
-		background-size: cover
-	
-		img, iframe
-			display: block
-			margin: 0 auto
-			width: 60%
-
-		iframe
+		.sttv-embed-video, #cover-img
 			height: 100%
+			background: black
+			background-size: cover
 
-		img
-			width: auto
-			height: 100%
+			iframe
+				width: 100%
+				height: 100%
 		
 @include MQ($mq-wide)
 	#stage
@@ -36,28 +27,44 @@
 			
 @include MQ($mq-desktop)
 	#stage
-	
-		span.sttv-embed-video, span.post-thumb-top
-			height: 480px
-			
-			iframe
-				+w3quarter
+		height: 45vh
 
-/** Mobile **/		
+		#stage-inner
+	
+			span.sttv-embed-video, span.post-thumb-top
+				
+				iframe
+					+w3quarter
+
+		
 @include MQ($mq-tablet)			
 	#stage
-	
-		span.sttv-embed-video, span.post-thumb-top
-			height: 360px
-			
-			iframe
-				+wfull
 
+		#stage-inner
+	
+			.sttv-embed-video, #cover-img
+				height: 480px
+				margin-bottom: $large * 2
+				
+				iframe
+					+wfull
+
+@include MQ($mq-tportrait)			
+	#stage
+
+		#stage-inner
+	
+			.sttv-embed-video, #cover-img
+				height: 360px
+
+/** Mobile **/
 @include MQ($mq-mobile)			
 	#stage
+
+		#stage-inner
 	
-		span.sttv-embed-video, span.post-thumb-top
-			height: 240px
-			
-			iframe
-				width: 100%
+			.sttv-embed-video, #cover-img
+				height: 240px
+				
+				iframe
+					width: 100%

@@ -1,24 +1,52 @@
-#title-meta
-	padding: 0
+#stage-inner
+	
+	#title-meta
+		padding: 0
 
-	#page-title
-		+wfull
+		#title-meta-inner
+			margin: 0
+			padding: 0
 
-	hr
-		height: 2px
-		width: 6em
-		background: $seafoam
-		margin: 0 auto
-		
-	#post-meta
-		text-align: center
-		padding: 1em
-		
-		.category-desc
-			font-style: italic
+		#page-title
+
+			h1
+				margin-top: 0
 			
+			.category-desc
+				font-style: italic
+			
+@include MQ($mq-desktop)
+	#stage-inner
+
+		#title-meta
+			position: relative
+			height: 100%
+
+			#title-meta-inner
+				padding: 0 $huge
+				position: absolute
+				top: 50%
+				transform: translateY(-50%)
+
+				#post-meta
+					padding: 0 $huge*2 0 0
+
 /** Mobile **/			
 @include MQ($mq-tablet)
-	#page-title
-		padding-left: 1em
-		padding-right: 1em
+	#stage-inner
+
+		#title-meta
+			
+			#title-meta-inner
+				width: $bodyw / 2
+				margin: 0 auto
+
+@include MQ($mq-tportrait)
+	#stage-inner
+
+		#title-meta
+			padding: 0 $huge
+			
+			#title-meta-inner
+				width: 100%
+				margin: 0

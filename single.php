@@ -1,5 +1,5 @@
 <?php get_header(); ?>
-	<section id="content-wrapper" class="col s12 m9">
+	<section id="content-wrapper" class="row">
 	<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
     	<article id="post-<?php the_ID(); ?>" class="post single-post">
         	<?php the_content(); ?>
