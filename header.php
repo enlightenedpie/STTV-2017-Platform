@@ -29,7 +29,6 @@
     <div id="not-header-wrapper" class="row">
     <?php if (is_singular('courses')) : ?>
     	<div id="courses-left-wrapper" class="col m12 l9">
-    <?php endif; ?>
-    	<section class="z-depth-1" id="stage">
-        	<?php get_template_part('templates/stage'); ?>
-        </section>
+    <?php endif; 
+    
+    get_template_part('templates/stage');

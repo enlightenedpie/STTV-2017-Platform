@@ -1,13 +1,20 @@
 #stage
-	+wfull
-	background-color: white
+	padding: 0
+	margin-bottom: 3em
+	height: 540px
+
+	.col
+		padding: 0
+
+	#stage-inner
+		height: 100%
+		max-width: $bodyw
+		margin: 0 auto
 	
-	span.sttv-embed-video, span.post-thumb-top
-		height: 540px
-		+wfull
+	span.sttv-embed-video, #cover-img
+		height: 100%
 		background: black
-		display: block
-		max-height: 700px
+		background-size: cover
 	
 		img, iframe
 			display: block
