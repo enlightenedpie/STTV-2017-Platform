@@ -1,5 +1,4 @@
 		</div><?php //end #content ?>
-	</main>
 	<?php if (is_singular('courses')) : ?>
 		</div><?php //end courses non-sidebar wrapper ?>
    <div id="courses-right-sidebar" class="col m12 l3"></div>

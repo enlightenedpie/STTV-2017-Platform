@@ -1,4 +1,3 @@
-<main itemscope itemtype="http://schema.org/Article">
 <?php 
 
 //$colors = array('azure','seafoam','olive','sunrise','goldenrod','sienna','salmon');
@@ -30,7 +29,7 @@
 		
 		endif; 
 			
-			?><section id="title-meta">
+			?><section id="title-meta" class="col l12 xl6 pull-xl6">
 				<div itemprop="name" id="page-title">
 					<h1><?php _e($title, 'wordpress-seo') ?></h1>
 				</div>
@@ -51,7 +50,7 @@
                         	<div id="post-tags">
 								<?php foreach ($metas as $meta) :
                                 
-                                    ?><a href="<?php print get_tag_link($meta->term_id); ?>"><div style="box-shadow:0px 1px 1px rgba(150, 150, 150, 0.55)" class="chip"><?php print $meta->name; ?></div></a><?php
+                                    ?><a href="<?php print get_tag_link($meta->term_id); ?>"><div class="post-tag"><?php print $meta->name; ?></div></a><?php
                                 
                                 endforeach; ?>
 							</div>
@@ -63,4 +62,3 @@
 		endif; ?>
 			</section><?php
 	endif; ?>
-	<div id="content" class="row">
