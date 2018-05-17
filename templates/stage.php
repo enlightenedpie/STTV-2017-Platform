@@ -1,27 +1,22 @@
 <?php
 $ytlink = get_post_meta(get_the_ID(),'yt_link',true);
-	if (is_front_page()) :
+?><section class="row" id="stage"><div class="row" id="stage-inner"><?php
+
+	if ( is_front_page() ) :
 	
-		print do_shortcode('[smartslider3 slider=1]');
-	
-	elseif (is_page()) :
-		if (!empty($ytlink)) :
-		?>
-			<span class="sttv-embed-video" style="text-align:center; display: block;">
-				<iframe class="youtube-player" width="1920" height="1080" type="text/html" src="https://www.youtube.com/embed/<?php print $ytlink; ?>?version=3&rel=1&fs=1&autohide=2&showsearch=0&showinfo=1&iv_load_policy=1&wmode=transparent&playsinline=1" allowfullscreen="true" style="border:0;"></iframe>
-			</span><?php
-		endif;
-		do_action('sttv_stage_section');
-	elseif (is_404()) : ?>
+		print do_shortcode( '[smartslider3 slider=1]' );
+
+	elseif ( is_404() ) : ?>
 	<span class="stage-404"><?php
 		$img_id = get_theme_mod('404_stage_setting');
 		print wp_get_attachment_image($img_id,'full');
-		?></span>	
+	?></span>	
 	<?php elseif (is_category() || is_tag() || is_search()) :
 	
 		return false;
 	
-	elseif (is_singular()) :
+	elseif ( is_singular() ) : ?>
+	<?php
 		
 		if (!empty($ytlink)) : ?>
 			<span class="sttv-embed-video" style="text-align:center; display: block;">
@@ -29,20 +24,20 @@ $ytlink = get_post_meta(get_the_ID(),'yt_link',true);
 			</span><?php
 
 		elseif (has_post_thumbnail()) : ?>
-			<span id="post-<?php the_ID(); ?>-thumb" class="post-thumbnail post-thumb-top">
-				<?php print get_the_post_thumbnail( get_the_ID(), 'full' ); ?>
-			</span><?php
+			<div id="cover-img" class="col l12 xl6 push-xl6" style="background-image: url(<?php print get_the_post_thumbnail_url( get_the_ID(), 'full' ); ?>); background-position: 49% 29% !important"></div>
+		<?php
 
-		else :
-
-			do_action('sttv_stage_section');
-
-		endif;
-		
-	else :
-	
-		do_action('sttv_stage_section');
-		
+		endif; ?>
+		<?php
 	endif;
 
+	get_template_part('templates/title');
+	
+	do_action('sttv_stage_section');
+
+?></div></section><?php
+
 do_action('sttv_after_stage');
+
+?>
+<div id="content" class="row">
