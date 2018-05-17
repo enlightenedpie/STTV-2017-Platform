@@ -1,4 +1,11 @@
 /* COMMON POST STYLINGS */
 
-.post
-	padding: 1em
+@include MQ($mq-mobile)
+	#not-header-wrapper
+
+		#content
+
+			#content-wrapper
+
+                .single-post
+                    margin-bottom: $huge * 1.5

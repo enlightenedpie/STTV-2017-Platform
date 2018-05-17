@@ -16,7 +16,7 @@
 		border-#{$border}: #{$size} solid #{$color}
 		
 @mixin MQ($breakpoint)
-	@if $breakpoint == 1700px
+	@if $breakpoint >= $mq-tablet+1
 		@media only screen and (min-width: #{$breakpoint})
 			@content
 	@else
