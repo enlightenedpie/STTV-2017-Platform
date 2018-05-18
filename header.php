@@ -7,7 +7,7 @@
     $firstname = get_user_meta($current_user->ID,'first_name',true);
     $loggedin = is_user_logged_in();
 ?>
-    <header class="z-depth-1" id="siteheader">
+    <header class="" id="siteheader">
         <a href="#" id="main-menu" class="slide-bar">
             <div class="icon-block">
                 <span class="dashicons dashicons-menu"></span>

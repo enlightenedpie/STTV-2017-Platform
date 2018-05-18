@@ -6,27 +6,7 @@
 		.related-posts
 
 			.related-posts-title
-				margin-bottom: 1em		
-
-			article.related-post
-				padding-left: 1em
-				
-				figure
-					+wfull
-					display: block
-					
-					img
-						display: block
-						+wfull
-						height: auto
-						max-height: 432px
-				
-				figure, h5
-					margin: 0
-					margin-bottom: 1em
-
-				p
-					padding-bottom: 1em
+				margin-bottom: 1em
 
 @include MQ($mq-desktop)
 	#not-header-wrapper
@@ -35,25 +15,3 @@
 
 			.related-posts
 				padding: 0 $huge
-
-				article.related-post
-
-					&:nth-of-type(4n+1)
-						padding-left: 0
-		
-/** Mobile **/		
-@include MQ($mq-tablet)
-	#not-header-wrapper
-		
-		#content
-
-			.related-posts
-
-				article.related-post
-
-					&:nth-of-type(odd)
-						padding-right: $small
-						padding-left: 0
-					
-					&:nth-of-type(even)
-						padding-left: $small

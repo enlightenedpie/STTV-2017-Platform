@@ -13,8 +13,6 @@ $ytlink = get_post_meta(get_the_ID(),'yt_link',true);
 	?></span>	
 	<?php elseif (is_category() || is_tag() || is_search()) :
 	
-		return false;
-	
 	elseif ( is_singular() ) :
 		
 		if (!empty($ytlink)) : ?>
