@@ -1,32 +1,126 @@
 /* CATEGORY STYLES */
 
-#content-wrapper.archive-page
-	border-top: 2px solid $seafoam
-	border-image: url(i/sttv-border.png) 100
-	padding-top: $large
+body.archive
 
-	.category-post
-		+whalf
-		float: left
-		
-		figure
-			+wfull
-			display: block
-			
-			img
-				display: block
-				+wfull
-				height: auto
+	#not-header-wrapper
+
+		#stage
+			height: auto
+			margin-bottom: 0
+
+			#stage-inner
+				padding: 0 2em
+	
+				h1
+					border-bottom: 2px solid $seafoam
+					border-image: url(i/sttv-border.png) 100
+					display: inline-block
+					padding-bottom: $ittybitty
+
+				#title-meta-inner
+
+					.category-desc
+						font-style: italic
+
+		#content
+
+			#content-wrapper
+				width: auto
+				margin: 0
+
+
+#not-header-wrapper
+
+	#content
+
+		.archive
+
+			article.archive-post
+				font-size: $small
+				padding-right: 1em
+
+				.archive-inner
+					border: 1px solid $qtrblack
 				
-		h5
-			text-align: center
-		
-		figure, h5
-			margin: 0
-			margin-bottom: 1em
+					figure
+						display: block
+						
+						img
+							display: block
+							+wfull
+							height: auto
+					
+					figure
+						margin: 0
+						margin-bottom: 1em
 
-/** Mobile **/	
+					summary
+						padding: 0 1em 1em
+						display: block
+					
+						h4
+							font-weight: 700
+							margin-top: 0
+
+@include MQ($mq-desktop)
+	body.archive
+
+		#not-header-wrapper
+
+			#stage
+
+				#title-meta-inner
+					padding: 3em 0
+					position: relative
+					top: 0
+					transform: none
+
+	#not-header-wrapper
+
+		#content
+
+			.archive
+				padding: 0 $huge
+
+				article.archive-post
+
+					&:nth-of-type(4n)
+						padding-right: 0
+
+					.archive-inner
+						margin: 0
+		
+/** Mobile **/		
 @include MQ($mq-tablet)
-	.category-post
-		+wfull
-		float: none
+	#not-header-wrapper
+		
+		#content
+
+			.archive
+
+				article.archive-post
+
+					.archive-inner
+
+						figure
+							margin-bottom: 0
+						
+						summary
+							padding-top: 1em
+
+@include MQ($mq-mobile)
+	#not-header-wrapper
+		
+		#content
+
+			.archive
+
+				& > .row
+					margin: 0
+
+					article.archive-post
+						padding: 0
+
+						.archive-inner
+
+							summary

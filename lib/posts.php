@@ -38,31 +38,22 @@ add_action('add_meta_boxes', 'add_course_meta');
 function add_course_meta()
 {
     add_meta_box(
-                 'album_id', // $id
-                 'Vimeo Album ID', // $title
-                 'sttv_display_album_id', // $callback
-                 'page', // $post_type
-                 'side', // $context
-                 'high' // $priority
-				);
-	/*if ('signup.php' == get_post_meta( get_the_ID(), '_wp_page_template', true )) {
-		add_meta_box(
-					 'stripe_sub_plan_id', // $id
-					 'Stripe Subscription Plan ID', // $title
-					 'sttv_display_plan_id', // $callback
-					 'page', // $post_type
-					 'side', // $context
-					 'high' // $priority
-					);
-	}*/
+		'album_id', // $id
+		'Page template file name', // $title
+		'sttv_display_album_id', // $callback
+		[ 'post', 'page' ], // $post_type
+		'side', // $context
+		'high' // $priority
+	);
+
 	add_meta_box(
-                 'yt_link', // $id
-                 'Youtube Video ID', // $title
-                 'sttv_youtube_link', // $callback
-                 array('post','page'), // $post_type
-                 'side', // $context
-                 'high' // $priority
-				);
+		'yt_link', // $id
+		'Youtube Video ID', // $title
+		'sttv_youtube_link', // $callback
+		[ 'post', 'page' ], // $post_type
+		'side', // $context
+		'high' // $priority
+	);
 }
 
 function sttv_youtube_link()
