@@ -10,7 +10,7 @@ function kill_the_messenger($event,$object) {
 	$headers = array("Content-Type: text/html; charset=UTF-8","From: SupertutorTV <$to>","bcc: dave@supertutortv.com");
 	
 	$obj = json_decode($object);
-	$cus = \Stripe\Customer::retrieve($obj->data->object->customer); //cus_AXIdPJHOPvtzDr
+	//$cus = \Stripe\Customer::retrieve($obj->data->object->customer); //cus_AXIdPJHOPvtzDr
 	
 	switch ($event) {
 		case 'invoice.payment_succeeded': 
