@@ -1,12 +1,9 @@
 #sidebar
 	display: block
-	+w1quarter
 	min-height: $huge * 10
 	padding: 1em
 	
 	>div
-		+wfull
-		background-color: white
 		padding: 1em
 		
 		#recentposts
@@ -40,4 +37,3 @@
 /** Mobile **/		
 @include MQ($mq-tablet)
 	#sidebar
-		+wfull

@@ -6,7 +6,6 @@ body.archive
 
 		#stage
 			height: auto
-			margin-bottom: 0
 
 			#stage-inner
 				padding: 0 2em
@@ -68,6 +67,8 @@ body.archive
 		#not-header-wrapper
 
 			#stage
+				margin-bottom: 0
+				min-height: 0px
 
 				#title-meta-inner
 					padding: 3em 0
@@ -92,13 +93,34 @@ body.archive
 		
 /** Mobile **/		
 @include MQ($mq-tablet)
+	body.archive
+
+		#not-header-wrapper
+
+			#stage
+				margin-bottom: 0
+
+				#stage-inner
+
+					#title-meta
+						padding: 0
+
+						#title-meta-inner
+							padding: 3em 0
+							margin: 0
+							width: auto
+
 	#not-header-wrapper
 		
 		#content
 
 			.archive
 
+				& > .row
+					margin: 0
+
 				article.archive-post
+					padding: 0
 
 					.archive-inner
 

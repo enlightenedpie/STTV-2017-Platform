@@ -1,19 +1,16 @@
 <?php
 $ytlink = get_post_meta(get_the_ID(),'yt_link',true);
-?><section class="row" id="stage"><div class="row" id="stage-inner"><?php
+?><section class="row" id="stage" <?php do_action( 'sttv_stage_extras' ); ?>><div class="row" id="stage-inner"><?php
 
 	if ( is_front_page() ) :
 	
 		print do_shortcode( '[smartslider3 slider=1]' );
 
 	elseif ( is_404() ) : ?>
-	<span class="stage-404"><?php
-		$img_id = get_theme_mod('404_stage_setting');
-		print wp_get_attachment_image($img_id,'full');
-	?></span>	
+	<span class="stage-404"><?php print wp_get_attachment_image( get_theme_mod( '404_stage_setting' ), 'full' ); ?></span>	
 	<?php elseif (is_category() || is_tag() || is_search()) :
 	
-	elseif ( is_singular() ) :
+	elseif ( is_single() ) :
 		
 		if (!empty($ytlink)) : ?>
 			<div class="sttv-embed-video col s12 xl6 push-xl6">
@@ -36,5 +33,6 @@ $ytlink = get_post_meta(get_the_ID(),'yt_link',true);
 
 do_action('sttv_after_stage');
 
-?>
-<div id="content" class="row">
+?><div id="content" class="row"><?php
+
+do_action( 'sttv_ad' );
