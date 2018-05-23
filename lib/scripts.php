@@ -31,7 +31,8 @@ function sttv_enqueue_all() {
 	
 	//styles
 	wp_enqueue_style('sttv-main', get_stylesheet_directory_uri().'/styles.min.css', 'materialize', STTV_VERSION);
-	wp_enqueue_style('material-icons','https://fonts.googleapis.com/icon?family=Material+Icons','materialize',STTV_VERSION);
+	wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', 'materialize', STTV_VERSION);
+	wp_enqueue_style('font-awesome', 'https://use.fontawesome.com/releases/v5.0.13/css/all.css', 'materialize', STTV_VERSION);
 	wp_enqueue_style('dashicons');
 	
 	//conditionals
@@ -49,12 +50,20 @@ function sttv_enqueue_all() {
 	}
 }
 
-add_filter( 'script_loader_tag', 'add_id_to_main_js', 10, 3 );
-function add_id_to_main_js( $tag, $handle, $src ) {
+add_filter( 'script_loader_tag', 'add_atts_to_tags', 10, 3 );
+function add_atts_to_tags( $tag, $handle, $src ) {
 	if ( 'sttv-js-main' === $handle ) {
-		$tag = '<script type="text/javascript" src="' . esc_url( $src ) . '" id="'.$handle.'"></script>';
+		return '<script type="text/javascript" src="' . esc_url( $src ) . '" id="'.$handle.'"></script>';
 	}
 	return $tag;
+}
+
+add_filter( 'style_loader_tag', 'add_atts_to_styles', 10, 4 );
+function add_atts_to_styles( $html, $handle, $href, $media ) {
+	if ( 'font-awesome' === $handle ) {
+		return substr_replace( $html, ' integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous" ', -2, 0 );
+	}
+	return $html;
 }
 
 add_action( 'login_enqueue_scripts', 'sttv_login_brand' );

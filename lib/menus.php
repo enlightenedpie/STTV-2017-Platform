@@ -5,12 +5,31 @@ add_action( 'init', 'sttv_add_menus');
 
 function sttv_add_menus() {
 	
-	register_nav_menus( array(
+	register_nav_menus( [
 		'sttv-nav' => __('SupertutorTV Main Nav Menu'),
 		'sttv-acct' => __('SupertutorTV Account Menu'),
-		'footer-menu' => __('SupertutorTV Footer Menu')
-	) );
+		'footer-menu' => __('SupertutorTV Footer Menu'),
+		'tutoring-info' => __('SupertutorTV Tutoring Info Links')
+	 ] );
 
+}
+
+class Tutoring_Info_Walker extends Walker_Nav_Menu {
+
+	function start_lvl( &$output, $depth = 0, $args = [] ) {
+		$output .= '';
+	}
+
+	function end_lvl( &$output, $depth = 0, $args = [] ) {
+		$output .= '';
+	}
+
+	function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
+		global $post;
+		$active = ($post->ID == $item->object_id) ? ' active' : '';
+		$output .= "<a class='collection-item{$active}' href='{$item->url}'>{$item->title}</a>";
+		//$output .= print_r($item);
+	}
 }
 
 ###################################################

@@ -98,7 +98,8 @@ final class STTV {
 
         add_action( 'sttv_loaded', [ $this, 'finally' ], 999 );
 
-		//cleanup
+        //cleanup
+        show_admin_bar(false);
 		remove_action( 'wp_head', '_admin_bar_bump_cb' );
         remove_action( 'wp_head', 'wp_generator' );
         remove_action( 'rest_api_init', 'create_initial_rest_routes', 99 );

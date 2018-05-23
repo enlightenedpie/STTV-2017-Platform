@@ -1,30 +1,72 @@
-footer
-	+wfull
-	padding: 1em
-	text-align: center
-	
-/*footer:after
-	display: block
-	content: ""
-	width: 100%
-	height: 5px
-	background-repeat:no-repeat
-	background-image:url(i/sttv-border.png)
-	background-size: 100% 5px*/
+body
 
-#footer-subscribe-cta
-	+wfull
-	text-align: center
-	margin-bottom: 0px
-	color: white
-	background-color: $azure
-	
-	div
-		padding: $large
+	footer
+		padding: 1em
+		text-align: center
+		color: $transwht
+		background-color: $mdblack
 
-		a
-			color: $azure
-			background-color: white
+		&.row
+			margin-bottom: 0
+
+		.footer-logo
+			height: ($headerh - 20)
+			width: auto
+			display: block
+
+			&.row
+				margin-bottom: $small
+
+			img
+				height: 100%
+				width: auto
 		
-		h4
-			margin-top: 0px
+		.site-tagline
+			text-transform: uppercase
+			display: block
+			
+			h5
+				font-weight: 700
+
+		.site-social
+			display: block
+			font-size: $large
+
+			a
+				color: $azure
+				opacity: .75
+				transition: opacity .25s
+
+				&:not(:last-of-type)
+					margin-right: 1em
+
+				&:hover
+					opacity: 1
+
+				i
+					color: inherit
+
+	#footer-subscribe-cta
+		+wfull
+		text-align: center
+		margin-bottom: 0px
+		color: white
+		background-color: $azure
+		
+		div
+			padding: $large
+
+			a
+				color: $azure
+				background-color: white
+			
+			h4
+				margin-top: 0px
+
+@include MQ($mq-mobile)
+	body
+		
+		footer
+
+			.site-social
+				font-size: 1em

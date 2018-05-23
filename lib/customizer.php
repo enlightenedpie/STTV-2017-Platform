@@ -8,6 +8,30 @@ require_once dirname(__FILE__) . '/custom/controls.php';
 
 add_action( 'customize_register', 'sttv_customize_register' );
 function sttv_customize_register( $wp_customize ) {
+
+	/**
+	 *
+	 *
+	 * Footer Logo Customizer
+	 *
+	 *
+	**/
+		
+	$wp_customize->add_section( 'footer_image', [
+			'title' => 'Footer Image',
+			'description' => 'Select/Upload an image to display in the site footer',
+			'priority' => 61
+			]
+	);
+	
+	$wp_customize->add_setting( 'footer_image_setting' );
+	
+	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'footer_image_select', [
+		  'label' => 'Footer Image',
+		  'section' => 'footer_image',
+		  'settings' => 'footer_image_setting',
+		  'mime_type' => 'image',
+		] ) );
 	
 	/**
 	 *

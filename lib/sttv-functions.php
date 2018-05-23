@@ -33,6 +33,10 @@ function is_child($page = '') {
 	endif;
 }
 
+function footer_image() {
+	print wp_get_attachment_image( get_theme_mod( 'footer_image_setting' ), 'full' );
+}
+
 function sttv_name_generate() {
 	//delete_transient('_courses_dynamic_js');
 	$transient = get_transient('_courses_dynamic_js');
