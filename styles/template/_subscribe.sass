@@ -1,28 +1,36 @@
-#subscribe_page_form
-	background-color : white
-	padding : 1em 1em 0 1em
-	margin-bottom : 3em
-	text-align : center
+body.page-template
 
-	p.smessage, p.sblock
-		text-align : center
+	#not-header-wrapper
 
-		h1
-			margin : 0
+		#content
 
-	h4
-		margin : 0
+			#content-wrapper
 
-	form
-		position : relative
-		padding : 1em
+				#subscribe_page_form
+					background-color : white
+					padding : 1em 1em 0 1em
+					margin-bottom : $huge
+					text-align : center
 
-		.loading_overlay
-			font-size : $small
+					p.smessage, p.sblock
+						text-align : center
 
-		p
-			margin : 0
-		
-		button
-			+wfull
-			padding : 1em
+						h1
+							margin : 0
+
+					h4
+						margin : 0
+
+					form
+						position : relative
+						padding : 1em
+
+						.loading_overlay
+							font-size : $small
+
+						p
+							margin : 0
+						
+						button
+							+wfull
+							padding : 1em

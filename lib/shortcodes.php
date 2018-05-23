@@ -86,11 +86,6 @@ function sttv_subscribe_form($atts,$content = '') {
 	
 	
 	return '<div id="subscribeform">
-				<script>
-					var response = function() {
-						grecaptcha.getResponse();
-					};
-				</script>
 				<h4>'.$atts['title'].'</h4>
 				<div id="subscribe-c2a">'.$content.'</div>
 				<div id="sub_redir_button">
