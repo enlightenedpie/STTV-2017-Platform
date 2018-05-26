@@ -8,31 +8,31 @@ header#siteheader
 	box-shadow: 1px 1px 5px 0px $smblack
 	@include border($qtrblack,1px,bottom)
 	
-#logo-box
-	width: auto
-	height: 100%
-	padding: $small
-	display: inline-block
-	position: absolute
-	+centerpos
-	
-#logo-box img
-	width: auto
-	height: 100%
+	#logo-box
+		width: auto
+		height: 100%
+		padding: $tiny
+		display: inline-block
+		position: absolute
+		+centerpos
+		
+		img
+			width: auto
+			height: 100%
 
-a#main-menu, a#login
-	padding: 0 1em
-	height: 100%
-	display: block
-	position: absolute
-	
-a#main-menu
-	left: 0px
-	@include border($qtrblack,1px,right)
-	
-a#login
-	right: 0px
-	@include border($qtrblack,1px,left)
+	a#main-menu, a#login
+		padding: 0 1em
+		height: 100%
+		display: block
+		position: absolute
+		
+	a#main-menu
+		left: 0px
+		@include border($qtrblack,1px,right)
+		
+	a#login
+		right: 0px
+		@include border($qtrblack,1px,left)
 	
 a#menu-closer
 	display: block
