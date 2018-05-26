@@ -398,6 +398,6 @@ $('.signup-submit').on('click',function(e) {
 
 /* Final setup of fields and prices */
 
-Materialize.updateTextFields()
-$('select').material_select();
+M.updateTextFields()
+$('select').formSelect();
 _st.checkout.update()

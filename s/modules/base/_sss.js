@@ -445,6 +445,11 @@ var _st = {
 			})
 		}
 	},
+	scroll : function(a) {
+		$('html, body').stop().animate({
+			scrollTop: $(a).offset().top-100
+		},1250,"swing")
+	},
 	fn : function() {}
 };
 
@@ -458,12 +463,12 @@ var _st = {
 	"use strict";
 
 // Opener functions
-
 $('input, select','#mu_form_wrapper').on('change',function(e){
 	_st.form.validate('#mu_form_wrapper')
 	_st.modal.action = ''
 })
 
+// modal handler
 var selectors = '.slide-bar, .modal-toggle, .mu-signup, .read-more, .mu-submitter, .cart-fab, .payment-launcher'
 $(document).on('click',selectors,function(e) {
 	e.preventDefault();
@@ -503,6 +508,12 @@ $(document).on('click',selectors,function(e) {
 
 	c.some(function(v){typeof f[v] !== 'undefined' && f[v]()});
 });
+
+// scroller
+$(document).on('click','.st-scroll',function(e) {
+	e.preventDefault()
+	_st.scroll(e.target.getAttribute('href'))
+})
 	
 var thenav = $('body.nav-sidebar-open #main-nav');
 thenav.on('click touchstart',function(e) {

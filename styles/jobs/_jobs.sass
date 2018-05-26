@@ -1,205 +1,239 @@
 body.page-template-jobs-template
 
-    #stage
+    #not-header-wrapper
 
-        span.post-thumb-jobs
-            +wfull
-            background: black
-            display: block
-            max-height: 700px
-
-            img
-                display: block
-                min-width: 768px
-                height: auto
-                margin: 0 auto
-
-    #page-title
-        max-width: 768px
-        margin: 0 auto
-        text-align: left !important
-
-        h1
-            margin-bottom: 0
-
-    #content-wrapper-full
-
-        .jobs-action-button
+        .btn
             background-color: $azure
             color: white
 
-        #jobs
-            padding-bottom: $huge * 2
+        #stage
+            margin: 0
+            height: 60vh
 
-            #jobs-blurb
-                margin-bottom: $huge
-                padding-bottom: $huge
-                border-bottom: 1px solid $smazure
+            .btn
+                margin-top: $huge
 
-                .col
-                    padding: 0
+            #stage-inner
 
-        #jobs, .jobs-hero-img
-            max-width: 768px
-            margin: 0 auto
+                #title-meta
 
-            .meta-bar
-                +wfull
-                margin-bottom: 1em
-                padding: 0
+                    #title-meta-inner
+                        top: 25%
+                        bottom: auto
 
-                .col
-                    padding: 0
+                        #post-meta
+                            border-top: 2px solid $seafoam
+                            border-image: url(i/sttv-border.png) 100
+                            padding: 1em 0
 
-                .meta-apply-button
-                    text-align: right
+                            .byline
+                                font-size: 1em
+                                border: none
+                                padding: 0
 
-                .meta
-                    margin-right: 1em
-                    font-size: $small
-                    color: $azure
-                    text-transform: uppercase
+        #content
+            max-width: 100%
+            margin: 0
+            padding: 0
 
-                    i
-                        font-size: 1em
+            #content-wrapper
+                background-color: $seafoam
+                color: $transwht
+                padding: $huge
+                font-weight: 100
+                font-size: $medium
+                position: relative
+                margin-bottom: 0
 
-                .meta-remote
-                    color: $sunrise
+                & > div
+                    max-width: ($bodyw - 200)
+                    margin: auto
 
-                .meta-job-type
-                    font-style: italic
-
-            .job-description, .job-apply, .job-edit
-                background: white
-                padding: 1em
-                border: 1px solid $smblack
-
-            .job-description
-
-                p
-                    margin-bottom: 1em
-                    text-indent: 2em
-
-                li
-                    margin-bottom: $small
-
-                ul
-                    list-style-position: inside
-                    margin-left: 1em
-
-                    li
-                        list-style-type: disc
-
-                ol
-                    list-style-position: inside
-                    margin-left: 1em
-
-                    li
-                        list-style-type: decimal
-
-                ul ul, ol ul
-                    list-style-position: inside
-                    margin-left: 2em
-
-                    li
-                        list-style-type: circle
-
-                ol ol, ul ol
-                    list-style-position: inside
-                    margin-left: 2em
-
-                    li
-                        list-style-type: lower-latin
-
-            .job-edit-saved
-                position: absolute
-                right: 3em
-                z-index: 99999
-                color: $olive
-
-            #immutables
-                margin-bottom: 1em
-                padding: 0
-
-                &>div
-                    padding: 0
-
-            #job-edit-inputs
-
-                #title
-                    @extend h3
-                    margin: 0
-                    padding: 1em 0
-                    line-height: 1
-
-                .col.job-input
-                    padding: 0
-
-                    &:focus
-                        outline: none
-
-                    div
-                        border-bottom: 1px solid $smblack
-                        padding: 1em 0
-                        margin: 0 1em 0 0
-
-
-            .after-job-description
-                text-align: center
-                padding: $huge*2 0
-
-                .apply
-
-                    a
-                        color: $azure
-                        opacity: 1
-                        transition: opacity .25s ease-in-out
-
-                        &:hover
-                            opacity: .75
-
-            .single-job
-                margin-bottom: 1em
-
-                .single-job-title, .single-job-button
-                    padding: 0
-
-                    .job-deleter
-                        padding-right: 1em
-
-                .single-job-title
-
-                    h3
+                    p
                         margin: 0
 
-                .single-jobs-meta
+            #jobs-content
+                padding: $huge * 2
+
+            #jobs-testimonial
+                padding: 1em
+                margin-bottom: 0
+                color: $transwht
+                background-color: $seafoam
+
+                h2
+                    margin: 0
+                    mix-blend-mode: multiply
+
+            #jobs
+                margin-top: $huge
+                padding-bottom: $huge * 2
+
+                #jobs-blurb
+                    margin-bottom: $huge
+                    padding-bottom: $huge
+                    border-bottom: 1px solid $smazure
+
+                    .col
+                        padding: 0
+
+                .meta-bar
+                    +wfull
+                    margin-bottom: 1em
                     padding: 0
-                    height: $large
-                    vertical-align: top
-                    font-size: $small
-                    font-weight: 700
-                    text-transform: uppercase
+
+                    .col
+                        padding: 0
+
+                    .meta-apply-button
+                        text-align: right
 
                     .meta
-                        margin-right: $large
+                        margin-right: 1em
+                        font-size: $small
+                        color: $azure
+                        text-transform: uppercase
 
-            .job-apply
+                        i
+                            font-size: 1em
 
-                form
+                    .meta-remote
+                        color: $sunrise
 
-                fieldset
-                    border: 0
+                    .meta-job-type
+                        font-style: italic
+
+                .job-description, .job-apply, .job-edit
+                    background: white
                     padding: 1em
-                    margin: 1em 0
+                    border: 1px solid $smblack
 
-                input, textarea
+                .job-description
 
-                    &:focus
-                        border-bottom: 1px solid $azure
-                        box-shadow: 0 1px 0 0 $smblack
+                    p
+                        margin-bottom: 1em
+                        text-indent: 2em
 
-                    &::placeholder
-                        color: $ltblack
+                    li
+                        margin-bottom: $small
+
+                    ul
+                        list-style-position: inside
+                        margin-left: 1em
+
+                        li
+                            list-style-type: disc
+
+                    ol
+                        list-style-position: inside
+                        margin-left: 1em
+
+                        li
+                            list-style-type: decimal
+
+                    ul ul, ol ul
+                        list-style-position: inside
+                        margin-left: 2em
+
+                        li
+                            list-style-type: circle
+
+                    ol ol, ul ol
+                        list-style-position: inside
+                        margin-left: 2em
+
+                        li
+                            list-style-type: lower-latin
+
+                .job-edit-saved
+                    position: absolute
+                    right: 3em
+                    z-index: 99999
+                    color: $olive
+
+                #immutables
+                    margin-bottom: 1em
+                    padding: 0
+
+                    &>div
+                        padding: 0
+
+                #job-edit-inputs
+
+                    #title
+                        @extend h3
+                        margin: 0
+                        padding: 1em 0
+                        line-height: 1
+
+                    .col.job-input
+                        padding: 0
+
+                        &:focus
+                            outline: none
+
+                        div
+                            border-bottom: 1px solid $smblack
+                            padding: 1em 0
+                            margin: 0 1em 0 0
+
+
+                .after-job-description
+                    text-align: center
+                    padding: $huge*2 0
+
+                    .apply
+
+                        a
+                            color: $azure
+                            opacity: 1
+                            transition: opacity .25s ease-in-out
+
+                            &:hover
+                                opacity: .75
+
+                .single-job
+                    margin-bottom: 1em
+
+                    .single-job-title, .single-job-button
+                        padding: 0
+
+                        .job-deleter
+                            padding-right: 1em
+
+                    .single-job-title
+
+                        h3
+                            margin: 0
+
+                    .single-jobs-meta
+                        padding: 0
+                        height: $large
+                        vertical-align: top
+                        font-size: $small
+                        font-weight: 700
+                        text-transform: uppercase
+
+                        .meta
+                            margin-right: $large
+
+                .job-apply
+
+                    form
+
+                    fieldset
+                        border: 0
+                        padding: 1em
+                        margin: 1em 0
+
+                    input, textarea
+
+                        &:focus
+                            border-bottom: 1px solid $azure
+                            box-shadow: 0 1px 0 0 $smblack
+
+                        &::placeholder
+                            color: $ltblack
 
     #job_add_form
         display: block

@@ -2,7 +2,7 @@
 	"use strict";
 	
 	$(document).ready(function() {
-    	$('select').material_select();
+    	$('select').formSelect();
 	  });
   
   } ( jQuery ) ); //end wrapper
