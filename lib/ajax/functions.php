@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {exit;}
 ##### ACT SIGNUP FORM #####
 ###########################
 
-function sttv_signup_form($form = 'act',$plan_id = 'pln_iNb3cxrjseTucocu',$plan_price = '19999') { 
+function sttv_signup_form($form = 'act',$plan_id = 'pln_iNb3cxrjseTucocu',$plan_price = '19999') {
 //SP_sub::create();
 	$country = file_get_contents('https://gist.githubusercontent.com/enlightenedpie/888ba7972fa617579c374e951bd7eab9/raw/b987e55ddc4cde75f50298559e3a173a132657af/gistfile1.txt');
 ?>
@@ -71,7 +71,7 @@ function sttv_signup_form($form = 'act',$plan_id = 'pln_iNb3cxrjseTucocu',$plan_
                             </div>
                         </div>
                     </div>
-                    
+
                     <div id="payment" class="col s12">
                         <div id="billing_fields" class="row">
                             <div class="col s12">
@@ -111,42 +111,42 @@ function sttv_signup_form($form = 'act',$plan_id = 'pln_iNb3cxrjseTucocu',$plan_
         </div>
     <script>
 	alert('hello');
-	
+
 		var form = $('#sttv-<?php print $form; ?>-signup');
-		
-		
+
+
 		var stripe = Stripe('pk_test_aF7R0He4Yt4OYgAq3iERimgn');
 		var elements = stripe.elements();
 		var card = elements.create('card',{
 			hidePostalCode: true
 		});
-		
-		
+
+
 		$(document).ready(function() {
 			card.on('change', function(event) {
 			  fsub.setOutcome(event);
 			});
-			
+
 			$('#checkout_button').click(function(e) {
 					e.preventDefault();
 					if ($('input',form).hasClass('invalid') || ($('input',form).prop('required') && $('input',form).length < 1)) {
 						  alert('Please check for errors');
 					  } // validate
-					
+
 					price_updater();
 					$('.modal').modal('open');
-					
+
 				});
 			$('.signup-submit').click(function(e) {
 				e.preventDefault();
 				form.submit();
 			});
-			
+
 			form.submit( function(e) {
 			  e.preventDefault();
-			  
+
 			  $('.modal-content').empty().append('<h2>PROCESSING...</h2><br/><div class="progress"><div class="indeterminate"></div></div>');
-			  
+
 			  var det = {
 				name: $('input[name=cardname]').val(),
 				address_line1: $('input[name=sttv_billing_address1]').val(),
@@ -156,29 +156,29 @@ function sttv_signup_form($form = 'act',$plan_id = 'pln_iNb3cxrjseTucocu',$plan_
 				address_zip: $('input[name=sttv_billing_pcode]').val(),
 				address_country: $('select[name=sttv_billing_country]').val()
 			  };
-			  
+
 			  var data = {
 				  inputs: $(this).serialize(),
 				  url: window.location.href,
 				  action: $(this).attr('action')
 			  };
-			  
+
 			  stripe.createToken(card, det).then(fsub.setToken);
-			  
+
 			}); // end form submit
-			
+
 			$('#same_shipping').change(function() {
 				if ($(this).is(":checked")) {
-					
+
 					$('input[name=sttv_billing_address1]').val($('input[name=sttv_shipping_address1]').val());
 					$('input[name=sttv_billing_address2]').val($('input[name=sttv_shipping_address2]').val());
 					$('input[name=sttv_billing_city]').val($('input[name=sttv_shipping_city]').val());
 					$('input[name=sttv_billing_state]').val($('input[name=sttv_shipping_state]').val());
 					$('input[name=sttv_billing_pcode]').val($('input[name=sttv_shipping_pcode]').val());
 					$('select[name=sttv_billing_country]').val($('select[name=sttv_shipping_country]').val());
-					
+
 					Materialize.updateTextFields();
-	
+
 				} else {
 					$("#billing_fields :input").each(function(){
 						$(this).val('');
@@ -188,8 +188,8 @@ function sttv_signup_form($form = 'act',$plan_id = 'pln_iNb3cxrjseTucocu',$plan_
 				$('input[name=sttv_billing_pcode]').blur();
 			});
 		});// end document ready
-		
-		
+
+
 		$('input[name=course_choice],input[name=sttv_pri_shipping]').change(function() {
 			price_updater();
 		});

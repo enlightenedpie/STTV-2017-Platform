@@ -1,7 +1,7 @@
 /*
- * 
+ *
  * MAIN SITE OBJECT
- * 
+ *
  */
 var _st = {
 	analytics : function( obj ) {
@@ -134,7 +134,7 @@ var _st = {
 				if (this.action === act) {
 					return this.toggle()
 				}
-				
+
 				var cb;
 				if (act !== 'close') {
 					this.action = act
@@ -142,7 +142,7 @@ var _st = {
 						_st.modal.inner.empty()
 					})
 				}
-	
+
 				switch (act) {
 					case 'close':
 						break
@@ -207,14 +207,14 @@ var _st = {
 		}
 
 		var currentCount = Object.keys(cartObj.items).length
-	
+
 		var fabWrap = $('<div/>',{id:'cart-FAB'}),
 			fab = $('<a/>',{"class":'cart-fab btn-floating btn-large z-depth-5'}),
 			fabCon = $('<i/>',{"class":'material-icons',text:'shopping_cart'}),
 			fabAlert = $('<div/>',{"class":'cart-alert circle z-depth-2'})
-	
+
 		$('body').addClass('sttv-jscart')
-	
+
 		fabWrap.append(
 			fabAlert.text(currentCount)
 		).append(
@@ -226,7 +226,7 @@ var _st = {
 		}
 
 		localStorage.setItem('_stcart_',JSON.stringify(cartObj))
-	
+
 		return {
 			cartObj : cartObj,
 			changed : [],
@@ -237,7 +237,7 @@ var _st = {
 				}
 				var cart = this.cartObj.items,
 					msg = ''
-	
+
 				if ( typeof cart[item.id] === 'undefined' ) {
 					cart[item.id] = item
 					msg = 'Item added'
@@ -247,7 +247,7 @@ var _st = {
 						msg = 'Quantity updated'
 					}
 				}
-	
+
 				this.changed.push(item.id)
 				this.save(skipUpdate)
 
@@ -317,7 +317,7 @@ var _st = {
 					action : 'click',
 					pageview : true
 				})
-	
+
 				_st.request({
 					route : stajax.rest.url+'/checkout',
 					method : 'POST',
@@ -329,7 +329,7 @@ var _st = {
 						_st.checkout = 'subscription'
 						el.append(d.html)
 						_st.modal.loader()
-						
+
 						for (var itemID in data.cart) {
 							var item = data.cart[itemID]
 							_st.analytics({
@@ -357,7 +357,7 @@ var _st = {
 					error : function(x) {
 						console.log(x)
 						var d = x[0].responseJSON
-	
+
 						//$('.message',el).text(d.message)
 						_st.modal.toggle(function() {
 							_st.modal.loader()
@@ -430,7 +430,7 @@ var _st = {
 					_st.modal.loader()
 					setTimeout(function(){
 						window.location.href = d.data.redirect
-					},2000) 
+					},2000)
 					console.log(d)
 				},
 				error : function(x) {
@@ -455,9 +455,9 @@ var _st = {
 
 
 /*
- * 
+ *
  * EVENT HANDLERS
- * 
+ *
  */
 ( function ( $ ) { //begin wrapper
 	"use strict";
@@ -481,8 +481,8 @@ $(document).on('click',selectors,function(e) {
 			_st.modal.init('mu-signup')
 		},
 		'payment-launcher' : function() {
-			_st.cart.add(JSON.parse(t.attr('data-bind')))
-			_st.modal.init( tda );
+			modalInit({'id':'10789','name':'The Best ACT Prep Course Ever','price':24900,'taxable':true,'taxableAmt':2500,'qty':1,'type':'subscription'})
+			_st.modal.init( 'checkout' );
 		},
 		'modal-toggle' : function() {
 			if ( 'account' == tda ) { // remove this for 2.0
@@ -509,12 +509,190 @@ $(document).on('click',selectors,function(e) {
 	c.some(function(v){typeof f[v] !== 'undefined' && f[v]()});
 });
 
+function modalInit(){
+ 	var modal = "<section id='checkout-wrapper' class='row'> \
+	 <div id='checkout-info' class='align-middle' style='display:block;'> \
+				 <div id='wrapper_line-item' class='col s12'> \
+						 <div id='customer_info' class='row'> \
+								 <div id='account_info' class='col s12'> \
+										 <div class='row'> \
+												 <h4>Your Information</h4> \
+												 <div class='input-field left-col col s6'> \
+														 <input id='sttv_firstname' type='text' class='validate' name='sttv_firstname' value='' required/> \
+														 <label for='sttv_firstname'>First Name</label> \
+												 </div> \
+												 <div class='input-field left-col col s6'> \
+														 <input id='sttv_lastname' type='text' class='validate' name='sttv_lastname' value='' required/> \
+														 <label for='sttv_lastname'>Last Name</label> \
+												 </div> \
+												 <div class='input-field col s12'> \
+														 <input id='sttv_email' class='validate' name='sttv_email' type='email' value='' required/> \
+														 <label for='sttv_email'>Email Address</label> \
+												 </div> \
+												 <div class='input-field col s12'> \
+														 <input id='sttv_password' name='sttv_password' type='password' value='' required/> \
+														 <label for='sttv_password'>Choose Password</label> \
+												 </div> \
+												 <div class='input-field col s12'> \
+														 <input id='sttv_phone' class='validate' name='sttv_phone' type='tel' value='' required/> \
+														 <label data-error='Invalid phone number' for='sttv_phone'>Phone Number</label> \
+												 </div> \
+										 </div> \
+								 </div> \
+							 </div> \
+							 <input type='button' class='next_button' onClick=changePanel('checkout-info','checkout-billing') value='next' style='float: right;'/> \
+						 </div> \
+					 </div> \
+			 <div id='checkout-billing' class='align-middle' style='display:none;'> \
+						 <div id='wrapper_line-item' class='col s12'> \
+							 <div id='billing_info' class='col s12'> \
+									 <div id='billing_fields' class='row'> \
+											 <h4>Billing Address</h4> \
+											 <div class='input-field col s12'> \
+													 <input id='sttv_billing_address1' name='sttv_billing_address1' type='text' class='validate' required/> \
+													 <label class='active' for='sttv_billing_address1' data-error='Invalid format' >Address Line 1</label> \
+											 </div> \
+											 <div class='input-field col s12'> \
+													 <input id='sttv_billing_address2' name='sttv_billing_address2' type='text' /> \
+													 <label class='active' for='sttv_billing_address2'>Address Line 2</label> \
+											 </div> \
+											 <div class='input-field col s12'> \
+													 <input id='sttv_billing_city' name='sttv_billing_city' class='validate' type='text' required/> \
+													 <label class='active' for='sttv_billing_city'>City</label> \
+											 </div> \
+											 <div class='input-field left-col col s6'> \
+													 <input id='sttv_billing_state' name='sttv_billing_state' class='validate' type='text' required/> \
+													 <label class='active' for='sttv_billing_state'>State</label> \
+											 </div> \
+											 <div class='input-field col s6'> \
+													 <input id='sttv_billing_pcode' name='sttv_billing_pcode' class='validate' type='tel' required/> \
+													 <label class='active' for='sttv_billing_pcode'>Postal Code</label> \
+											 </div> \
+											 <div class='input-field col s12'> \
+													 <select class='country-dd' name='sttv_billing_country' required> \
+															 <option value disabled selected>Country...</option> \
+													 </select> \
+											 </div> \
+											 <div class='input-field col s12'> \
+													 <input class='filled-in' type='checkbox' id='same_as_billing'/><label for='same_as_billing'>Use same shipping address</label> \
+											 </div> \
+									 </div> \
+									 <input type='button' class='next_button' onClick=changePanel(\'checkout-billing\',\'checkout-info\') value='prev'/> \
+									 <input type='button' class='next_button' onClick=changePanel(\'checkout-billing\',\'checkout-shipping\') value='next' style='float: right;'/> \
+							 </div> \
+						 </div> \
+				 </div> \
+		 <div id='checkout-shipping' class='align-middle' style='display:none;'> \
+				 <div id='shipping_info' class='col s12'> \
+						 <div id='shipping_fields' class='row'> \
+								 <h4>Shipping Address</h4> \
+								 <div class='input-field col s12'> \
+										 <input id='sttv_shipping_address1' name='sttv_shipping_address1' type='text' class='validate' required/> \
+										 <label for='sttv_shipping_address1' data-error='Invalid format' >Address Line 1</label> \
+								 </div> \
+								 <div class='input-field col s12'> \
+										 <input id='sttv_shipping_address2' name='sttv_shipping_address2' type='text' /> \
+										 <label for='sttv_shipping_address2'>Address Line 2</label> \
+								 </div> \
+								 <div class='input-field col s12'> \
+										 <input id='sttv_shipping_city' class='validate' name='sttv_shipping_city' type='text' required/> \
+										 <label for='sttv_shipping_city'>City</label> \
+								 </div> \
+								 <div class='input-field left-col col s6'> \
+										 <input id='sttv_shipping_state' class='validate' name='sttv_shipping_state' type='text' required/> \
+										 <label for='sttv_shipping_state'>State</label> \
+								 </div> \
+								 <div class='input-field col s6'> \
+										 <input id='sttv_shipping_pcode' class='validate' name='sttv_shipping_pcode' type='tel' required/> \
+										 <label for='sttv_shipping_pcode'>Postal Code</label> \
+								 </div> \
+								 <div class='input-field col s12'> \
+										 <select class='country-dd validate' name='sttv_shipping_country' required> \
+												 <option value disabled selected>Country...</option> \
+										 </select> \
+								 </div> \
+						 </div> \
+						 <input type='button' class='next_button' onClick=changePanel(\'checkout-shipping\',\'checkout-billing\') value='prev'/> \
+						 <input type='button' class='next_button' onClick=changePanel(\'checkout-shipping\',\'checkout-order\') value='next' style='float: right;'/> \
+				 </div> \
+		 </div> \
+		 <div id='checkout-order' class='align-middle' style='display:none;'> \
+				 <div class='row'> \
+						 <h4>Your Order</h4> \
+						 <div class='col s12' style='margin-top:10px'> \
+								 <div class='row'> \
+										 <div id='shipping_options' class='col s12' style='margin-top:1%'> \
+												 <div class='shp-msg'> \
+													 <span>Shipping is for U.S. orders only.</span> \
+													 <div class='input-field col s12' style='margin-top:0px'> \
+															 <p> \
+																	 <input id='freeship' name='shipping_options' type='radio' value='0' checked /> \
+																	 <label for='freeship'>Free Shipping (1-3 weeks)</label> \
+															 </p> \
+															 <p> \
+																	 <input id='priship' name='shipping_options' type='radio' value='1285' /> \
+																	 <label for='priship'>Priority Shipping (3-4 days)</label> \
+															 </p> \
+													 </div> \
+												 </div> \
+										 </div> \
+								 </div> \
+						 </div> \
+						 <div id='cart-column' class='col s12'> \
+								 <div class='row headings-row'> \
+										 <div class='col s2'>Qty</div> \
+										 <div class='col s8'>Item</div> \
+										 <div class='col s2 right-align'>Price</div> \
+								 </div> \
+								 <div class='items-row'></div> \
+								 <div class='row totals-row'> \
+										 <div class='col s8'> \
+												 <div class='input-field coupon col s12'> \
+														 <input id='sttv_coupon' name='sttv_coupon' type='text'/> \
+														 <label for='sttv_coupon'>Coupon Code</label> \
+												 </div> \
+										 </div> \
+										 <div id='total' class='col s4 right-align'><span id='ttltxt'>Total: $<span>0</span></span></div> \
+								 </div> \
+						 </div> \
+				 </div> \
+				 <div class='card-content row'> \
+						 <h4>Payment</h4> \
+						 <div class='input-field col s12'> \
+								 <input name='sttv_cardname' type='text' required/> \
+								 <label class='active' for='sttv_cardname'>Name On Card</label> \
+						 </div> \
+						 <div class='input-field col s12'> \
+								 <div id='sttv_card_element'></div> \
+						 </div> \
+						 <div class='col s12'> \
+								 <div class='input-field col s12' style='margin-top:0px'> \
+										 <input class='filled-in' type='checkbox' name='sttv_mailinglist' id='sttv_mailinglist' checked/><label for='sttv_mailinglist'>Sign me up for promos, coupons, and giveaways from SupertutorTV</label><br/> \
+								 </div> \
+								 <div class='tandc col s12'> \
+										 <span>By submitting this payment, you agree to SupertutorTV's <a class='azure' href='' target='blank'>Terms and Conditions</a>.</span> \
+								 </div> \
+						 </div> \
+						 <div class='col s12'> \
+								 <button type='submit' class='signup-submit button-wide z-depth-1 waves-effect waves-light' disabled><span>Place Order</span></button> \
+						 </div> \
+						 <div class='col s12'> \
+								 <p class='error token'>&nbsp;</p> \
+						 </div> \
+						 <input type='button' class='next_button' onClick=changePanel(\'checkout-order\',\'checkout-shipping\') value='prev'/> \
+				 </div> \
+		 </div> \
+ </section> \
+ <script type='text/javascript' src='/wp-content/themes/sttv_2017/s/checkout.js' id='sttv-checkout-js'></script>"
+ $('.sttvmodal_inner').append(modal)
+}
+
 // scroller
 $(document).on('click','.st-scroll',function(e) {
 	e.preventDefault()
 	_st.scroll(e.target.getAttribute('href'))
 })
-	
+
 var thenav = $('body.nav-sidebar-open #main-nav');
 thenav.on('click touchstart',function(e) {
 	if (e.offsetX > thenav.offsetWidth) {
@@ -609,7 +787,7 @@ $('form#sttv_contact').on('submit',function(e) {
 			console.log(x)
 		}
 	})
-	
+
   });
 
 	$('#subscribe_page_mc').on('submit',function(e){
@@ -626,7 +804,7 @@ $('form#sttv_contact').on('submit',function(e) {
 			email : $('#sttv_mc_email',form).val(),
 			g_recaptcha_response : grecaptcha.getResponse()
 		}
-		
+
 		_st.request({
 			route : stajax.rest.url+'/subscribe',
 			method : 'POST',
@@ -651,6 +829,7 @@ $('form#sttv_contact').on('submit',function(e) {
 	});
 
 } ( jQuery ) ); //end wrapper
+
 
 // =require "handlers.js"
 ( function ( $ ) { //begin wrapper

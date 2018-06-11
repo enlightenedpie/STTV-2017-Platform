@@ -46,7 +46,7 @@ _st.checkout = (function(element) {
 					if ( i === 0 ) {
 						tot.total = tot.taxable = tot.tax.amt = 0
 					}
-				
+
 					var item = items[keys[i]],
 						price = item.price*item.qty
 
@@ -55,7 +55,7 @@ _st.checkout = (function(element) {
 					}
 
 					tot.total += price
-	
+
 					$(this).append('<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+_st.checkout.pricer(price)+'</div></div>')
 				}
 
@@ -69,7 +69,7 @@ _st.checkout = (function(element) {
 					tot.total -= discprice
 					$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">Discount ('+tot.coupon+')</div><div class="col s2 right-align">-'+_st.checkout.pricer(discprice)+'</div></div>')
 				}
-				
+
 				if ( tot.tax.rate > 0 ) {
 					tot.tax.amt = (tot.taxable*tot.tax.rate)/100
 					tot.total += tot.tax.amt
@@ -80,7 +80,7 @@ _st.checkout = (function(element) {
 					tot.total += tot.shipping
 					$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">Priority Shipping</div><div class="col s2 right-align">+'+_st.checkout.pricer(tot.shipping)+'</div></div>')
 				}
-				
+
 				$('#ttltxt>span').text(_st.checkout.pricer(tot.total))
 			}).fadeIn(100);
 
@@ -101,7 +101,7 @@ _st.checkout = (function(element) {
 				var mo = $('#modal_loading_overlay')
 
 				mo.find('*').not('img').remove()
-				
+
 				mo.append('<h2 style="margin-top:4em">Authorizing card...</h2>')
 					.append('<span>(Patience, young padawan... This will take a moment.)</span>');
 			})
@@ -135,7 +135,7 @@ _st.checkout = (function(element) {
 						},
 						success : function(d) {
 							console.log(d)
-							
+
 							if ( 'error' === d.code ) {
 								var ecode = d.error.decline_code || d.error.code
 								_st.modal.loader(function(el){
@@ -199,7 +199,7 @@ _st.checkout = (function(element) {
 			if ( typeof extra === 'undefined' ) {
 				extra = true
 			}
-			
+
 			var cEr = true
 
 			inputs.each( function( k, v ) {
@@ -240,15 +240,15 @@ card.on( 'change', function( event ) {
 
 $('#same_as_billing').on('change',function() {
     if ($(this).is(":checked")) {
-        
+
         $('input[name=sttv_shipping_address1]').val($('input[name=sttv_billing_address1]').val());
         $('input[name=sttv_shipping_address2]').val($('input[name=sttv_billing_address2]').val());
         $('input[name=sttv_shipping_city]').val($('input[name=sttv_billing_city]').val());
         $('input[name=sttv_shipping_state]').val($('input[name=sttv_billing_state]').val());
         $('input[name=sttv_shipping_pcode]').val($('input[name=sttv_billing_pcode]').val());
         $('select[name=sttv_shipping_country]').val($('select[name=sttv_billing_country]').val());
-        
-        $('select').material_select()
+
+        $('select').formSelect()
 
     } else {
         $("#shipping_fields :input").each(function(){
@@ -257,7 +257,7 @@ $('#same_as_billing').on('change',function() {
         $("select[name=sttv_shipping_country]").prop("selectedIndex", -1);
     }
 
-    Materialize.updateTextFields()
+    M.updateTextFields()
     $( 'input, select', '#shipping_fields' ).blur()
 });
 
@@ -339,7 +339,7 @@ $('[name=sttv_email],input[name=sttv_coupon]').on({
             default:
                 return false
         }
-        
+
         _st.request({
             route : stajax.rest.url+'/checkout?'+qstring+val,
             headers : {
@@ -395,6 +395,24 @@ $('.signup-submit').on('click',function(e) {
         _st.checkout.submit( _st.parseParams( decodeURIComponent( inputs.serialize() ), /sttv_/gi ) )
     }
 })
+
+/* Set up window changer */
+
+function changePanel(from, to){
+	if (to == 'checkout-shipping' && document.getElementById('same_as_billing').checked){
+		if (from == 'checkout-billing'){
+			changePanel('checkout-billing', 'checkout-order')
+		}
+		else if (from == 'checkout-order'){
+			changePanel('checkout-order', 'checkout-billing')
+		}
+	}
+	else {
+		$(document.getElementById(from)).fadeOut('fast', function() {
+			$(document.getElementById(to)).fadeIn('fast')
+		})
+	}
+}
 
 /* Final setup of fields and prices */
 

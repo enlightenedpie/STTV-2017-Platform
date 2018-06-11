@@ -1,12 +1,18 @@
 $gutter: 1.25em
-	
+
 body.page-template-signup
 	//background: -moz-linear-gradient(left, $bodybg 51%, $azure 51%)
 	//background: -webkit-linear-gradient(left, $bodybg 51%, $azure 51%)
 	//background: linear-gradient(to right, $bodybg 51%, $azure 51%)
 
-	#main-wrapper
-		background: 0
+	#checkout-wrapper
+		background: white
+		height: 650px
+		width: 500px
+		padding-left: 4%
+		padding-right: 4%
+		border-radius: 10px
+		padding-top: 2%
 
 	header#checkoutheader
 		+wfull
@@ -28,15 +34,21 @@ body.page-template-signup
 				height: 100%
 
 			h3
-				font-weight: 700
+				font-weight: 550
 				text-transform: uppercase
 				padding: 0 0 0 $tiny
 				margin: 0
 				display: inline
 
-	#checkout-left, #checkout-middle, #checkout-right
-		height: 100%
+	#checkout-info, #checkout-billing, #checkout-shipping, #checkout-order
+		height: 10%
 		padding: 0
+
+		align-middle
+			padding-top: 10%
+
+		.wrapper_line-item
+			text-align: left
 
 		h4
 			margin: 0
@@ -46,6 +58,9 @@ body.page-template-signup
 
 		.row
 			margin-bottom: $tiny
+
+		.check
+			padding-top: $large
 
 		input
 			margin: 0 0 1em 0
@@ -61,17 +76,8 @@ body.page-template-signup
 		.input-field.coupon
 			padding: 0 $huge 0 0
 
-	#checkout-left
-		padding-right: $gutter
-
-	#checkout-middle
-		padding: 0 $gutter
-		border-left: 1px solid $smblack
-		border-right: 1px solid $smblack
-
 		#shipping_options
 			color: $azure
-			padding: 1em 0
 
 			.shp-msg
 				text-align: center
@@ -82,11 +88,8 @@ body.page-template-signup
 					text-align: left
 					color: $ltblack
 
-	#checkout-right
-		padding-left: $gutter
-
 		#sttv_card_element
-			margin: 0 0 $large 0
+			margin: 0 0 $medium 0
 
 		[type="checkbox"]+label
 			top: 0
@@ -95,6 +98,7 @@ body.page-template-signup
 			padding: 0 1em
 			margin: $large 0 1em
 			text-align: center
+			font-size: $small
 
 			a
 				color: $azure
@@ -117,6 +121,7 @@ body.page-template-signup
 
 			.totals-row
 				margin-top: $small
+				margin-bottom: $small
 
 				.input-field
 					margin-top: 0px
@@ -136,6 +141,3 @@ body.page-template-signup
 
 @include MQ($mq-mobile)
 	body.page-template-signup
-
-		#checkout-left, #checkout-middle, #checkout-right
-			padding: 0 1em

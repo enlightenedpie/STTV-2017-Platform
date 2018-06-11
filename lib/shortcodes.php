@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 ######################
 ##### SHORTCODES #####
@@ -18,7 +18,7 @@
 
 add_shortcode('sttv-bio','sttv_shortcode_bio');
 function sttv_shortcode_bio($atts,$content) {
-	
+
 	$sttv_atts = shortcode_atts( array(
 			'name' => 'name',
 			'title' => 'title',
@@ -26,7 +26,7 @@ function sttv_shortcode_bio($atts,$content) {
 			'columns' => '2'
     		), $atts, 'sttv-bio' );
 	$cols = '';
-	
+
 	switch($sttv_atts['columns']) :
 		case '1':
 			$cols = '12';
@@ -43,8 +43,8 @@ function sttv_shortcode_bio($atts,$content) {
 		default :
 			$cols = '6';
 	endswitch;
-	
-	
+
+
 		return '<div class="col l'.$cols.' m12">
 					<div class="card">
 						<div class="card-image waves-effect waves-block waves-light">
@@ -77,14 +77,14 @@ add_shortcode('subscribe-form','sttv_subscribe_form');
 function sttv_subscribe_form($atts,$content = '') {
 	global $current_user;
 	wp_get_current_user();
-	
+
 	$atts = shortcode_atts( array(
 			'context' => 'content',
 			'title' => 'Subscribe Now!'
     		), $atts, 'sttv-bio' );
 	$context = ($atts['context'] == 'sidebar') ? 'l12' : 'l6' ;
-	
-	
+
+
 	return '<div id="subscribeform">
 				<h4>'.$atts['title'].'</h4>
 				<div id="subscribe-c2a">'.$content.'</div>
@@ -92,14 +92,14 @@ function sttv_subscribe_form($atts,$content = '') {
 					<a class="z-depth-2 button" href="'.site_url().'/subscribe"><h3>Subscribe now!</h3></a>
 				</div>
 			</div>';
-	
+
 }
 
 add_shortcode('stripe-plan','sttv_stripe_plan');
 function sttv_stripe_plan($atts,$content='') {
-	
+
 	$contents = explode(',',$content);
-	
+
 	$highlight = $taxable = false;
 	if (in_array('highlight',$atts)) {
 		$highlight = 'highlight';
@@ -109,7 +109,7 @@ function sttv_stripe_plan($atts,$content='') {
 	}
 
 	$taxableAmt = ( isset( $atts['taxable_amt'] ) ) ? $atts['taxable_amt'] : $atts['price'];
-	
+
 	$databind = [
 		'id' => $atts['plan'],
 		'name' => sanitize_text_field($atts['title']),
@@ -119,9 +119,9 @@ function sttv_stripe_plan($atts,$content='') {
 		'qty' => 1,
 		'type' => 'subscription'
 	];
-	
+
 	$cols = '';
-	
+
 	switch($atts['columns']) :
 		case '1':
 			$cols = '12';
@@ -138,7 +138,7 @@ function sttv_stripe_plan($atts,$content='') {
 		default :
 			$cols = '6';
 	endswitch;
-	
+
 	ob_start(); ?>
 	<div class="row">
 		<div class="col s12 m8 l6 xl4 offset-m2 offset-l3 offset-xl4 sttv-sales-table-wrapper <?php echo ($highlight) ? $highlight.' z-depth-4': ''; ?>">
@@ -147,29 +147,29 @@ function sttv_stripe_plan($atts,$content='') {
 					<?php /*?><tr>
                     	<td>
                         	<span class="sttv-course-price"><?php echo $atts['price']; ?></span>
-                            <?php 
+                            <?php
 								echo (!empty($atts['length'])) ? ' / '.$atts['length'] : '';
 							?>
                         </td>
                     </tr><?php */?>
 				<?php
-				
-				foreach ($contents as $con) : 
+
+				foreach ($contents as $con) :
 					$con = str_replace('{comma}',',',$con);
 					$high = false;
 					if (stristr($con,'(highlight)')) {
 						$high = 'txt-highlight';
 						$con = str_replace('(highlight)','',$con);
 					}
-				
-					?><tr><td><?php echo ($high) ? '<span class="'.$high.'">'.$con.'</span>' : $con; ?></td></tr><?php 
-				
+
+					?><tr><td><?php echo ($high) ? '<span class="'.$high.'">'.$con.'</span>' : $con; ?></td></tr><?php
+
 				endforeach;
-                
+
     		?>
             <tr>
             	<td>
-                	<a href="<?php echo get_permalink(); ?>/checkout" class="payment-launcher pmt-button btn waves-effect waves-light" data-action='checkout' data-bind='<?php echo json_encode($databind); ?>'>Sign up now!</a>
+                	<a class="payment-launcher pmt-button btn waves-effect waves-light"> Sign up now!</a>
                 </td>
             </tr>
             </table>
@@ -193,7 +193,7 @@ function sttv_faq_display($atts,$content='') {
 	<div id="sttv_faq_<?php echo $atts['id']; ?>" class="sttv-faq-column col s12 m6">
     	<div class="sttv-faq-inner"><?php echo $content; ?></div>
     </div>
-<?php 
+<?php
 	return ob_get_clean();
 }
 

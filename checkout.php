@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /* Template Name: Checkout Page */
 
@@ -176,15 +176,15 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 		hidePostalCode: true
 	});
 	card.mount('#sttv_card_element');
-	
+
 	card.on('change', function(event) {
 		fsub.setOutcome(event);
 	});
-	
+
 	$('[name=sttv_email],[name=sttv_billing_pcode],input[name=sttv_coupon]').blur(function(e) {
 		e.preventDefault();
 		var tThis = $(this);
-		
+
 		if (!tThis.val()) {
 			if (tThis.is('input[name=sttv_coupon]')) {
 				plan.disc = plan.discp = 0;
@@ -197,23 +197,23 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 			return;
 		}
 		//console.log(tThis.attr('name'));
-		
+
 		var data = {
 			action : tThis.attr('name'),
 			value : tThis.val()
 		}
-		
+
 		setTimeout( function() {
 			$.post(
 			stajax.ajaxURL,
 			data,
 			function(response) {
-		
+
 				var rd = response.data;
 				var rs = response.success;
-				
+
 				//console.log(response);
-				
+
 				switch (rd.field) {
 					case 'testing' :
 						console.log(rd);
@@ -222,41 +222,41 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 							if (rd.current) {return;}
 							tThis.siblings('label').attr({
 								'data-success':rd.msg
-								
+
 							});
 							tThis.removeClass('invalid');
 							tThis.addClass('valid');
 						} else {
 							tThis.siblings('label').attr({
-								
+
 								'data-error':rd.msg
-								
+
 							});
 							tThis.removeClass('valid');
 							tThis.addClass('invalid');
 						}
 						break;
-						
+
 					case 'zip' :
 						plan.tax = rd.tax;
 						price_updater();
 						console.log(rd);
 						break;
-						
+
 					case 'coupon' :
-					
-						
+
+
 						if (!rs) {
 							tThis.siblings('label').attr({
 								'data-error':'Invalid coupon'
-								
+
 							});
-							
+
 							tThis.removeClass('valid');
 							tThis.addClass('invalid');
 							plan.disc = plan.discp = 0;
 							price_updater();
-							
+
 						} else {
 							if (rd.obj.percent_off) {
 								plan.disc = 0;
@@ -268,9 +268,9 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 								var msg = '$'+String(rd.obj.amount_off/100)+' off';
 							}
 							tThis.siblings('label').attr({
-								
+
 								'data-success': msg
-								
+
 							});
 							tThis.removeClass('invalid');
 							tThis.addClass('valid');
@@ -279,28 +279,28 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 						}
 						//console.log(plan);
 						break;
-					
-				} 
+
+				}
 			});
 		},1);
-		
+
 	});
 	 $('#t_and_c, #sttv_digital_book').change(function() {
 		 var disb = $(this).is(":checked");
 		 var valID = (disb && fsub.valid);
 			 $('.signup-submit').prop('disabled',!valID);
-		 
+
 		 if ($(this).is('#sttv_digital_book')) {
 			 price_updater();
 		 }
-		 
+
 	 });
 	 $('select[name=sttv_shipping_country]').one('change',function() {
 		 fsub.shipWasChecked = $('#sttv_digital_book').is(":checked");
 	 });
 	 $('select[name=sttv_shipping_country]').change(function(){
 		 var shipUS = $(this).val();
-			 
+
 		 if (!shipUS || shipUS !== 'US') {
 			 $('#sttv_digital_book').prop('checked',false)
 			 $('#sttv_digital_book').prop('disabled',true)
@@ -312,14 +312,14 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 	 });
 	$('#same_shipping').change(function() {
 		if ($(this).is(":checked")) {
-			
+
 			$('input[name=sttv_billing_address1]').val($('input[name=sttv_shipping_address1]').val());
 			$('input[name=sttv_billing_address2]').val($('input[name=sttv_shipping_address2]').val());
 			$('input[name=sttv_billing_city]').val($('input[name=sttv_shipping_city]').val());
 			$('input[name=sttv_billing_state]').val($('input[name=sttv_shipping_state]').val());
 			$('input[name=sttv_billing_pcode]').val($('input[name=sttv_shipping_pcode]').val());
 			$('select[name=sttv_billing_country]').val($('select[name=sttv_shipping_country]').val());
-			
+
 			Materialize.updateTextFields();
 
 		} else {
@@ -330,11 +330,11 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 		}
 		$('input[name=sttv_billing_pcode]').blur();
 	});
-	
+
 	$('.signup-submit').click(function(e) {
 		e.preventDefault();
 		var cEr = true;
-		
+
 		var sInputs = $('input','#wrapper_line-item');
 		sInputs.each(function(k,v) {
 			var msgTag = '';
@@ -349,20 +349,20 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 			if (!cEr) {return cEr}
 		});
 		if (!cEr) {return cEr}
-		
+
 		// show 'processing' modal
 		cModal.animate({
 			scrollTop: 0
 		}, 1);
-		
+
 		cModal.css('overflow','hidden');
-		
+
 		$('#checkout_modal_overlay').fadeIn(1,function() {
 			$(this).prepend('<h2 style="margin-top:3em">PROCESSING...</h2>');
 			$('span',this).text('This could take a minute if you have a slow connection.');
 		});
 		//end show modal
-		
+
 		var det = {
 			name: $('input[name=sttv_cardname]').val(),
 			address_line1: $('input[name=sttv_billing_address1]').val(),
@@ -372,7 +372,7 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 			address_zip: $('input[name=sttv_billing_pcode]').val(),
 			address_country: $('select[name=sttv_billing_country]').val()
 		};
-			  
+
 		  var data = {
 			  inputs: sInputs.serialize(),
 			  plan: window.plan.ID,
@@ -380,16 +380,16 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 			  action: 'sttvajax_signup'
 		  };
 		  //console.log(det,data);
-		  
+
 		  stripe.createToken(card, det).then(function(result){
 			  data.token = result.token;
 			  data.totals_table = $('#totals_table').wrap('<div/>').parent().html();
-			
+
 			$.post(stajax.ajaxURL,data,function(response) {
 				console.log(response);
 				var action = {};
 				var cmOver = $('#checkout_modal_overlay');
-						
+
 						if (response.success) {
 							action.ST = function() {
 								gtag_report_conversion()
@@ -401,7 +401,7 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 							action.color = 'olive';
 							action.msg = 'You will be redirected shortly';
 							action.class = 'class="s-success"';
-							
+
 						} else {
 							action.ST = function() {
 								setTimeout(function() {
@@ -409,7 +409,7 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 										$(this).empty();
 										$(this).prepend('<img src="'+stajax.contentURL+'/i/sttv-spinner.gif"/><span></span>');
 									});
-									
+
 									cModal.css('overflow','auto');
 								},8000);
 							};
@@ -421,7 +421,7 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 						var appended = '<div id="modal_results"><div id="sttv-emotee" '+action.class+'></div><br/><h2 class="'+action.color+'">'+action.action+'</h2><small>'+action.msg+'</small><br/>';
 						if (!response.success){appended += '<small>err: '+response.data.error+'</small>';}
 						appended += '</div>';
-						
+
 						//console.log(response);
 						cmOver.empty();
 						cmOver.append(appended);
@@ -430,10 +430,10 @@ $countrydd = wp_remote_get('https://gist.githubusercontent.com/enlightenedpie/88
 			.fail(function(xhr,status,err){
 				console.log(xhr,status,err);
 			});
-			  
-			  
+
+
 		  });
-		  
+
 	});
 	price_updater();
  </script>
