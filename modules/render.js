@@ -1,14 +1,14 @@
-import {courses} from '../single-courses.js'
-import {defaultReq} from './setup.js'
+import {data, settings} from './data.js'
+import {defaultReq} from './loader.js'
 
 var render = {
   stage : {
     iframe : function() {
-      $('.sttv-embed-video>iframe').replaceWith(courses.data.activeVid);
+      $('.sttv-embed-video>iframe').replaceWith(data.activeVid);
     },
     setActiveVid : function(id,title) {
-      var html = '<iframe class="sttv-course-player" src="https://player.vimeo.com/video/'+id+'?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&autoplay='+courses.settings.autoplay+'" width="1920" height="1080" frameborder="0" title="'+title+'" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>';
-      courses.data.activeVid = html;
+      var html = '<iframe class="sttv-course-player" src="https://player.vimeo.com/video/'+id+'?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&autoplay='+settings.autoplay+'" width="1920" height="1080" frameborder="0" title="'+title+'" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>';
+      data.activeVid = html;
     },
     changeActiveVid : function(id,title) {
       this.setActiveVid(id,title);
@@ -16,14 +16,14 @@ var render = {
     }
   },
   title : function(txt) {
-    $('#course-after-title h2').css("color",courses.settings.activeColor).html(txt);
+    $('#course-after-title h2').css("color",settings.activeColor).html(txt);
   },
   content : function() {
-    //$('.tabs a').css("color",courses.settings.activeColor);
-    //$('.tabs .indicator').css("background-color",courses.settings.activeColor);
+    //$('.tabs a').css("color",settings.activeColor);
+    //$('.tabs .indicator').css("background-color",settings.activeColor);
   },
   courseNav : function() {
-    var obj = courses.data.object;
+    var obj = data.object;
     var nav = $('<ul/>',{
       "class": "collapsible",
       "data-collapsible": "accordion",
@@ -107,8 +107,8 @@ var render = {
     if (!defaultReq.section) {
       return false;
     } else if (defaultReq.section === 'practice') {
-      var sec = courses.data.object.practice.tests,
-        sub = courses.data.object.practice.tests[defaultReq.subsec];
+      var sec = data.object.practice.tests,
+        sub = data.object.practice.tests[defaultReq.subsec];
 
         switch (sub) {
           case undefined:
@@ -130,7 +130,7 @@ var render = {
                     var aReq = {section:'practice',subsec:k,video:key};
                     $('<a/>',{
                       "class" : 'course-click',
-                      href : courses.data.object.link+'/practice/'+k+'/'+key,
+                      href : data.object.link+'/practice/'+k+'/'+key,
                       "data-req" : JSON.stringify(aReq),
                       text : val.title,
                       style : "display:block;padding:1em;margin-left:1em"
@@ -158,7 +158,7 @@ var render = {
 
               a = $('<a/>',{
                 "class" : 'course-click',
-                href : courses.data.object.link+'/'+y.section+'/'+y.subsec+'/'+y.video+'/'+slug,
+                href : data.object.link+'/'+y.section+'/'+y.subsec+'/'+y.video+'/'+slug,
                 "data-req" : JSON.stringify(y)
               });
               div = $('<div/>',{
@@ -196,7 +196,7 @@ var render = {
         }
     } else {
 
-      $.each(courses.data.object.sections[defaultReq.section].subsec, function(key, value){
+      $.each(data.object.sections[defaultReq.section].subsec, function(key, value){
 
         var h = $('<div/>',{
           "class" : "row course-subsection-container",
@@ -211,7 +211,7 @@ var render = {
               dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
             a = $('<a/>',{
                 "class" : 'course-click',
-                href : courses.data.object.link+'/'+z.section+'/'+key+'/'+v.slug,
+                href : data.object.link+'/'+z.section+'/'+key+'/'+v.slug,
                 "data-req" : JSON.stringify(z)
               });
             div = $('<div/>',{
@@ -254,15 +254,15 @@ var render = {
     $('#courses-right-sidebar').empty().append(wrap);
   },
   singleVid : function(req) {
-    courses.render.stage.changeActiveVid(req.object.ID,req.object.name);
+    render.stage.changeActiveVid(req.object.ID,req.object.name);
     var txt = '';
-    var obj = courses.data.object;
+    var obj = data.object;
     if (defaultReq.section === 'practice') {
       txt = defaultReq.section+' &raquo; '+obj.practice.tests[defaultReq.subsec].name+' &raquo; '+obj.practice.tests[defaultReq.subsec].subsec[defaultReq.video].title+' &raquo; '+req.object.name;
     } else {
       txt = defaultReq.section+' &raquo; '+defaultReq.subsec+' &raquo; '+req.object.name;
     }
-    courses.render.title(txt);
+    render.title(txt);
   }
 }
 

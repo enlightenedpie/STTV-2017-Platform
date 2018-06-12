@@ -46,7 +46,6 @@ var data = {
   reset : function(cb) {
     localStorage.removeItem('course_data');
     localStorage.removeItem('__c-update');
-
     return typeof cb === 'function' && cb()
   }
 }
@@ -58,4 +57,11 @@ var preloader = {
   }
 }
 
-export {data, preloader, version, hash, settings, error404}
+export {
+data,
+error404,
+hash,
+preloader,
+settings,
+version
+}

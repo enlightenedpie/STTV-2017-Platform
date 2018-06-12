@@ -5,13 +5,11 @@ import {modal} from './modal.js'
 import {render} from './render.js'
 import {shutdown, preloader} from './shutdown.js'
 
-if (typeof(defaultReq) == 'undefined'){
-  var defaultReq = {}
-  var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question']
-  var reqValues = location.pathname.split('/').filter(String)
-  while (reqKeys.length > 0 && reqValues.length > 0){
-  	defaultReq[reqKeys.shift()] = reqValues.shift()
-  };
+var defaultReq = {}
+var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question']
+var reqValues = location.pathname.split('/').filter(String)
+while (reqKeys.length > 0 && reqValues.length > 0){
+	defaultReq[reqKeys.shift()] = reqValues.shift()
 }
 
 var init = function(){
@@ -62,7 +60,6 @@ var init = function(){
     clearInterval(checker);
     data.objectify(data.get());
 
-    // This is what's triggering the reload
     if (typeof data.object.version === 'undefined' || data.object.version !== version) {
       data.reset(
         window.location.reload()
@@ -85,9 +82,7 @@ var init = function(){
 
 var setup = {
   validateRequest : function(request) {
-    if (typeof request === 'undefined') {
-      var r = defaultReq;
-    } else if (request.hasOwnProperty('type')) {
+    if (request.hasOwnProperty('type')) {
       return request;
     } else {
       var r = request;
@@ -136,7 +131,6 @@ var setup = {
       try {
         if (s === 'practice'){
           req = {type:'practice',object:obj.practice};
-          //console.log('here');
         } else if (typeof obj.sections[s] === 'undefined'){
           req = {type:'video',object:obj.tl_content[s]};
         } else {
@@ -148,7 +142,6 @@ var setup = {
     } else {
       req = {type:'root'}
     }
-    //console.log(req);
     return req;
   },
   processRequest : function(req) {
@@ -187,9 +180,9 @@ var setup = {
   },
   run : function() {
     try {
-      this.processRequest();
-      render.courseNav();
-      render.courseSidebar();
+      this.processRequest(defaultReq);
+      render.courseNav(defaultReq);
+      render.courseSidebar(defaultReq);
     } catch (err) {
       console.log(err);
     }
@@ -201,5 +194,18 @@ var setup = {
   },
 }
 
-export {init, setup, data, hash, version, settings, error404, student,
-  log, modal, defaultReq, render, shutdown, preloader, downloads}
+export {data,
+defaultReq,
+downloads,
+error404,
+hash,
+init,
+log,
+modal,
+preloader,
+render,
+settings,
+setup,
+shutdown,
+student,
+version}
