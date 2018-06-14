@@ -260,6 +260,7 @@ var render = {
     } else {
       txt = defaultReq.section+' &raquo; '+defaultReq.subsec+' &raquo; '+req.object.name;
     }
+    render.title(txt)
     $('.course-click .sidebar-sub-link').css({"color":"","background-color":""}).removeClass('z-depth-1 course-active');
     $('#' + req.object.slug).children('.sidebar-sub-link',this).css(
       {
