@@ -1,7 +1,7 @@
 var reqKeys = ['section', 'subsec', 'video', 'question']
 var reqValues = location.pathname.split('/').filter(String)
 
-var version = '1.4'
+var version = '2.0.0'
 var hash = ''
 var settings = {
 	autoplay : 0,
@@ -30,10 +30,10 @@ var data = {
   },
   request : function(cdata,method) {
     $.ajax({
-      url: stajax.rest.url+'/course_data/'+stajax.rest.ID+'/',
+      url: 'https://api.supertutortv.com/json/courses/8',
       data: cdata || null,
       type: method || 'GET',
-      headers: {'X-WP-Nonce' : stajax.rest.nonce},
+      headers: {},
       success: function(r) {
         data.update.set();
         data.set(r);

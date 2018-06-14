@@ -107,9 +107,8 @@ var render = {
     if (!defaultReq.section) {
       return false;
     } else if (defaultReq.section === 'practice') {
-      var sec = data.object.practice.tests,
-        sub = data.object.practice.tests[defaultReq.subsec];
-
+      var sec = data.object.practice.books,
+        sub = data.object.practice.books[defaultReq.subsec];
         switch (sub) {
           case undefined:
             $.each(sec,function(k,v){
@@ -117,8 +116,7 @@ var render = {
                 "class" : "row course-subsection-container",
                 "style" : "background-color:white"
               }).append('<h3><p>'+v.name+'</p></h3>');
-
-              switch (v.subsec) {
+              switch (v.tests) {
                 case undefined:
                   $('<div/>',{
                     "class":"sidebar-sub-link row valign-wrapper",
@@ -126,24 +124,23 @@ var render = {
                   }).appendTo(d);
                   break;
                 default:
-                  $.each(v.subsec,function(key,val){
+                  $.each(v.tests,function(key,val){
                     var aReq = {section:'practice',subsec:k,video:key};
                     $('<a/>',{
                       "class" : 'course-click',
-                      href : data.object.link+'/practice/'+k+'/'+key,
+                      href : window.location.href+'/books/'+k+'/tests/'+key,
                       "data-req" : JSON.stringify(aReq),
-                      text : val.title,
+                      text : val.name,
                       style : "display:block;padding:1em;margin-left:1em"
                     }).append('').appendTo(d);
                   });
                   break;
               }
-
               d.appendTo(wrap);
             });
             break;
           default:
-            var pracSec = sub.subsec[defaultReq.video];
+            var pracSec = sub.tests[defaultReq.video];
 
             var h = $('<div/>',{
               "class" : "row course-subsection-container",
@@ -159,7 +156,7 @@ var render = {
               a = $('<a/>',{
                 "class" : 'course-click',
                 href : data.object.link+'/'+y.section+'/'+y.subsec+'/'+y.video+'/'+slug,
-                "data-req" : JSON.stringify(y)
+                "data-req" : JSON.stringify(y),
               });
               div = $('<div/>',{
                 "class":"sidebar-sub-link row valign-wrapper"
@@ -172,7 +169,7 @@ var render = {
                   "class":"col s4",
                   style: "padding:0px"
                 }).append($('<img/>',{
-                  src : v.thumb,
+                  src : data.object.thumbUrls.plain.replace('||ID||', v.thumb),
                   style : "width:100%;height:auto;display:block"
                 })).appendTo(div);
 
@@ -211,6 +208,7 @@ var render = {
               dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
             a = $('<a/>',{
                 "class" : 'course-click',
+                "id": v.slug,
                 href : data.object.link+'/'+z.section+'/'+key+'/'+v.slug,
                 "data-req" : JSON.stringify(z)
               });
@@ -225,7 +223,7 @@ var render = {
                 "class":"col s4",
                 style: "padding:0px"
               }).append($('<img/>',{
-                src : v.thumb,
+                src : data.object.thumbUrls.plain.replace('||ID||', v.thumb),
                 style : "width:100%;height:auto;display:block"
               })).appendTo(div);
 
@@ -262,7 +260,13 @@ var render = {
     } else {
       txt = defaultReq.section+' &raquo; '+defaultReq.subsec+' &raquo; '+req.object.name;
     }
-    render.title(txt);
+    $('.course-click .sidebar-sub-link').css({"color":"","background-color":""}).removeClass('z-depth-1 course-active');
+    $('#' + req.object.slug).children('.sidebar-sub-link',this).css(
+      {
+        color: "white",
+        "background-color": settings.activeColor
+      }
+    ).addClass('z-depth-1 course-active');
   }
 }
 

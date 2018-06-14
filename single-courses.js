@@ -134,7 +134,7 @@ $(document).on('click',handlers,function(e){
 			var d = JSON.parse(t.attr('data-req'));
 			var a = courses.setup.newRequest(t.attr('data-req'));
 			var b = courses.data.object.link+'/'+d.section;
-			courses.pushHist(a,b,function(){
+			courses.pushHist(d,b,function(){
 				$('.indicator').css('background-color',t.css('color'));
 			});
 		}
@@ -164,13 +164,6 @@ $(document).on('click','.course-click',function(e) {
 			a = courses.setup.newRequest(o)
 
 		courses.pushHist(a,g);
-		$('.course-click .sidebar-sub-link').css({"color":"","background-color":""}).removeClass('z-depth-1 course-active');
-		$('.sidebar-sub-link',this).css(
-			{
-				color: "white",
-				"background-color": courses.settings.activeColor
-			}
-		).addClass('z-depth-1 course-active');
 	}
 );
 

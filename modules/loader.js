@@ -13,8 +13,9 @@ while (reqKeys.length > 0 && reqValues.length > 0){
 }
 
 var init = function(){
+	data.objectify(data.get());
+
   var ctrl = parseInt(localStorage.getItem('__c-update'));
-  var objd = data.get();
 
   $(document).queue('heartbeat',()=>{
     console.log('first heartbeat')
@@ -48,19 +49,20 @@ var init = function(){
     modal.init();
   }
 
-  if (objd === null || Math.floor(Date.now()/1000) > ctrl+86400) { //86400
+  if (data.object === null || Date.now()/1000 - ctrl > 86400) { //86400
     data.reset(
       data.request()
     );
-  } else if (objd !== null && objd['version'] !== version) {
+  } else if (data.object !== null && data.object['version'] !== version) {
+		console.log('b')
     data.reset(window.location.reload())
   }
 
   function finish_init() {
     clearInterval(checker);
-    data.objectify(data.get());
 
-    if (typeof data.object.version === 'undefined' || data.object.version !== version) {
+    if (typeof data.object == 'undefined' || typeof data.object.version === 'undefined' || data.object.version !== version) {
+			console.log('c')
       data.reset(
         window.location.reload()
       );
@@ -109,7 +111,7 @@ var setup = {
 
     if (q) {
       try {
-        req = {type:'video',object:obj.practice.tests[b].subsec[v].videos[q]};
+        req = {type:'video',object:obj.practice.books[b].subsec[v].videos[q]};
       } catch (e) {
         console.log(e);
       }
@@ -117,14 +119,14 @@ var setup = {
       try {
         req = {type:'video',object:obj.sections[s].subsec[b].videos[v]};
       } catch (e) {
-        req = {type:'section',object:obj.practice.tests[b].subsec[v]};
+        req = {type:'section',object:obj.practice.books[b].tests[v]};
         console.log(e);
       }
     } else if (!v && b) {
       try {
         req = {type:'video',object:obj.sections[s].subsec[b]};
       } catch (e) {
-        req = {type:'section',object:obj.practice.tests[b].subsec};
+        req = {type:'section',object:obj.practice.books[b].subsec};
         console.log(e);
       }
     } else if (!b && s) {
@@ -180,9 +182,9 @@ var setup = {
   },
   run : function() {
     try {
-      this.processRequest(defaultReq);
       render.courseNav(defaultReq);
       render.courseSidebar(defaultReq);
+			this.processRequest(defaultReq);
     } catch (err) {
       console.log(err);
     }
