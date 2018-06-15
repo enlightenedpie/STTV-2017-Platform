@@ -1,29 +1,29 @@
-<?php 
+<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class STTV_Courses_Admin {
-	
+
 	private $alb_cache = [];
 
 	private $introvid_album = false;
-	
+
 	public function __construct() {
 		$this->album_cache_ids();
-		
+
 		add_action( 'init', [ $this, 'sttv_course_init' ], 10, 0 );
 		add_action( 'init', [ $this, 'sttv_course_endpoints' ], 10, 0 );
 		add_filter( 'query_vars', [ $this, 'sttv_course_query_vars' ], 10, 1 );
 		add_action( 'edit_form_after_title', [ $this, 'course_meta_position' ] );
 		add_action( 'save_post_courses' , [ $this, 'save_course_meta' ], 10, 2 );
-		
+
 	}
-	
+
 	public function sttv_course_init() {
-		
+
 		$labels = [
 			'name'	=>	'Courses'
 		];
-		
+
 		$args = [
 			'labels'				=>	$labels,
 			'description'			=>	'SupertutorTV courses',
@@ -43,33 +43,36 @@ class STTV_Courses_Admin {
 			'supports'				=>	['title', 'editor', 'comments', 'revisions', 'author', 'excerpt', 'thumbnail'],
 			'register_meta_box_cb'	=> [ $this, 'sttv_add_course_meta' ]
 		];
-		
+
 		register_post_type( 'courses', $args );
 	}
-	
+
 	public function sttv_course_endpoints() {
-		
+
+		add_rewrite_rule('^courses/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)?$','index.php?post_type=courses&name=$matches[1]&section=$matches[2]&subsection=$matches[3]&video=$matches[4]&q=$matches[5]&param=$matches[6]','top' );
 		add_rewrite_rule('^courses/(.*)/(.*)/(.*)/(.*)/(.*)?$','index.php?post_type=courses&name=$matches[1]&section=$matches[2]&subsection=$matches[3]&video=$matches[4]&q=$matches[5]','top' );
 		add_rewrite_rule('^courses/(.*)/(.*)/(.*)/(.*)?$','index.php?post_type=courses&name=$matches[1]&section=$matches[2]&subsection=$matches[3]&video=$matches[4]','top' );
 		add_rewrite_rule('^courses/(.*)/(.*)/(.*)?$','index.php?post_type=courses&name=$matches[1]&section=$matches[2]&subsection=$matches[3]','top' );
 		add_rewrite_rule('^courses/(.*)/(.*)?$','index.php?post_type=courses&name=$matches[1]&section=$matches[2]','top' );
 		add_rewrite_rule('^courses/(.*)?$','index.php?post_type=courses&name=$matches[1]','top' );
-		
+
 		add_rewrite_tag( '%section%', '([a-zA-Z0-9]+[_-])*', 'section=' );
 		add_rewrite_tag( '%subsection%', '([a-zA-Z0-9]+[_-])*', 'subsection=' );
 		add_rewrite_tag( '%video%', '([a-zA-Z0-9]+[_-])*', 'video=' );
 		add_rewrite_tag( '%question%', '([a-zA-Z0-9]+[_-])*', 'q=' );
-		
+		add_rewrite_tag( '%param%', '([a-zA-Z0-9]+[_-])*', 'param=' );
+
 	}
-	
+
 	public function sttv_course_query_vars($vars) {
 		$vars[] = 'section';
 		$vars[] = 'subsection';
 		$vars[] = 'video';
 		$vars[] = 'q';
+		$vars[] = 'param';
 		return $vars;
 	}
-	
+
 	public function sttv_add_course_meta() {
 			add_meta_box(
 				 'course_info', // $id
@@ -79,7 +82,7 @@ class STTV_Courses_Admin {
 				 'top', // $context
 				 'high' // $priority
 			);
-		
+
 			add_meta_box(
 				 'course_product_page', // $id
 				 'Course Product Page', // $title
@@ -97,19 +100,19 @@ class STTV_Courses_Admin {
 				'side', // $context
 				'low' // $priority
 		   );
-			
+
 			remove_meta_box('wpseo_meta', 'courses', 'normal');
 			remove_meta_box('members-cp', 'courses', 'advanced');
-		
+
 	}
-	
+
 	public function sttv_display_course_product_page() { ?>
-		<select name="product_page_dropdown"> 
-		 <option value=""><?php echo esc_attr( __( 'Select page' ) ); ?></option> 
-		 <?php 
+		<select name="product_page_dropdown">
+		 <option value=""><?php echo esc_attr( __( 'Select page' ) ); ?></option>
+		 <?php
 		global $post;
 			$cpp = get_post_meta($post->ID,'course_product_page',true);
-		  $pages = get_pages(); 
+		  $pages = get_pages();
 		  foreach ( $pages as $page ) :
 			$selected = ($page->ID == $cpp) ? 'selected' : '';
 			$option = '<option value="' . $page->ID . '" '.$selected.'>';
@@ -119,19 +122,19 @@ class STTV_Courses_Admin {
 		  endforeach;
 		 ?>
 		</select>
-	<?php 
-		wp_nonce_field('save_course_product_page_nonce','course_product_page_nonce');										   
+	<?php
+		wp_nonce_field('save_course_product_page_nonce','course_product_page_nonce');
 	}
-	
-	public function sttv_display_course_introvid_album() { 
+
+	public function sttv_display_course_introvid_album() {
 		global $post;
 		?>
 		<input type="text" name="course_introvid_album" value="<?php echo get_post_meta($post->ID,'course_introvid_album',true)?>"/>
 	<?php }
-	
-	public function sttv_display_course_meta() { 
-			global $post; 
-			
+
+	public function sttv_display_course_meta() {
+			global $post;
+
 			$data = get_post_meta($post->ID,'sttv_course_data',true);
 			$intro = get_post_meta($post->ID,'course_introvid_album',true);
 			//$this->album_video_select($intro);
@@ -146,10 +149,10 @@ class STTV_Courses_Admin {
 		clear: both;
 		margin-bottom: 1em;
 	}
-	.row::after { 
+	.row::after {
 	   content: " ";
-	   display: block; 
-	   height: 0; 
+	   display: block;
+	   height: 0;
 	   clear: both;
 	}
 	.col {
@@ -198,10 +201,10 @@ class STTV_Courses_Admin {
 <div id="sttv_course_sections" class="row">
 	<div id="sections_title_h"><h3>Sections</h3></div>
     <div id="sections_wrapper">
-    	<?php 
+    	<?php
 			$i = $s = 0;
 			$html = '';
-		
+
 			if (empty($data['sections'])) {
 				$data['sections'] = [ false => false ];
 			}
@@ -215,11 +218,11 @@ class STTV_Courses_Admin {
 				$html .= "<br/><hr/><br/><textarea placeholder='Section description' rows='10' cols='100' name='courses[sections][{$i}][desc]'>{$val['description']}</textarea>";
 				$html .= "<button class='add-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
 				$html .= "<div class='course_subsec'>";
-				
+
 				if (empty($val['subsec'])) {
 					$val['subsec'] = [ false => false ];
 				}
-				
+
 				foreach ($val['subsec'] as $k => $v){
 					$checked = '';
 					$disabled = '';
@@ -241,9 +244,9 @@ class STTV_Courses_Admin {
 					$html .= "</div>";
 					$s++;
 				}
-				
+
 				$html .= "</div></div>";
-				
+
 				$i++;
 				$s = 0;
 			}
@@ -269,12 +272,12 @@ class STTV_Courses_Admin {
 			$html .= "<label for='courses[practice][tests][{$a}][title]'>Book/Test name: <input size='50' name='courses[practice][tests][{$a}][title]' value='{$val['name']}'/></label>&nbsp;";
 			$html .= "<button class='add-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
 			$html .= "<div class='course_practice_test'>";
-			
+
 			if (empty($val['sections'])) {
 				$val['sections'] = ['placeholder'=>'placeholder'];
 			}
 			foreach ($val['sections'] as $sec) {
-				
+
 				$pract_id = "courses[practice][tests][{$a}][sections][{$b}][id]";
 				$pract_title = "courses[practice][tests][{$a}][sections][{$b}][title]";
 				$pract_intro = "courses[practice][tests][{$a}][sections][{$b}][intro_vid]";
@@ -288,7 +291,7 @@ class STTV_Courses_Admin {
 				$html .= "</label>&nbsp;";
 				$html .= "<button class='add-sub-sub-section' href='/'>+</button> <button class='remove-section' href='/'>-</button><br/>";
 				$html .= "</div>";
-				
+
 				$b++;
 			}
 			$html .= "</div></div>";
@@ -296,13 +299,13 @@ class STTV_Courses_Admin {
 			$b = 0;
 		}
 		print $html;
-		
+
 	?>
 	</div>
 </div>
 <pre style="display:block;width:100%"><?php //print_r(get_post_meta($post->ID,'course_raw_post_data',true)); ?><?php print_r(json_encode($data,JSON_PRETTY_PRINT)); ?><?php //print STTV_CACHE_DIR; ?><?php //print_r($this->alb_cache); ?></pre>
 <?php }
-	
+
 	public function course_meta_position() {
 		global $post, $wp_meta_boxes;
 
@@ -310,7 +313,7 @@ class STTV_Courses_Admin {
 
 		unset($wp_meta_boxes[get_post_type($post)]['top']);
 	}
-	
+
 	public function save_course_meta($post_id, $post) {
 		// Stop WP from clearing custom fields on autosave
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -324,21 +327,21 @@ class STTV_Courses_Admin {
 		if ($_POST['course_introvid_album']) :
 			update_post_meta($post_id, 'course_introvid_album', sanitize_text_field($_POST['course_introvid_album']));
 		endif;
-			
+
 		//save course product page
 		if ($_POST['product_page_dropdown']) :
 			update_post_meta($post_id, 'course_product_page', sanitize_text_field($_POST['product_page_dropdown']));
 		endif;
-		
+
 		if ($_POST['courses']) :
 			update_post_meta($post_id, 'course_raw_post_data', $_POST['courses']);
-    
+
 			$test = strtolower($_POST['courses']['test_abbrev']?:'act');
 			$caps = [ //default caps for all courses
 				'course_post_feedback',
 				'course_post_reviews'
 			];
-		
+
 			$data = [
 				'id'=>$post_id,
 				'name'=>$post->post_title,
@@ -358,22 +361,22 @@ class STTV_Courses_Admin {
 			];
 			$caps[]=$data['cap'];
 			update_post_meta($post_id,'course_primary_cap',$data['cap']);
-		
+
 			foreach($_POST['courses']['sections'] as $sec) :
 				$i = 0;
 				$sec['title'] = strtolower($sec['title']);
-		
+
 				$cap = "course_{$test}_{$sec['title']}";
 				$caps[]=$cap;
-		
+
 				$albs = [];
-		
+
 				$color = '';
-		
+
 				foreach ($sec['videos'] as $sub) {
 					$albs[sanitize_title_with_dashes($sub['title'])] = [];
-					
-					
+
+
 						$calb = $this->get_cached_album($sub['id']);
 						if (empty($color)) {
 							$color = $calb['embedColor'];
@@ -384,7 +387,7 @@ class STTV_Courses_Admin {
 							'videos' => $calb[$sub['id']]
 						];
 				}
-				
+
 				$root_path = STTV_RESOURCE_DIR.strtolower($data['test']).'/'.$sec['title'].'/';
 				$resources = [];
 				$files = scandir($root_path);
@@ -393,7 +396,7 @@ class STTV_Courses_Admin {
 						$resources[$file] = md5_file($root_path.$file);
 					}
 				}
-		
+
 				$data['sections'][$sec['title']] = [
 					'name'=>ucfirst($sec['title']),
 					'description'=>$sec['desc'],
@@ -406,7 +409,7 @@ class STTV_Courses_Admin {
 				];
 				$i++;
 			endforeach;
-			
+
 			$rp = STTV_RESOURCE_DIR.strtolower($data['test']).'/practice/';
 			$resc = [];
 			$f = scandir($rp);
@@ -423,16 +426,16 @@ class STTV_Courses_Admin {
 			];
 
 			foreach ($_POST['courses']['practice']['tests'] as $prac) :
-		
+
 				$title = sanitize_title_with_dashes($prac['title']);
-		
+
 				$sections = [];
 				foreach ($prac['sections'] as $v) {
 					$calb = $this->get_cached_album($v['id']);
 					if (empty($color)) {
 						$color = $calb['embedColor'];
 					}
-					
+
 					$sections[sanitize_title_with_dashes($v['title'])] = [
 						'id'=>$v['id'],
 						'album-name'=>$calb['albumName'],
@@ -449,20 +452,20 @@ class STTV_Courses_Admin {
 				];
 
 				$caps[]=$data['practice'][$title]['cap'];
-		
+
 			endforeach;
-		
+
 			$data['size'] = (mb_strlen(json_encode($data), '8bit')/1000).'KB';
-		
+
 			$data['allcaps'] = $caps;
-			
+
 			update_post_meta($post_id, 'sttv_course_data', $data);
-		
+
 			$admin = get_role('administrator');
 			foreach ($caps as $c){
 				$admin->add_cap($c);
 			}
-			
+
 		endif;
 	}
 
@@ -471,7 +474,7 @@ class STTV_Courses_Admin {
 			update_post_meta($post_id,'introvid_album',$album_id);
 		}
 	}
-	
+
 	private function get_cached_album($id) {
 
 		$file = STTV_CACHE_DIR.$id.'.cache';
@@ -481,9 +484,9 @@ class STTV_Courses_Admin {
 
 		return json_decode($albs,true);
 	}
-	
+
 	private function album_cache_ids(){
-		
+
 		$files = scandir(''.STTV_CACHE_DIR);
 		foreach ($files as $file) {
 			if (is_file(STTV_CACHE_DIR.$file)){
@@ -491,18 +494,18 @@ class STTV_Courses_Admin {
 			}
 		}
 	}
-	
+
 	private function cached_album_select($name = '', $s = '',$d = '') {
-		
+
 		$select = "<select name={$name} {$d}>";
-		
+
 		foreach ($this->alb_cache as $file) {
 			$file = str_replace('.cache','',$file);
 			$obj = $this->get_cached_album($file);
 			$selected = ($file != $s)?:'selected';
 			$select .= "<option value='{$file}' {$selected}>{$obj['albumName']}</option>";
 		}
-		
+
 		$select .= '</select>';
 		return $select;
 	}

@@ -23,7 +23,6 @@ var render = {
     //$('.tabs .indicator').css("background-color",settings.activeColor);
   },
   courseNav : function() {
-    console.log(data.object.link)
     var obj = data.object;
     var nav = $('<ul/>',{
       "class": "collapsible",
@@ -262,7 +261,7 @@ var render = {
     var txt = '';
     var obj = data.object;
     if (defaultReq.section === 'practice') {
-      txt = defaultReq.section+' &raquo; ' + obj.practice.books[defaultReq.subsec].name + ' &raquo; ' + obj.practice.books[defaultReq.subsec].tests[defaultReq.video].title + ' &raquo; ' + req.object.name;
+      txt = defaultReq.section+' &raquo; ' + obj.practice.books[defaultReq.subsec].name + ' &raquo; ' + obj.practice.books[defaultReq.subsec].tests[defaultReq.video].name + ' &raquo; ' + obj.practice.books[defaultReq.subsec].tests[defaultReq.video].sections[defaultReq.question].name + ' &raquo; ' + req.object.name;
     } else {
       txt = defaultReq.section+' &raquo; ' + defaultReq.subsec+' &raquo; ' + req.object.name;
     }

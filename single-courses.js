@@ -144,7 +144,6 @@ $(document).on('click',handlers,function(e){
 
 // Reads Vimeo Player
 $(window).on('load',function() {
-
 	var video = document.querySelector('iframe.sttv-course-player');
 	var player = new Vimeo.Player(video);
 	player.on('timeupdate',function(d){
