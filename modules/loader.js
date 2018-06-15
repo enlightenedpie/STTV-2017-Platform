@@ -6,7 +6,7 @@ import {render} from './render.js'
 import {shutdown, preloader} from './shutdown.js'
 
 var defaultReq = {}
-var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question']
+var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question', 'param']
 var reqValues = location.pathname.split('/').filter(String)
 while (reqKeys.length > 0 && reqValues.length > 0){
 	defaultReq[reqKeys.shift()] = reqValues.shift()
@@ -86,80 +86,77 @@ var setup = {
   validateRequest : function(request) {
     if (request.hasOwnProperty('type')) {
       return request;
-    } else {
-      var r = request;
-      defaultReq = {
-        section : r.section,
-        subsec : r.subsec,
-        video : r.video,
-        question : r.question
-      }
+    }
+    var r = request;
+    defaultReq = {
+      section : r.section,
+      subsec : r.subsec,
+      video : r.video,
+      question : r.question,
+			param : r.param
     }
     var obj = data.object;
     var req;
 
-    var q = r.question,
+    var p = r.param,
+			q = r.question,
       v = r.video,
       b = r.subsec,
-      s = r.section;
+      s = r.section
 
-    if ((obj.sections[s] != null && obj.sections[s].restricted)) {
+    if (obj.sections[s] != null && obj.sections[s].restricted) {
       req = {type:'restricted'}
       return req;
     }
-
-
-    if (q) {
-      try {
-        req = {type:'video',object:obj.practice.books[b].subsec[v].videos[q]};
-      } catch (e) {
-        console.log(e);
-      }
-    } else if (!q && v) {
-      try {
-        req = {type:'video',object:obj.sections[s].subsec[b].videos[v]};
-      } catch (e) {
-        req = {type:'section',object:obj.practice.books[b].tests[v]};
-        console.log(e);
-      }
-    } else if (!v && b) {
-      try {
-        req = {type:'video',object:obj.sections[s].subsec[b]};
-      } catch (e) {
-        req = {type:'section',object:obj.practice.books[b].subsec};
-        console.log(e);
-      }
-    } else if (!b && s) {
-      try {
-        if (s === 'practice'){
-          req = {type:'practice',object:obj.practice};
-        } else if (typeof obj.sections[s] === 'undefined'){
-          req = {type:'video',object:obj.tl_content[s]};
-        } else {
-          req = {type:'section',object:obj.sections[s]};
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      req = {type:'root'}
-    }
-    return req;
-  },
+		try {
+			if (s) {
+				if (s === 'practice') {
+					if (p) {
+			        req = {type:'video',object:obj.practice.books[b].tests[v].sections[q].videos[p]};
+			    } else if (q) {
+			        req = {type:'section',object:obj.practice.books[b].tests[v].sections[q]};
+			    } else if (b) {
+			        req = {type:'section',object:obj.practice.books[b]};
+			    } else {
+						req = {type:'section',object:obj.practice.books};
+					}
+				} else if (s) {
+					if (p || q) {
+						req = {type:'error'}
+					} else if (v) {
+			        req = {type:'video',object:obj.sections[s].subsec[b].videos[v]};
+			    } else if (b) {
+			        req = {type:'section',object:obj.sections[s].subsec[b]};
+			    } else {
+			        if (typeof obj.sections[s] === 'undefined') {
+			          req = {type:'video',object:obj.tl_content[s]};
+			        } else {
+			          req = {type:'section',object:obj.sections[s]};
+			        }
+						}
+					}
+				} else {
+	      	req = {type:'root'}
+		    }
+	   } catch (e) {
+			 req = {type:'error'}
+		}
+	if (typeof req.object === 'undefined'){
+		error404()
+		req = {type:'error'}
+	}
+	return req;
+	},
   processRequest : function(req) {
+		render.title('')
     var r = this.validateRequest(req);
     var obj = data.object;
     settings.activeColor = typeof obj.sections[defaultReq.section] !== 'undefined' ? obj.sections[defaultReq.section].color : 'SlateGray';
-
-    switch (r.type) {
+		switch (r.type) {
       case 'root':
         render.stage.changeActiveVid(obj.intro,'Intro');
         break;
-      case 'practice':
-        render.courseSidebar();
-        break;
       case 'section':
-        //console.log(r);
         render.stage.changeActiveVid(r.object.intro,'Intro');
         render.courseSidebar();
         break;
@@ -171,6 +168,7 @@ var setup = {
         $(sec).text(data.object.sections[defaultReq.section].restricted);
         break;
       default:
+			render.stage.changeActiveVid(obj.intro,'Intro');
         error404();
         return false;
     }
@@ -182,9 +180,10 @@ var setup = {
   },
   run : function() {
     try {
-      render.courseNav(defaultReq);
-      render.courseSidebar(defaultReq);
-			this.processRequest(defaultReq);
+			var req = this.validateRequest(defaultReq)
+      render.courseNav(req);
+      render.courseSidebar(req);
+			this.processRequest(req);
     } catch (err) {
       console.log(err);
     }

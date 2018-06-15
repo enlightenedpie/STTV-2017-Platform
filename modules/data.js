@@ -1,3 +1,5 @@
+import {render} from './render.js'
+
 var reqKeys = ['section', 'subsec', 'video', 'question']
 var reqValues = location.pathname.split('/').filter(String)
 
@@ -9,9 +11,9 @@ var settings = {
 }
 var error404 = function() {
 	try {
-		throw new Error('Video not found. Please use the course links to navigate to your desired content.');
+		throw new Error('Resource not found. Please use the course links to navigate to your desired content.');
 	} catch (e) {
-		courses.render.title(e);
+		render.title(e);
 	}
 }
 
@@ -21,6 +23,7 @@ var data = {
   object : null,
   objectify : function(x){
     this.object = JSON.parse(x);
+		this.object.link.replace('api.supertutortv.com', 'localhost:8888/')
   },
   get : function() {return localStorage.getItem('course_data')},
   set : function(data) {return localStorage.setItem('course_data',JSON.stringify(data));},

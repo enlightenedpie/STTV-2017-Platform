@@ -134,7 +134,7 @@ $(document).on('click',handlers,function(e){
 			var d = JSON.parse(t.attr('data-req'));
 			var a = courses.setup.newRequest(t.attr('data-req'));
 			var b = courses.data.object.link+'/'+d.section;
-			courses.pushHist(d,b,function(){
+			courses.pushHist(defaultReq,b,function(){
 				$('.indicator').css('background-color',t.css('color'));
 			});
 		}
@@ -143,12 +143,12 @@ $(document).on('click',handlers,function(e){
 });
 
 // Reads Vimeo Player
-$(window).on('load',function(){
+$(window).on('load',function() {
 
 	var video = document.querySelector('iframe.sttv-course-player');
 	var player = new Vimeo.Player(video);
 	player.on('timeupdate',function(d){
-		if (d.percent<0.5){
+		if (d.percent<0.5) {
 			return false;
 		} else {
 			console.log(d)
@@ -163,7 +163,7 @@ $(document).on('click','.course-click',function(e) {
 			g = $(t).attr('href'),
 			a = courses.setup.newRequest(o)
 
-		courses.pushHist(a,g);
+		courses.pushHist(defaultReq,g);
 	}
 );
 

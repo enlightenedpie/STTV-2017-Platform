@@ -23,6 +23,7 @@ var render = {
     //$('.tabs .indicator').css("background-color",settings.activeColor);
   },
   courseNav : function() {
+    console.log(data.object.link)
     var obj = data.object;
     var nav = $('<ul/>',{
       "class": "collapsible",
@@ -34,19 +35,20 @@ var render = {
       var active = (k === defaultReq.section) ? ' active' : '' ;
       var item = $('<li/>').append($('<div/>',{
         text: v.name,
+        href : data.object.link + '/' + k,
         style: "color: "+v.color,
+        "data-req" : JSON.stringify({section:k}),
         "class": "section-link collapsible-header"+active,
-        "data-req" : JSON.stringify({section:k})
       })).append($('<div/>',{
         "class": "collapsible-body",
         html: '<span>'+v.description+'</span>'
       }).append($('<div/>',{
-        "class":"collapsible-footer"
+        "class" : "collapsible-footer"
       })));
 
       $.each(v.subsec,function(a,b){
         var sub = $('<a/>',{
-          "class":"cfooter-subsec-link",
+          "class" : "cfooter-subsec-link",
           text: b.title,
           href: "",
           style: "color:"+v.color
@@ -71,18 +73,18 @@ var render = {
       text: 'Practice Tests',
       href: '#practice',
       "class": "section-link practice-section-link collapsible-header",
-      "data-req" : JSON.stringify({section:'practice'})
+      "data-req" : JSON.stringify({section:'practice'}),
     })).append($('<div/>',{
       "class": "collapsible-body",
       html: '<span>'+obj.practice.description+'</span>'
     }).append($('<div/>',{
-      "class":"collapsible-footer"
+      "class" : "collapsible-footer"
     })));
 
     $('.collapsible-footer',prac).append(
       $('<a/>',{
         "class": "cfooter-dl-link",
-        "data-sec":"practice",
+        "data-sec" : "practice",
         href: "",
         text: "downloads",
         style: "color:gray"
@@ -119,16 +121,20 @@ var render = {
               switch (v.tests) {
                 case undefined:
                   $('<div/>',{
-                    "class":"sidebar-sub-link row valign-wrapper",
+                    "class" : "sidebar-sub-link row valign-wrapper",
                     text: v.restricted
                   }).appendTo(d);
                   break;
                 default:
                   $.each(v.tests,function(key,val){
-                    var aReq = {section:'practice',subsec:k,video:key};
+                    var aReq = {
+                      section:'practice',
+                      subsec:k,
+                      video:key
+                    };
                     $('<a/>',{
                       "class" : 'course-click',
-                      href : window.location.href+'/books/'+k+'/tests/'+key,
+                      href : data.object.link + '/' + aReq.section + '/' + aReq.subsec + '/' + aReq.video,
                       "data-req" : JSON.stringify(aReq),
                       text : val.name,
                       style : "display:block;padding:1em;margin-left:1em"
@@ -140,57 +146,61 @@ var render = {
             });
             break;
           default:
-            var pracSec = sub.tests[defaultReq.video];
-
-            var h = $('<div/>',{
-              "class" : "row course-subsection-container",
-              "style" : "background-color:white"
-            });
-            h.append('<h3><p>'+pracSec.title+'</p></h3>');
-
-            $.each(pracSec.videos,function(k,v){
-              var slug = v.slug,
-                y = {section:defaultReq.section,subsec:defaultReq.subsec,video:defaultReq.video,question:slug},
-                dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
-
-              a = $('<a/>',{
-                "class" : 'course-click',
-                href : data.object.link+'/'+y.section+'/'+y.subsec+'/'+y.video+'/'+slug,
-                "data-req" : JSON.stringify(y),
+            switch (defaultReq.question) {
+            case undefined:
+              var subSecs = sub.tests[defaultReq.video].sections;
+              var h = $('<div/>',{
+                "class" : "row course-subsection-container",
+                "style" : "background-color:white"
               });
-              div = $('<div/>',{
-                "class":"sidebar-sub-link row valign-wrapper"
+              $.each(subSecs,function(k,v){
+                var aReq = {
+                  section:defaultReq.section,
+                  subsec:defaultReq.subsec,
+                  video:defaultReq.video,
+                  question:k
+                };
+                var d = $('<div/>',{
+                  "class" : "row course-subsection-container",
+                  "style" : "background-color:white"
+                }).append($('<a/>', {
+                  "class" : 'course-click',
+                     href : data.object.link + '/' + aReq.section + '/' + aReq.subsec + '/' + aReq.video + '/' + aReq.question,
+                     "data-req" : JSON.stringify(aReq),
+                     text : v.name,
+                     style : "display:block;padding:1em;margin-left:1em"}));
+                d.appendTo(wrap);
               });
-              if (!v){
-                div.text("No videos found in this section");
-              } else {
-
-                $('<div/>',{
-                  "class":"col s4",
-                  style: "padding:0px"
-                }).append($('<img/>',{
-                  src : data.object.thumbUrls.plain.replace('||ID||', v.thumb),
-                  style : "width:100%;height:auto;display:block"
-                })).appendTo(div);
-
-                $('<div/>',{
-                  "class":"col s8"
-                }).append($('<span/>',{
-                  "class" : 'course-video-title',
-                  text : v.name
-                })).append($('<span/>',{
-                  "class":"course-video-duration",
-                  text : dur
-                })).appendTo(div);
-
-                div.appendTo(a);
-                a.appendTo(h);
-              }
-            });
-
-            h.appendTo(wrap);
-            break;
+              h.appendTo(wrap);
+              break;
+            default:
+              var vids = sub.tests[defaultReq.video].sections[defaultReq.question].videos;
+              var h = $('<div/>',{
+                "class" : "row course-subsection-container",
+                "style" : "background-color:white"
+              });
+              $.each(vids,function(k,v){
+                var aReq = {
+                  section:defaultReq.section,
+                  subsec:defaultReq.subsec,
+                  video:defaultReq.video,
+                  question:defaultReq.question,
+                  param:k
+                };
+                var d = $('<div/>',{
+                  "class" : "row course-subsection-container",
+                  "style" : "background-color:white"
+                }).append($('<a/>', {
+                  "class" : 'course-click',
+                     href : data.object.link + '/' + aReq.section + '/' + aReq.subsec + '/' + aReq.video + '/' + aReq.question + '/' + aReq.param,
+                     "data-req" : JSON.stringify(aReq),
+                     text : v.name,
+                     style : "display:block;padding:1em;margin-left:1em"}));
+                d.appendTo(wrap);
+              });
+              h.appendTo(wrap);
         }
+      }
     } else {
 
       $.each(data.object.sections[defaultReq.section].subsec, function(key, value){
@@ -213,14 +223,14 @@ var render = {
                 "data-req" : JSON.stringify(z)
               });
             div = $('<div/>',{
-              "class":"sidebar-sub-link row valign-wrapper"
+              "class" : "sidebar-sub-link row valign-wrapper"
             });
             if (!v){
               div.text("No videos found in this section");
             } else {
 
               $('<div/>',{
-                "class":"col s4",
+                "class" : "col s4",
                 style: "padding:0px"
               }).append($('<img/>',{
                 src : data.object.thumbUrls.plain.replace('||ID||', v.thumb),
@@ -228,18 +238,14 @@ var render = {
               })).appendTo(div);
 
               $('<div/>',{
-                "class":"col s8"
+                "class" : "col s8"
               }).append($('<span/>',{
                 "class" : 'course-video-title',
                 text : v.name
               })).append($('<span/>',{
-                "class":"course-video-duration",
+                "class" : "course-video-duration",
                 text : dur
               })).appendTo(div);
-
-              /*$('<div/>',{
-                "class":"col s2 m1"
-              }).append('<div class="valign-wrapper"><span>W</span></div>').appendTo(div);*/
 
             }
             div.appendTo(a);
@@ -256,12 +262,12 @@ var render = {
     var txt = '';
     var obj = data.object;
     if (defaultReq.section === 'practice') {
-      txt = defaultReq.section+' &raquo; '+obj.practice.tests[defaultReq.subsec].name+' &raquo; '+obj.practice.tests[defaultReq.subsec].subsec[defaultReq.video].title+' &raquo; '+req.object.name;
+      txt = defaultReq.section+' &raquo; ' + obj.practice.books[defaultReq.subsec].name + ' &raquo; ' + obj.practice.books[defaultReq.subsec].tests[defaultReq.video].title + ' &raquo; ' + req.object.name;
     } else {
-      txt = defaultReq.section+' &raquo; '+defaultReq.subsec+' &raquo; '+req.object.name;
+      txt = defaultReq.section+' &raquo; ' + defaultReq.subsec+' &raquo; ' + req.object.name;
     }
     render.title(txt)
-    $('.course-click .sidebar-sub-link').css({"color":"","background-color":""}).removeClass('z-depth-1 course-active');
+    $('.course-click .sidebar-sub-link').css({"color" : "","background-color" : ""}).removeClass('z-depth-1 course-active');
     $('#' + req.object.slug).children('.sidebar-sub-link',this).css(
       {
         color: "white",
