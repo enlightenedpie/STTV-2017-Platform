@@ -16,6 +16,7 @@ class STTV_Forms extends WP_REST_Controller {
 
     public function __construct() {
         add_action( 'rest_api_init', [ $this, 'register_forms_endpoints' ] );
+        add_action( 'wp_mail_failed', [ $this, 'mail_fail_log' ], 10, 1 );
     }
 
     public function register_forms_endpoints() {
@@ -72,7 +73,7 @@ class STTV_Forms extends WP_REST_Controller {
         if ($sentmail) {
             return $this->forms_generic_response( 'contact_form_success', 'Thanks for contacting us! We\'ll get back to you ASAP!', 200, [ 'sent' => $sentmail ] );
         } else {
-            return $this->forms_generic_response( 'contact_form_fail', 'There was an issue sending your message. Please try again later.', 400, [ 'sent' => $sentmail ] );
+            return $this->forms_generic_response( 'contact_form_fail', 'There was an issue sending your message. Please try again later.', 200, [ 'sent' => $sentmail ] );
         }
 
     }
@@ -156,6 +157,13 @@ class STTV_Forms extends WP_REST_Controller {
         }
         $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".RECAPTCHA_SECRET."&response=".$token."&remoteip=".$_SERVER['REMOTE_ADDR']),true);
         return $response['success'] ?: new WP_Error( 'recaptcha_failed', 'Shoo bot, shoo!', [ 'status' => 403 ] );
+    }
+
+    public function mail_fail_log( $error ) {
+        file_put_contents( '/home/sttvroot/logs/wp_mail_fail.log',
+            date('Y-m-d G:i:s') .' | '. json_encode($error),
+            FILE_APPEND | LOCK_EX
+        );
     }
 
     private function forms_generic_response( $code = '', $msg = '', $status = 200, $extra = [] ) {
