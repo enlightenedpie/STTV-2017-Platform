@@ -160,7 +160,7 @@ class STTV_Forms extends WP_REST_Controller {
     }
 
     public function mail_fail_log( $error ) {
-        file_put_contents( '/home/sttvroot/logs/wp_mail_fail.log',
+        file_put_contents( '/home/sttvroot/wp_mail_fail.log',
             date('Y-m-d G:i:s') .' | '. json_encode($error),
             FILE_APPEND | LOCK_EX
         );
