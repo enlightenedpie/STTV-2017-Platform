@@ -72,7 +72,7 @@ class STTV_Forms extends WP_REST_Controller {
         if ($sentmail) {
             return $this->forms_generic_response( 'contact_form_success', 'Thanks for contacting us! We\'ll get back to you ASAP!', 200, [ 'sent' => $sentmail ] );
         } else {
-            return $this->forms_generic_response( 'contact_form_fail', 'There was an issue sending your message. Please try again later.', 200, [ 'sent' => $sentmail ] );
+            return $this->forms_generic_response( 'contact_form_fail', 'There was an issue sending your message. Please try again later.', 400, [ 'sent' => $sentmail ] );
         }
 
     }
