@@ -13,6 +13,7 @@ while (reqKeys.length > 0 && reqValues.length > 0){
 }
 
 var init = function(){
+	render.title('')
 	data.objectify(data.get());
 
   var ctrl = parseInt(localStorage.getItem('__c-update'));
@@ -136,7 +137,7 @@ var setup = {
 						}
 					}
 				} else {
-	      	req = {type:'root'}
+	      	req = {type:'root', object:{}}
 		    }
 	   } catch (e) {
 			 req = {type:'error'}
