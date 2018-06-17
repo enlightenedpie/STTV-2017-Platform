@@ -99,8 +99,7 @@ class STTV_Courses {
 				'name' => $val['name'],
 				'description' => $val['description'],
 				'intro' => $val['intro'],
-				'color' => $val['color'],
-				//'videos' => $val['videos']
+				'color' => $val['color']
 			];
 			
 			if (current_user_can($val['cap'])) {
@@ -116,17 +115,19 @@ class STTV_Courses {
 			'tests' => []
 		];
 		foreach ($meta['practice']['tests'] as $s => $v) {
+			$tsecs = [];
+			foreach ( $v['sections'] as $nm => $ob ) {
+				if ( ( $s == 'the-official-act-prep-guide' && strpos( $nm, 'test-4' ) ) && !current_user_can( $ob['cap'] ) ) {
+					continue;
+				}
+				unset( $ob['cap'] );
+				$tsecs[$nm] = $ob;
+			}
 			$data['practice']['tests'][$s] = [
 				'name'=> $v['name'],
 				'color'=>'rgba(0,0,0,0.60)',
-				'subsec'=> $v['sections']
+				'subsec'=> $tsecs
 			];
-			
-			//if (current_user_can($v['cap'])) {
-			//$data['practice']['tests'][$s]['subsec'] = ;
-			//} else {
-			//	$data['practice'][$s]['restricted'] = 'Restricted access. This practice section will be available when you purchase the full course, or your trial period ends.';
-			//}
 		}
 		
 		$data['size'] = (mb_strlen(json_encode($data), '8bit')/1000).'KB';

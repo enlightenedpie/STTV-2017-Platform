@@ -436,10 +436,13 @@ class STTV_Courses_Admin {
 					$sections[sanitize_title_with_dashes($v['title'])] = [
 						'id'=>$v['id'],
 						'album-name'=>$calb['albumName'],
+						'cap'=>"course_{$test}_practice_{$title}_{$v['title']}",
 						'title'=>$v['title'],
 						'intro'=>$v['intro_vid'],
 						'videos'=>$calb[$v['id']]
 					];
+
+					$caps[]=$sections[sanitize_title_with_dashes($v['title'])]['cap'];
 				}
 
 				$data['practice']['tests'][$title] = [
@@ -459,8 +462,10 @@ class STTV_Courses_Admin {
 			update_post_meta($post_id, 'sttv_course_data', $data);
 		
 			$admin = get_role('administrator');
+			$crole = get_role( str_replace( '-', '_', $data['slug'] ) );
 			foreach ($caps as $c){
 				$admin->add_cap($c);
+				$crole->add_cap($c);
 			}
 			
 		endif;
