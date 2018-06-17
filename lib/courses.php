@@ -117,7 +117,7 @@ class STTV_Courses {
 		foreach ($meta['practice']['tests'] as $s => $v) {
 			$tsecs = [];
 			foreach ( $v['sections'] as $nm => $ob ) {
-				if ( ( $s == 'the-official-act-prep-guide' && strpos( $nm, 'test-4' ) ) && !current_user_can( $ob['cap'] ) ) {
+				if ( ( $s == 'the-official-act-prep-guide' && strpos( $nm, 'test-4' ) !== false ) && !current_user_can( $ob['cap'] ) ) {
 					continue;
 				}
 				unset( $ob['cap'] );
