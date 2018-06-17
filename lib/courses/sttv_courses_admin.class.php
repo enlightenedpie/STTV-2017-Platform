@@ -432,17 +432,18 @@ class STTV_Courses_Admin {
 					if (empty($color)) {
 						$color = $calb['embedColor'];
 					}
+					$sectitl = sanitize_title_with_dashes($v['title']);
 					
-					$sections[sanitize_title_with_dashes($v['title'])] = [
+					$sections[$sectitl] = [
 						'id'=>$v['id'],
 						'album-name'=>$calb['albumName'],
-						'cap'=>"course_{$test}_practice_{$title}_{$v['title']}",
+						'cap'=>"course_{$test}_practice_{$title}_{$sectitl}",
 						'title'=>$v['title'],
 						'intro'=>$v['intro_vid'],
 						'videos'=>$calb[$v['id']]
 					];
 
-					$caps[]=$sections[sanitize_title_with_dashes($v['title'])]['cap'];
+					$caps[]=$sections[$sectitl]['cap'];
 				}
 
 				$data['practice']['tests'][$title] = [
