@@ -179,7 +179,7 @@ class Order {
 		if ( is_wp_error( $user_id ) ) {
 			return [ 'error' => $user_id ];
 		}
-		$userroleadd = (new WP_User($user_id))->add_role('test_4_patch');
+		$userroleadd = (new \WP_User($user_id))->add_role('test_4_patch');
 
 		$customer->metadata = [
 			'wp_id' => $user_id
