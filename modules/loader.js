@@ -129,7 +129,7 @@ var setup = {
 			        }
 						}
 				} else {
-					render.stage.changeActiveVid(obj.intro,'Intro');
+	      	req = {type:'root', object:{}}
 		    }
 	   } catch (e) {
 			 console.log(e)
