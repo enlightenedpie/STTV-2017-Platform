@@ -6,15 +6,13 @@ import {render} from './render.js'
 import {shutdown, preloader} from './shutdown.js'
 
 var defaultReq = {}
-var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question', 'param']
+var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question']
 var reqValues = location.pathname.split('/').filter(String)
 while (reqKeys.length > 0 && reqValues.length > 0){
 	defaultReq[reqKeys.shift()] = reqValues.shift()
 }
 
 var init = function(){
-	data.objectify(data.get());
-
   var ctrl = parseInt(localStorage.getItem('__c-update'));
 
   $(document).queue('heartbeat',()=>{
@@ -54,15 +52,14 @@ var init = function(){
       data.request()
     );
   } else if (data.object !== null && data.object['version'] !== version) {
-		console.log('b')
     data.reset(window.location.reload())
   }
 
   function finish_init() {
+		render.title('')
     clearInterval(checker);
-
-    if (typeof data.object == 'undefined' || typeof data.object.version === 'undefined' || data.object.version !== version) {
-			console.log('c')
+		data.objectify(data.get())
+    if (data.object == null || typeof data.object.version === 'undefined' || data.object.version !== version) {
       data.reset(
         window.location.reload()
       );
@@ -83,107 +80,72 @@ var init = function(){
 }
 
 var setup = {
-  validateRequest : function(request) {
+  processRequest : function(request) {
+		render.title('')
     if (request.hasOwnProperty('type')) {
       return request;
     }
     var r = request;
-    defaultReq = {
-      section : r.section,
-      subsec : r.subsec,
-      video : r.video,
-      question : r.question,
-			param : r.param
-    }
+		for (var i in defaultReq) {
+			defaultReq[i] = r[i]
+		}
     var obj = data.object;
     var req;
 
-    var p = r.param,
-			q = r.question,
+		var q = r.question,
       v = r.video,
       b = r.subsec,
       s = r.section
 
     if (obj.sections[s] != null && obj.sections[s].restricted) {
-      req = {type:'restricted'}
-      return req;
+			var sec = '#'+courses.defaultReq.section+' .video-text';
+			$(sec).text(courses.data.object.sections[courses.defaultReq.section].restricted);
+      return
     }
 		try {
-			if (s) {
 				if (s === 'practice') {
-					if (p) {
-			        req = {type:'video',object:obj.practice.books[b].tests[v].sections[q].videos[p]};
-			    } else if (q) {
-			        req = {type:'section',object:obj.practice.books[b].tests[v].sections[q]};
-			    } else if (b) {
-			        req = {type:'section',object:obj.practice.books[b]};
+				 if (q && obj.practice.tests[b].subsec[v].videos[q]) {
+					 	render.singleVid(obj.practice.tests[b].subsec[v].videos[q]);
+			    } else if (v && obj.practice.tests[b].subsec[v]) {
+						render.courseSidebar();
 			    } else {
-						req = {type:'section',object:obj.practice.books};
+						render.courseSidebar();
 					}
 				} else if (s) {
-					if (p || q) {
-						req = {type:'error'}
-					} else if (v) {
-			        req = {type:'video',object:obj.sections[s].subsec[b].videos[v]};
-			    } else if (b) {
-			        req = {type:'section',object:obj.sections[s].subsec[b]};
+					if (q) {
+						error404()
+						return
+					} else if (v && obj.sections[s].subsec[b].videos[v]) {
+							render.singleVid(obj.sections[s].subsec[b].videos[v]);
+			    } else if (b && obj.sections[s].subsec[b]) {
+							render.courseSidebar();
+							render.stage.changeActiveVid(obj.sections[s].subsec[b],'Intro');
 			    } else {
 			        if (typeof obj.sections[s] === 'undefined') {
-			          req = {type:'video',object:obj.tl_content[s]};
+								render.singleVid(obj.sections[s]);
 			        } else {
-			          req = {type:'section',object:obj.sections[s]};
+								render.stage.changeActiveVid(obj.sections[s].intro,'Intro');
+								render.courseSidebar();
 			        }
 						}
-					}
 				} else {
-	      	req = {type:'root'}
+					render.stage.changeActiveVid(obj.intro,'Intro');
 		    }
 	   } catch (e) {
-			 req = {type:'error'}
+			 console.log(e)
+			 error404()
+			 return
 		}
-	if (typeof req.object === 'undefined'){
-		error404()
-		req = {type:'error'}
-	}
 	return req;
 	},
-  processRequest : function(req) {
-		render.title('')
-    var r = this.validateRequest(req);
-    var obj = data.object;
-    settings.activeColor = typeof obj.sections[defaultReq.section] !== 'undefined' ? obj.sections[defaultReq.section].color : 'SlateGray';
-		switch (r.type) {
-      case 'root':
-        render.stage.changeActiveVid(obj.intro,'Intro');
-        break;
-      case 'section':
-        render.stage.changeActiveVid(r.object.intro,'Intro');
-        render.courseSidebar();
-        break;
-      case 'video':
-        render.singleVid(r);
-        break;
-      case 'restricted':
-        var sec = '#'+defaultReq.section+' .video-text';
-        $(sec).text(data.object.sections[defaultReq.section].restricted);
-        break;
-      default:
-			render.stage.changeActiveVid(obj.intro,'Intro');
-        error404();
-        return false;
-    }
-
-    return r;
-  },
   newRequest : function(l) {
     return this.processRequest(JSON.parse(l));
   },
   run : function() {
     try {
-			var req = this.validateRequest(defaultReq)
-      render.courseNav(req);
-      render.courseSidebar(req);
-			this.processRequest(req);
+      render.courseNav(defaultReq);
+      render.courseSidebar(defaultReq);
+			this.processRequest(defaultReq)
     } catch (err) {
       console.log(err);
     }

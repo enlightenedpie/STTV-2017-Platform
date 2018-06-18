@@ -31,7 +31,7 @@ class STTV_Courses {
 			[
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => [ $this, 'get_course_meta' ],
-				'permission_callback' => [ $this, 'course_permissions_check' ],
+				'permission_callback' => '__return_true',
 				'args' => [
 					'alert' => [
 						'required' => false

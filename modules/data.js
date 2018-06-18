@@ -3,7 +3,7 @@ import {render} from './render.js'
 var reqKeys = ['section', 'subsec', 'video', 'question']
 var reqValues = location.pathname.split('/').filter(String)
 
-var version = '2.0.0'
+var version = '1.4'
 var hash = ''
 var settings = {
 	autoplay : 0,
@@ -23,7 +23,7 @@ var data = {
   object : null,
   objectify : function(x){
     this.object = JSON.parse(x);
-		this.object.link.replace('api.supertutortv.com', 'localhost:8888/')
+		console.log(this.object.link)
   },
   get : function() {return localStorage.getItem('course_data')},
   set : function(data) {return localStorage.setItem('course_data',JSON.stringify(data));},
@@ -33,7 +33,7 @@ var data = {
   },
   request : function(cdata,method) {
     $.ajax({
-      url: 'https://api.supertutortv.com/json/courses/8',
+      url: stajax.rest.url+'/course_data/'+stajax.rest.ID+'/',
       data: cdata || null,
       type: method || 'GET',
       headers: {},
