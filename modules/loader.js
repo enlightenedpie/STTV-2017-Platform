@@ -97,8 +97,8 @@ var setup = {
       s = reqState.section
 
     if (obj.sections[s] != null && obj.sections[s].restricted) {
-			var sec = '#'+courses.reqState.section+' .video-text';
-			$(sec).text(courses.data.object.sections[courses.reqState.section].restricted);
+			var sec = '#'+reqState.section+' .video-text';
+			$(sec).text(data.object.sections[reqState.section].restricted);
       return
     }
 		try {

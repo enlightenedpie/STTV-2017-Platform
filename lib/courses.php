@@ -76,9 +76,9 @@ class STTV_Courses {
 		if ( isset($data['alert']) ){
 			return $this->get_course_alert_template($data);
 		}
-		
+
 		$meta = get_post_meta( $data['id'], 'sttv_course_data' , true );
-		
+
 		$data = [
 			'id'=>$meta['id'],
 			'name'=>$meta['name'],
@@ -88,12 +88,12 @@ class STTV_Courses {
 			'intro'=>$meta['intro'],
 			'version'=>STTV_VERSION
 		];
-		
+
 		if (current_user_can($meta['cap'])) {
 			$data['tl_content'] = $meta['tl_content'];
 		}
-		
-		
+
+
 		foreach ($meta['sections'] as $sec => $val) {
 			$data['sections'][$sec] = [
 				'name' => $val['name'],
@@ -102,13 +102,9 @@ class STTV_Courses {
 				'color' => $val['color'],
 				//'videos' => $val['videos']
 			];
-			
-			if (current_user_can($val['cap'])) {
-				$data['sections'][$sec]['resources'] = $val['resources'];
-				$data['sections'][$sec]['subsec'] = $val['subsec'];
-			} else {
-				$data['sections'][$sec]['restricted'] = 'Restricted access. This section will be available when you purchase the full course, or your trial period ends.';
-			}
+
+			$data['sections'][$sec]['resources'] = $val['resources'];
+			$data['sections'][$sec]['subsec'] = $val['subsec'];
 		}
 		$data['practice'] = [
 			'description' => $meta['practice']['description'],
@@ -121,16 +117,16 @@ class STTV_Courses {
 				'color'=>'rgba(0,0,0,0.60)',
 				'subsec'=> $v['sections']
 			];
-			
+
 			//if (current_user_can($v['cap'])) {
 			//$data['practice']['tests'][$s]['subsec'] = ;
 			//} else {
 			//	$data['practice'][$s]['restricted'] = 'Restricted access. This practice section will be available when you purchase the full course, or your trial period ends.';
 			//}
 		}
-		
+
 		$data['size'] = (mb_strlen(json_encode($data), '8bit')/1000).'KB';
-		
+
 		return $data;
 
 	}
