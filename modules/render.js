@@ -259,7 +259,7 @@ var render = {
     var color = settings.activeColor
     if (reqState.section === 'practice') {
       txt = reqState.section+' &raquo; ' + obj.practice.tests[reqState.subsec].name + ' &raquo; ' + obj.practice.tests[reqState.subsec].subsec[reqState.video].title + ' &raquo; ' + req.name;
-      color = obj.practice.color
+      color = obj.practice.tests[reqState.subsec].color
     } else {
       txt = reqState.section+' &raquo; ' + reqState.subsec+' &raquo; ' + req.name;
       color = obj.sections[reqState.section].color
