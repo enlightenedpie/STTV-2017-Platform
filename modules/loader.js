@@ -1,4 +1,4 @@
-import {data, hash, version, settings, error404} from './data.js'
+import {data, settings, error404} from './data.js'
 import {downloads} from './downloads.js'
 import {log, student} from './log.js'
 import {modal} from './modal.js'
@@ -19,8 +19,8 @@ var setState = function (r){
 }
 
 var init = function(){
+	data.objectify(data.get())
   var ctrl = parseInt(localStorage.getItem('__c-update'));
-
   $(document).queue('heartbeat',()=>{
     console.log('first heartbeat')
   })
@@ -29,17 +29,19 @@ var init = function(){
   if (student.alerts.dismissed() === null){
     localStorage.setItem('alertsDismissed',JSON.stringify([]));
   }
-  if (JSON.parse(student.alerts.dismissed()).indexOf(hash) === -1) {
+  if (JSON.parse(student.alerts.dismissed()).indexOf(data.object.hash) === -1) {
+		var al = JSON.parse(student.alerts.dismissed())
+		al.push(data.object.hash)
+		console.log(al)
+		localStorage.setItem('alertsDismissed',JSON.stringify(al))
     modal.init({
       dismissible : false,
       complete : function(){
-        var al = JSON.parse(student.alerts.dismissed())
-        al.push(hash)
-        localStorage.setItem('alertsDismissed',JSON.stringify(al))
         modal.destroy()
         modal.init()
       }
     },function() {
+			console.log('this works')
       $(document).queue('afterload',function(){
         $('.modal-loading-overlay').fadeIn(250);
         $('#course_modal').modal('open');
@@ -57,19 +59,10 @@ var init = function(){
     data.reset(
       data.request()
     );
-  } else if (data.object !== null && data.object['version'] !== version) {
-    data.reset(window.location.reload())
   }
-
   function finish_init() {
 		render.title('')
     clearInterval(checker);
-		data.objectify(data.get())
-    if (data.object == null || typeof data.object.version === 'undefined' || data.object.version !== version) {
-      data.reset(
-        window.location.reload()
-      );
-    }
 
     console.log('Initialized!');
 
@@ -163,7 +156,6 @@ export {data,
 reqState,
 downloads,
 error404,
-hash,
 init,
 log,
 modal,
@@ -172,5 +164,4 @@ render,
 settings,
 setup,
 shutdown,
-student,
-version}
+student}

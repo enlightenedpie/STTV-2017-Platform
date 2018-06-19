@@ -80,6 +80,7 @@ class STTV_Courses {
 		$meta = get_post_meta( $data['id'], 'sttv_course_data' , true );
 
 		$data = [
+			'hash'=>sttvhashit($meta['name'].'/'.STTV_VERSION.'/'.$meta['id']),
 			'id'=>$meta['id'],
 			'name'=>$meta['name'],
 			'slug'=>$meta['slug'],

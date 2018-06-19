@@ -3,8 +3,6 @@ import {render} from './render.js'
 var reqKeys = ['section', 'subsec', 'video', 'question']
 var reqValues = location.pathname.split('/').filter(String)
 
-var version = '1.4'
-var hash = ''
 var settings = {
 	autoplay : 0,
 	activeColor : $('body').css('color')
@@ -62,8 +60,5 @@ var preloader = {
 export {
 data,
 error404,
-hash,
 preloader,
-settings,
-version
-}
+settings}
