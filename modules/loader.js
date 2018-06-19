@@ -19,6 +19,11 @@ var setState = function (r){
 }
 
 var init = function(){
+  if (data.object === null || Date.now()/1000 - ctrl > 86400) { //86400
+    data.reset(
+      data.request()
+    );
+  }
 	data.objectify(data.get())
   var ctrl = parseInt(localStorage.getItem('__c-update'));
   $(document).queue('heartbeat',()=>{
@@ -26,41 +31,36 @@ var init = function(){
   })
   log.access()
 
-  if (student.alerts.dismissed() === null){
-    localStorage.setItem('alertsDismissed',JSON.stringify([]));
-  }
-  if (JSON.parse(student.alerts.dismissed()).indexOf(data.object.hash) === -1) {
-		var al = JSON.parse(student.alerts.dismissed())
-		al.push(data.object.hash)
-		console.log(al)
-		localStorage.setItem('alertsDismissed',JSON.stringify(al))
-    modal.init({
-      dismissible : false,
-      complete : function(){
-        modal.destroy()
-        modal.init()
-      }
-    },function() {
-			console.log('this works')
-      $(document).queue('afterload',function(){
-        $('.modal-loading-overlay').fadeIn(250);
-        $('#course_modal').modal('open');
-        modal.alert(function(d) {
-          $('#course_modal .modal-content').append(d.html);
-          $('.modal-loading-overlay').fadeOut(250);
-        });
-      })
-    })
-  } else {
-    modal.init();
-  }
-
-  if (data.object === null || Date.now()/1000 - ctrl > 86400) { //86400
-    data.reset(
-      data.request()
-    );
-  }
   function finish_init() {
+			data.objectify(data.get())
+		  if (student.alerts.dismissed() === null){
+		    localStorage.setItem('alertsDismissed',JSON.stringify([]));
+		  }
+		  if (JSON.parse(student.alerts.dismissed()).indexOf(data.object.hash) === -1) {
+				var al = JSON.parse(student.alerts.dismissed())
+				al.push(data.object.hash)
+				console.log(al)
+				localStorage.setItem('alertsDismissed',JSON.stringify(al))
+		    modal.init({
+		      dismissible : false,
+		      complete : function(){
+		        modal.destroy()
+		        modal.init()
+		      }
+		    },function() {
+					console.log('this works')
+		      $(document).queue('afterload',function(){
+		        $('.modal-loading-overlay').fadeIn(250);
+		        $('#course_modal').modal('open');
+		        modal.alert(function(d) {
+		          $('#course_modal .modal-content').append(d.html);
+		          $('.modal-loading-overlay').fadeOut(250);
+		        });
+		      })
+		    })
+		  } else {
+		    modal.init();
+		  }
 		render.title('')
     clearInterval(checker);
 
