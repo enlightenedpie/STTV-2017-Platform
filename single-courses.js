@@ -1,4 +1,4 @@
-import {data, defaultReq, downloads, error404, hash,
+import {data, reqState, downloads, error404, hash,
 	init, log, modal, preloader, render, settings, setup,
 	shutdown, student, version} from './modules/loader.js'
 
@@ -10,7 +10,7 @@ import {ratings} from './modules/ratings'
 
 var courses = {
 	data : data,
-	defaultReq : defaultReq,
+	reqState : reqState,
 	downloads : downloads,
 	error404 : error404,
 	hash : hash,
@@ -134,7 +134,7 @@ $(document).on('click',handlers,function(e){
 			var d = JSON.parse(t.attr('data-req'));
 			var a = courses.setup.newRequest(t.attr('data-req'));
 			var b = courses.data.object.link+'/'+d.section;
-			courses.pushHist(defaultReq,b,function(){
+			courses.pushHist(reqState,b,function(){
 				$('.indicator').css('background-color',t.css('color'));
 			});
 		}
@@ -162,7 +162,7 @@ $(document).on('click','.course-click',function(e) {
 			g = $(t).attr('href'),
 			a = courses.setup.newRequest(o)
 
-		courses.pushHist(defaultReq,g);
+		courses.pushHist(reqState,g);
 	}
 );
 

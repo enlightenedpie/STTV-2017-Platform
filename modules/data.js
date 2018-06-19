@@ -23,7 +23,6 @@ var data = {
   object : null,
   objectify : function(x){
     this.object = JSON.parse(x);
-		console.log(this.object.link)
   },
   get : function() {return localStorage.getItem('course_data')},
   set : function(data) {return localStorage.setItem('course_data',JSON.stringify(data));},

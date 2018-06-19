@@ -1,5 +1,5 @@
 import {data, settings} from './data.js'
-import {defaultReq} from './loader.js'
+import {reqState} from './loader.js'
 
 var render = {
   stage : {
@@ -31,7 +31,7 @@ var render = {
     });
 
     $.each(obj.sections,function(k,v){
-      var active = (k === defaultReq.section) ? ' active' : '' ;
+      var active = (k === reqState.section) ? ' active' : '' ;
       var item = $('<li/>').append($('<div/>',{
         text: v.name,
         href : data.object.link + '/' + k,
@@ -106,11 +106,11 @@ var render = {
 			var div;
       var obj = data.object
 
-			if (!defaultReq.section) {
+			if (!reqState.section) {
 				return false;
-			} else if (defaultReq.section === 'practice') {
+			} else if (reqState.section === 'practice') {
 				var sec = obj.practice.tests,
-					sub = obj.practice.tests[defaultReq.subsec];
+					sub = obj.practice.tests[reqState.subsec];
 
 					switch (sub) {
 						case undefined:
@@ -145,7 +145,7 @@ var render = {
 							});
 							break;
 						default:
-							var pracSec = sub.subsec[defaultReq.video];
+							var pracSec = sub.subsec[reqState.video];
 
 							var h = $('<div/>',{
 								"class" : "row course-subsection-container",
@@ -154,7 +154,7 @@ var render = {
 							h.append('<h3><p>'+pracSec.title+'</p></h3>');
 
 							$.each(pracSec.videos,function(k,v){
-									var y = {section:defaultReq.section,subsec:defaultReq.subsec,video:defaultReq.video,question:v.slug},
+									var y = {section:reqState.section,subsec:reqState.subsec,video:reqState.video,question:v.slug},
 									dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
 
 								a = $('<a/>',{
@@ -195,7 +195,7 @@ var render = {
 					}
 			} else {
 
-				$.each(obj.sections[defaultReq.section].subsec, function(key, value){
+				$.each(obj.sections[reqState.section].subsec, function(key, value){
 
 					var h = $('<div/>',{
 						"class" : "row course-subsection-container",
@@ -206,7 +206,7 @@ var render = {
 						h.append("<span>No videos found in this section</span>");
 					} else {
 						$.each(value.videos,function(k,v){
-							var z = {section:defaultReq.section,subsec:key,video:v.slug},
+							var z = {section:reqState.section,subsec:key,video:v.slug},
 								dur = Math.floor(v.time / 60) + 'm '+ (v.time % 60) + 's';
 							a = $('<a/>',{
 									"class" : 'course-click',
@@ -257,12 +257,12 @@ var render = {
     var txt = '';
     var obj = data.object;
     var color = settings.activeColor
-    if (defaultReq.section === 'practice') {
-      txt = defaultReq.section+' &raquo; ' + obj.practice.tests[defaultReq.subsec].name + ' &raquo; ' + obj.practice.tests[defaultReq.subsec].subsec[defaultReq.video].title + ' &raquo; ' + req.name;
+    if (reqState.section === 'practice') {
+      txt = reqState.section+' &raquo; ' + obj.practice.tests[reqState.subsec].name + ' &raquo; ' + obj.practice.tests[reqState.subsec].subsec[reqState.video].title + ' &raquo; ' + req.name;
       color = obj.practice.color
     } else {
-      txt = defaultReq.section+' &raquo; ' + defaultReq.subsec+' &raquo; ' + req.name;
-      color = obj.sections[defaultReq.section].color
+      txt = reqState.section+' &raquo; ' + reqState.subsec+' &raquo; ' + req.name;
+      color = obj.sections[reqState.section].color
     }
     render.title(txt)
     this.highlightVid(req.slug, color)

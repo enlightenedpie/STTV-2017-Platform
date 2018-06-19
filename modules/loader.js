@@ -5,11 +5,17 @@ import {modal} from './modal.js'
 import {render} from './render.js'
 import {shutdown, preloader} from './shutdown.js'
 
-var defaultReq = {}
+var reqState = {}
 var reqKeys = ['content', 'coursename', 'section', 'subsec', 'video', 'question']
 var reqValues = location.pathname.split('/').filter(String)
-while (reqKeys.length > 0 && reqValues.length > 0){
-	defaultReq[reqKeys.shift()] = reqValues.shift()
+while (reqKeys.length > 0){
+	reqState[reqKeys.shift()] = reqValues.shift()
+}
+
+var setState = function (r){
+	for (var i in reqState) {
+		reqState[i] = r[i]
+	}
 }
 
 var init = function(){
@@ -80,26 +86,19 @@ var init = function(){
 }
 
 var setup = {
-  processRequest : function(request) {
+  processRequest : function() {
 		render.title('')
-    if (request.hasOwnProperty('type')) {
-      return request;
-    }
-    var r = request;
-		for (var i in defaultReq) {
-			defaultReq[i] = r[i]
-		}
     var obj = data.object;
     var req;
 
-		var q = r.question,
-      v = r.video,
-      b = r.subsec,
-      s = r.section
+		var q = reqState.question,
+      v = reqState.video,
+      b = reqState.subsec,
+      s = reqState.section
 
     if (obj.sections[s] != null && obj.sections[s].restricted) {
-			var sec = '#'+courses.defaultReq.section+' .video-text';
-			$(sec).text(courses.data.object.sections[courses.defaultReq.section].restricted);
+			var sec = '#'+courses.reqState.section+' .video-text';
+			$(sec).text(courses.data.object.sections[courses.reqState.section].restricted);
       return
     }
 		try {
@@ -129,7 +128,8 @@ var setup = {
 			        }
 						}
 				} else {
-	      	req = {type:'root', object:{}}
+					return
+					// Should render the 'root' option here
 		    }
 	   } catch (e) {
 			 console.log(e)
@@ -139,13 +139,15 @@ var setup = {
 	return req;
 	},
   newRequest : function(l) {
-    return this.processRequest(JSON.parse(l));
+		setState(JSON.parse(l))
+		render.courseSidebar()
+		this.processRequest();
   },
   run : function() {
     try {
-      render.courseNav(defaultReq);
-      render.courseSidebar(defaultReq);
-			this.processRequest(defaultReq)
+      render.courseNav();
+      render.courseSidebar();
+			this.processRequest()
     } catch (err) {
       console.log(err);
     }
@@ -158,7 +160,7 @@ var setup = {
 }
 
 export {data,
-defaultReq,
+reqState,
 downloads,
 error404,
 hash,
