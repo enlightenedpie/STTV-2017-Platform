@@ -14,7 +14,7 @@ $shipping = <<<HTML
         <label for="freeship">Free Shipping (1-3 weeks)</label>
     </p>
     <p>
-        <input id="priship" name="shipping_options" type="radio" value="1285" />
+        <input id="priship" name="shipping_options" type="radio" value="705" />
         <label for="priship">Priority Shipping (3-4 days)</label>
     </p>
 </div>

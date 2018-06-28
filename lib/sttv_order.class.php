@@ -100,7 +100,7 @@ class Order {
 			if ( isset($obj['shipping_options']) && $obj['shipping_options'] ) {
 				\Stripe\InvoiceItem::create([
 					"customer" => $customerID,
-					"amount" => 1285,
+					"amount" => 705,
 					"currency" => "usd",
 					"description" => "Priority Shipping",
 					"discountable" => false
