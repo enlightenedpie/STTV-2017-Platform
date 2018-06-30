@@ -134,5 +134,4 @@ class STTV_Courses {
 }
 new STTV_Courses;
 
-include_once 'courses/sttv_course.class.php';
 include_once 'courses/sttv_courses_admin.class.php';
