@@ -1,11 +1,10 @@
 {
-  "name": "sttv_2017",
-  "version": "1.0.0",
+  "name": "sttvsite",
+  "version": "2.0.0",
   "description": "STTV Theme dependencies",
-  "main": "sttv-js.min.js",
   "directories": {
     "s": "./s",
-    "lib": "lib"
+    "styles": "./styles"
   },
   "scripts": {
     "babel": "babel --presets es2015 s/checkout.min.js -o main.bundle.js",
@@ -16,30 +15,30 @@
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.2",
+    "babel-loader": "^7.1.5",
     "babel-preset-es2015": "^6.24.1",
-    "css-loader": "^0.28.9",
-    "extract-text-webpack-plugin": "^2.1.2",
+    "css-loader": "^0.28.11",
+    "depcheck": "^0.6.9",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "font-awesome-webpack2": "0.0.6",
     "gulp-concat": "^2.6.1",
     "gulp-include": "^2.3.1",
     "gulp-merge": "^0.1.1",
-    "gulp-rename": "^1.2.3",
+    "gulp-rename": "^1.3.0",
     "gulp-sass": "^3.2.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
     "jquery": "^3.3.1",
     "materialize-css": "^0.100.2",
     "md5": "^2.2.1",
+    "node-sass-glob-importer": "^5.1.3",
+    "resolve-url-loader": "^2.3.0",
     "rollup": "^0.49.3",
-    "sass-loader": "^6.0.6",
+    "sass-loader": "^6.0.7",
     "stream": "0.0.2",
-    "style-loader": "^0.20.1",
+    "style-loader": "^0.20.3",
     "url-loader": "^0.6.2",
-    "webpack": "^4.2.0",
-    "webpack-cli": "^3.0.3"
-  },
-  "dependencies": {
-    "depcheck": "^0.6.9"
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8"
   }
 }

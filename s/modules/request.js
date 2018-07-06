@@ -21,4 +21,4 @@ var request = function(obj) {
   $.ajax(ajaxp)
 }
 
-export {request}
+export default request

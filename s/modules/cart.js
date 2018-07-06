@@ -181,4 +181,4 @@ var cart = (function(){
   }
 })()
 
-export {cart}
+export default cart

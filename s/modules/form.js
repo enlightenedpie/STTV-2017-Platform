@@ -18,4 +18,4 @@ var form = {
   },
 }
 
-export {form}
+export default form

@@ -65,4 +65,4 @@ var modal = (function() {
   }
 })()
 
-export {modal}
+export default modal

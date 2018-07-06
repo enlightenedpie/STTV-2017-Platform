@@ -25,4 +25,4 @@ var analytics = function( obj ) {
   return (pageview) ? (page ? ga( 'send', 'pageview', page ) : ga( 'send', 'pageview' ) ) : pageview
 }
 
-export {analytics}
+export default analytics

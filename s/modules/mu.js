@@ -76,4 +76,4 @@ var mu = {
   }
 }
 
-export {mu}
+export default mu
