@@ -1,19 +1,38 @@
-const webpack = require('webpack')
 const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const globImporter = require('node-sass-glob-importer')
 
-module.exports = {
-  entry : ['./s/_entry.js','./styles/_init.sass'],
+const jsConfig = {
+  entry : './scripts/_entry.js',
+  target : 'web',
   output : {
-    path : path.resolve(__dirname, './assets'),
+    path : path.resolve(__dirname, './scripts'),
     filename : './sttv-js.min.js',
-    library : 'sttvjs',
-    libraryTarget : 'umd',
-    umdNamedDefine : true
+    library : '_st',
+    libraryTarget : 'var'
   },
   externals : {
     jquery : 'jQuery'
+  },
+  mode : 'none',
+  module : {
+    rules : [
+      { test : /\.(js)$/,
+        exclude : /node_modules/,
+        use : {
+          loader: 'babel-loader'
+        }
+      }
+    ]
+  }
+}
+
+const sassConfig = {
+  entry : './styles/sass/_init.sass',
+  target : 'web',
+  output : {
+    path : path.resolve(__dirname, './styles'),
+    filename : './main.min.css',
   },
   mode : 'none',
   module : {
@@ -39,12 +58,6 @@ module.exports = {
             }
           ]
         })
-      },
-      { test : /\.(js)$/,
-        exclude : /node_modules/,
-        use : {
-          loader: 'babel-loader'
-        }
       }
     ]
   },
@@ -55,4 +68,6 @@ module.exports = {
       allChunks : true
     })
   ]
-};
+}
+
+module.exports = [jsConfig,sassConfig]

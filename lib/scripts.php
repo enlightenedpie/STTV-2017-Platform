@@ -24,14 +24,14 @@ function sttv_enqueue_all() {
 	
 	//jquery scripts
 	wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js',false,null);
-	wp_enqueue_script('sttv-js-main', get_stylesheet_directory_uri().'/assets/sttv-js.min.js','jquery',STTV_VERSION,true);
+	wp_enqueue_script('sttv-js-main', get_stylesheet_directory_uri().'/scripts/sttv-js.min.js','jquery',STTV_VERSION,true);
 	wp_enqueue_script('materialize-js', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js','jquery',null);
 	wp_enqueue_script('sttv-stripe-js', 'https://js.stripe.com/v3/',null,null,false);
 	wp_enqueue_script('jq-validate','https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js','jquery');
 	
 	//styles
 	wp_enqueue_style('materialize','https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css',false,null);
-	wp_enqueue_style('sttv-main', get_stylesheet_directory_uri().'/assets/main.min.css', 'materialize', STTV_VERSION);
+	wp_enqueue_style('sttv-main', get_stylesheet_directory_uri().'/styles/main.min.css', 'materialize', STTV_VERSION);
 	wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', 'materialize', STTV_VERSION);
 	wp_enqueue_style('font-awesome', 'https://use.fontawesome.com/releases/v5.0.13/css/all.css', 'materialize', STTV_VERSION);
 	wp_enqueue_style('dashicons');
