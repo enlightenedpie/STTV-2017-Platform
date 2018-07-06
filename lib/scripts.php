@@ -142,32 +142,3 @@ function gtag_report_conversion(url) {
 }
 </script>
 <?php endif; }
-
-#########################
-##### STAJAX OBJECT #####
-#########################
-
-add_action( 'wp_print_scripts' , 'stajax_object' );
-function stajax_object() { 
-	global $post, $user_id; ?>
-	<script>
-		<?php
-			$stajax = [
-				'ajaxURL'=>trailingslashit(site_url()).'stajax.php',
-				'contentURL'=>get_stylesheet_directory_uri(),
-				'rootURL'=>site_url(),
-				'dlURL'=>site_url('course-dl.php'),
-				'type'=>get_post_type(),
-				'stripe' => [
-					'public_key' => Spress()->public_key
-				]
-			];
-			$stajax['rest'] = [
-				'ID' => $post->ID ?? $user_id,
-				'nonce' => wp_create_nonce( STTV_REST_AUTH ), 
-				'url' => rest_url( STTV_REST_NAMESPACE )
-			];
-		?>
-		var stajax = <?php echo json_encode($stajax); ?>;
-	</script>
-<?php }

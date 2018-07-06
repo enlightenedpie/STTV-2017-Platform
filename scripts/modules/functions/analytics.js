@@ -6,7 +6,7 @@ var analytics = function( obj ) {
   var page = obj.page || false,
     pageview = obj.pageview || false,
     event = obj.event || false,
-    action = obj.action || obj.data
+    action = obj.action || obj.data,
     data = obj.data || false
 
   if (typeof action === 'string' && typeof data === 'object') {

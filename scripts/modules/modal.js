@@ -1,6 +1,6 @@
 var modal = (function() {
   $('.loading-spinner').each(function(i){
-    $(this).attr('src',stajax.contentURL+'/i/sttv-spinner.gif')
+    $(this).attr('src',_st.resources.content+'/i/sttv-spinner.gif')
   })
   return {
     action : '',

@@ -1,6 +1,6 @@
-var request = function(obj) {
+const request = (obj) => {
   var ajaxp = {
-    url: obj.route || '',
+    url: _st.resources.api+obj.route,
     method: obj.method || 'GET',
     headers: obj.headers || {},
     processData : false,

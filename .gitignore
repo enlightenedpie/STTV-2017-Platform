@@ -8,4 +8,5 @@ lib/Stripe
 X*
 Gulpfile.js
 .vscode
+*.code-workspace
 resttest.php

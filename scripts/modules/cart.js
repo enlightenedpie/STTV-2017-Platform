@@ -1,7 +1,5 @@
 var cart = (function(){
-  if ( stajax.type === 'courses' ) {
-    return false
-  }
+
   var cartObj = JSON.parse(localStorage.getItem('_stcart_'))
   var initDate = Date.now()
   if ( cartObj === null || (cartObj.ID / 1000 | 0) + (86400) < initDate / 1000 | 0 ) {
@@ -132,12 +130,9 @@ var cart = (function(){
       })
 
       _st.request({
-        route : stajax.rest.url+'/checkout',
+        route : '/checkout',
         method : 'POST',
         cdata : data,
-        headers : {
-          //'X-WP-Nonce' : stajax.rest.nonce,
-        },
         success : function(d) {
           _st.checkout = 'subscription'
           el.append(d.html)

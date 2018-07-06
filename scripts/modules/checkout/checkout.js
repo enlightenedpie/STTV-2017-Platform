@@ -1,5 +1,5 @@
 /* Let's define the checkout object with methods and properties */
-const checkout = function(){
+const checkout = () => {
 	this.state = {
 		type : '',
 		valid : false,
@@ -100,7 +100,7 @@ checkout.prototype = {
 		_st.checkout.validate( inputs, con, result.complete )
 	},
 	setup : function setup(){
-		var stripe = Stripe(stajax.stripe.public_key);
+		var stripe = Stripe(_st.stripe.publicKey);
 		var elements = stripe.elements();
 		var card = elements.create('card',{
 			hidePostalCode: true
@@ -146,12 +146,9 @@ checkout.prototype = {
 				data.cart = _st.cart.cartObj
 
 				_st.request({
-					route : stajax.rest.url+'/checkout',
+					route : '/checkout',
 					method : 'POST',
 					cdata : data,
-					headers : {
-						'X-WP-Nonce' : stajax.rest.nonce,
-					},
 					success : function(d) {
 						console.log(d)
 

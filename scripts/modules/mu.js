@@ -12,12 +12,9 @@ var mu = {
     type = 'multi-user'
 
     _st.request({
-      route : stajax.rest.url+'/multi-user',
+      route : '/multi-user',
       method : 'POST',
       cdata : data,
-      headers : {
-        'X-WP-Nonce' : stajax.rest.nonce,
-      },
       success : function(d) {
         _st.checkout = type
         _st.cart.empty(function(t) {
@@ -49,12 +46,9 @@ var mu = {
     }
 
     _st.request({
-      route : stajax.rest.url+'/checkout',
+      route : '/checkout',
       method : 'POST',
       cdata : data,
-      headers : {
-        'X-WP-Nonce' : stajax.rest.nonce,
-      },
       success : function(d) {
         el.append(d.html)
         _st.modal.loader()
