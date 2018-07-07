@@ -1,5 +1,5 @@
-var menuToggle = function(cb) {
+const menuToggle = (cb) => {
     $('body').toggleClass('nav-sidebar-open')
-    typeof cb === 'function' && cb();
+    typeof cb === 'function' && cb()
 }
 export default menuToggle

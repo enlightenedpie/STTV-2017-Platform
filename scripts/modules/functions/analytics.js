@@ -1,4 +1,4 @@
-var analytics = function( obj ) {
+const analytics = ( obj ) => {
   if ( typeof obj === 'undefined' ) {
     return false
   }

@@ -1,35 +1,40 @@
 /* Let's define the checkout object with methods and properties */
-const checkout = () => {
-	this.state = {
-		type : '',
-		valid : false,
-		items : _st.cart.get(),
-		totals : {
-			total : 0,
-			tax : {
-				amt : 0,
+const Checkout = class {
+	constructor(){
+		this.state = {
+			type : '',
+			valid : false,
+			items : '',
+			totals : {
+				total : 0,
+				tax : {
+					amt : 0,
+					msg : '',
+					rate : 0
+				},
+				taxable : 0,
+				shipping : 0,
+				disc : 0,
+				discp : 0,
+				shipping : 0,
 				msg : '',
-				rate : 0
+				coupon : ''
 			},
-			taxable : 0,
-			shipping : 0,
-			disc : 0,
-			discp : 0,
-			shipping : 0,
-			msg : '',
-			coupon : ''
-		},
-		customer : {
-
+			customer : {
+	
+			}
 		}
 	}
-}
 
-checkout.prototype = {
-	pricer : function pricer(price) {
+	pricer(price) {
 		return (Math.round(price)/100).toFixed(2)
-	},
-	update : function update(obj) {
+	}
+	
+	cartGetter() {
+		return console.log(_st.resources.content)
+	}
+
+	update(obj) {
 		if (obj !== null) {
 			$.extend(this.totals,obj)
 		}
@@ -88,8 +93,9 @@ checkout.prototype = {
 		}).fadeIn(100);
 
 		this.state = $.extend( true, {}, this.totals );
-	},
-	setOutcome : function setOutcome( result, con ) {
+	}
+
+	setOutcome( result, con ) {
 		if ( typeof result.error !== 'undefined' ) {
 			$( '.error', con ).text( result.error.message );
 		} else {
@@ -98,24 +104,27 @@ checkout.prototype = {
 
 		var inputs = $( 'input, select', con )
 		_st.checkout.validate( inputs, con, result.complete )
-	},
-	setup : function setup(){
-		var stripe = Stripe(_st.stripe.publicKey);
-		var elements = stripe.elements();
+	}
+
+	setup() {
+		var stripe = Stripe(_st.stripe.publicKey)
+		var elements = stripe.elements()
 		var card = elements.create('card',{
 			hidePostalCode: true
 		});
 		card.mount('#sttv_card_element');
 
 		card.on( 'change', function( event ) {
-			this.setOutcome( event, '#checkout-wrapper' );
+			this.setOutcome( event, '#checkout-wrapper' )
 		});
 
 		M.updateTextFields()
-		$('select').formSelect();
+		$('select').formSelect()
+		this.cartGetter()
 		this.update()
-	},
-	submit : function submit( data ) {
+	}
+
+	submit( data ) {
 		_st.modal.loader(function(){
 			var mo = $('#modal_loading_overlay')
 
@@ -210,8 +219,9 @@ checkout.prototype = {
 				})
 			}
 		})
-	},
-	validate : function validate( inputs, context, extra ) {
+	}
+
+	validate( inputs, context, extra ) {
 		if ( typeof extra === 'undefined' ) {
 			extra = true
 		}
@@ -240,4 +250,4 @@ checkout.prototype = {
 	}
 }
 
-export default checkout
+export default Checkout
