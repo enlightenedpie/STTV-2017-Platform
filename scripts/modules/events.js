@@ -1,7 +1,7 @@
 import $ from 'jquery'
 
 $(document).ready(function(){
-    _st.checkout.cartGetter()
+    
 })
 
 // BEGIN Checkout form handlers //
@@ -254,7 +254,7 @@ $(document).on('click','.slide-bar',function(e) {
 // ########################## //
 
 // BEGIN Modal window handler
-var selectors = '.modal-toggle, .mu-signup, .mu-submitter, .cart-fab, .payment-launcher'
+var selectors = '.st-dismiss, .mu-signup, .mu-submitter, .cart-fab, .payment-launcher'
 $(document).on('click',selectors,function(e) {
     e.preventDefault();
     var t = $(this),
@@ -264,7 +264,7 @@ $(document).on('click',selectors,function(e) {
     var f = {
         'mu-signup' : 'mu-signup',
         'payment-launcher' : 'checkout',
-        'modal-toggle' : tda,
+        'st-dismiss' : 'close',
         'mu-submitter' : 'mu-checkout',
         'cart-fab' : 'sttv-cart'
     }

@@ -1,37 +1,35 @@
 const Modal = class {
   constructor() {
     this.action = '',
-    this.element = $('#sttvmodal')
-    this.inner = $('.sttvmodal_inner')
+    this.element = $('#st-modal-inner-content')
+    this.inner = $('#st-modal-inner-content-inner')
   }
 
   init( act ){
-    if (typeof act === 'undefined'){
-      return false
-    }
-    if (this.action === act) {
-      return this.toggle()
-    }
+    var t = this
+    if (typeof act === 'undefined') return false
+    if (t.action === act) return t.toggle()
 
     var cb;
     if (act !== 'close') {
-      this.action = act
-      this.loader(function() {
-        this.inner.empty()
+      t.action = act
+      t.loader(() => {
+        t.inner.empty()
+        t.element.removeClass('st-quiet-load')
       })
     }
 
     switch (act) {
       case 'close':
+      cb = function() {
+        setTimeout(function(){
+          $('#st-modal').hide()
+        },250)
+      }
         break
       case 'login':
         cb = function(el) {
           _st.login(el)
-        }
-        break
-      case 'account':
-        cb = function(el) {
-
         }
         break
       case 'mu-checkout':
@@ -47,14 +45,19 @@ const Modal = class {
       case 'sttv-cart':
       case 'checkout':
         cb = function(el) {
-          _st.cart.submit(true,el)
+          _st.checkout = new _st.checkout()
+          _st.checkout.init(((x) => {
+            x.render(el)
+            t.loader()
+          }))
         }
         break
     }
-    this.toggle(cb)
+    t.toggle(cb)
   }
 
   toggle(cb) {
+    $('#st-modal').show()
     $('body').toggleClass('modal-open')
     typeof cb === 'function' && cb(this.inner)
   }
@@ -66,4 +69,4 @@ const Modal = class {
 
 }
 
-export default Modal
+export default new Modal

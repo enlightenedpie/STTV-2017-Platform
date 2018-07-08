@@ -1,109 +1,140 @@
 body.modal-open
     overflow: hidden
 
-body.modal-open #sttvmodal, #sttvmodal.loader-active #modal_loading_overlay
+body.modal-open #st-modal
 	opacity: 1
 	visibility: visible
 
-#sttvmodal
+#st-modal
     position: fixed
-    left: 10%
-    right: 10%
-    top: 3%
-    bottom: 5%
-    height: 80%
+    width: 100vw
+    height: 100vh
+    left: 0
+    right: 0
+    top: 0
+    bottom: 0
     visibility: hidden
-    background: transparent
+    background: $transwht
     z-index: 998
     opacity: 0
-    -webkit-transition: all .25s linear
-    transition: all .25s linear
+    -webkit-transition: all .25s ease-in-out
+    transition: all .25s ease-in-out
 
-    .closer-wrapper
-        display: block
-        position: absolute
-        right: $huge
-        top: $huge
-        width: $huge
-        height: $huge
-        z-index: 1
+    .row
+        margin: 0
 
-        .modal-toggle
-            cursor: pointer
-            position: absolute
-            right: 100%
-            top: -50%
-
-        .material-icons
-            font-size: $huge
-
-    #modal_loading_overlay
-        opacity: 0
-        visibility: hidden
-        position: absolute
-        z-index: 1001
-        top: 0
-        left: 0
-        right: 0
-        bottom: 0
-        background: white
-        text-align: center
-        -webkit-transition: all .25s linear
-        transition: all .25s linear
-
-        .loading-spinner
-            display: block
-            position: absolute
-            max-width: 300px
-            height: auto
-            top: 50%
-            left: 50%
-            transform: translate(-50%,-50%)
-
-        #success
-            position: absolute
-            width: 100%
-            top: 50%
-            transform: translateY(-50%)
-
-            h2
-                font-size: $huge * 5
-                margin: 0
-                color: green
-
-                i
-                    font-size: inherit
-                    font-weight: 700
-
-    .sttvmodal_inner
-        max-width: $bodyw
-        width: 75%
+    .col
+        padding: 0
+                    
+    #st-modal-inner
+        background-color: rgb(255,255,255)
+        overflow: hidden
+        position: relative
+        top: 10%
         margin: 0 auto
-        height: 100%
-        overflow: auto
+        z-index: 1000
+        width: 700px
+        border-radius: 10px
+        
+        header
+            position: relative
+            background-color: $mdblack
+            color: $transwht
+            padding: $small
+            font-weight: 700
+            font-size: $medium
+            text-transform: uppercase
+
+            #st-modal-title
+                text-align: center
+
+                img
+                    height: 50px
+                    width: auto
+
+            #st-closer-wrapper
+                text-align: right
+                cursor: pointer
+
+        #st-modal-inner-content
+            position: relative
+            padding: 1em
+            height: auto
+            min-height: 10em
+
+            &.loader-active > #st-modal-overlay
+                opacity: 1
+                visibility: visible
+
+            #st-modal-inner-content-inner
+
+            #st-modal-overlay
+                opacity: 0
+                visibility: hidden
+                position: absolute
+                z-index: 1001
+                top: 0
+                left: 0
+                right: 0
+                bottom: 0
+                background: white
+                text-align: center
+                -webkit-transition: all .25s ease-in-out
+                transition: all .25s ease-in-out
+
+                .st-loading-spinner
+                    display: block
+                    position: absolute
+                    max-width: 300px
+                    height: auto
+                    top: 50%
+                    left: 50%
+                    transform: translate(-50%,-50%)
+
+                #success
+                    position: absolute
+                    width: 100%
+                    top: 50%
+                    transform: translateY(-50%)
+
+                    h2
+                        font-size: $huge * 5
+                        margin: 0
+                        color: green
+
+                        i
+                            font-size: inherit
+                            font-weight: 700
+
+        footer
+
+            img
+                display: block
+                width: 100%
+                height: auto
 
 @include MQ($mq-desktop)
-    #sttvmodal
+    #st-modal
 
-        .sttvmodal_inner
+        .st-modal-inner
             width: 90%
 
 @include MQ($mq-tablet)
-    #sttvmodal
+    #st-modal
 
-        .sttvmodal_inner
+        .st-modal-inner
             width: 100%
 
 
 @include MQ($mq-mobile)
-    #sttvmodal
+    #st-modal
 
-        .sttvmodal_inner
+        .st-modal-inner
             margin: 0
             width: 100%
             padding: 1em
 
-        .closer-wrapper
+        .st-closer-wrapper
             right: $large
             top: $large
             width: $large
