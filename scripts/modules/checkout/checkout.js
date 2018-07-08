@@ -15,6 +15,7 @@ const Checkout = class {
 				coupon : '',
 				trial: 0
 			},
+			card : false,
 			customer : {
 	
 			},
@@ -117,6 +118,12 @@ const Checkout = class {
 						<span>Same as billing address</span>
 					</label>
 				</div>
+				<div class="st-checkout-spaced col s12">
+					<label>
+						<input name="st-shipping-priority" class="filled-in" type="checkbox" />
+						<span>I want Priority Shipping (+$7.05, U.S. only)</span>
+					</label>
+				</div>
 				<div class="input-field col s12">
 					<input class="browser-default" type="text" name="st-billing-address1" placeholder="Address 1" />
 				</div>
@@ -154,7 +161,7 @@ const Checkout = class {
 					<input class="browser-default" type="text" name="st-card-name" placeholder="Name on card" />
 				</div>
 				<div id="st-checkout-card-element" class="col s12"></div>
-				<script>_st.checkout.setup()</script>
+				<script>if (!_st.checkout.card) _st.checkout.setup()</script>
 			</div>
 			<div class="st-checkout-buttons col s12">
 				<a class="st-checkout-prev st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.prev()"><< Back</a>
@@ -299,7 +306,7 @@ const Checkout = class {
 		card.on( 'change', function( event ) {
 			this.setOutcome( event, '#checkout-wrapper' )
 		});
-
+		this.card = true
 		/* M.updateTextFields()
 		$('select').formSelect()
 		this.update() */
