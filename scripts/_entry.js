@@ -10,10 +10,11 @@ import './modules/events'
 const STTV = class {
 	constructor() {
 		this.stripe = config[config.env].stripe
+		this.root = 'http://localhost:8888/sttvroot'
 		this.resources = {
 			api : 'https://api.supertutortv.com/v2',
 			app : 'https://courses.supertutortv.com',
-			content : 'https://supertutortv.com/wp-content/themes/sttvsite'
+			content : this.root+'/wp-content/themes/sttvsite'
 		}
 		this.cart = cart,
 		this.checkout = checkout,

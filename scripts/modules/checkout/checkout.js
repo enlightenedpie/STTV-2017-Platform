@@ -3,23 +3,25 @@ const Checkout = class {
 	constructor(){
 		Object.assign(this,{
 			valid : false,
+			card : false,
+			reset : null,
 			index : 0,
-			totals : {
+			state : {
+				items : [],
 				total : 0,
 				tax : 0,
 				taxable : 0,
-				shipping : 705,
+				shipping : 0,
 				disc : 0,
 				discp : 0,
-				msg : '',
 				coupon : '',
-				trial: 0
+				trial: 0,
+				customer : {
+					token: ''
+				}
 			},
-			card : false,
-			customer : {
-	
-			},
-			html : ['']
+			html : [],
+			table : []
 		})
 	}
 
@@ -28,177 +30,55 @@ const Checkout = class {
 		_st.request({
 			route: '/checkout?pricing=C3500',
 			success : (data) => {
-			  var p = data.data.pricing
-			  t.totals.total += p.price
-			  t.totals.taxable += p.taxable_amt
-			  t.totals.trial = p.trial_period
-			  typeof cb === 'function' && cb(t)
+				console.log(data)
+				t.html = data.data.html
+				t.state.items.push(data.data.pricing)
+				t.state.trial = data.data.pricing.trial_period
+				t.update()
+				typeof cb === 'function' && cb(t)
 			},
 			error : (err) => {
 			  console.log(err)
 			}
 		  })
-
-		this.html.push(this.constructor.pane1())
-		this.html.push(this.constructor.pane2())
-		this.html.push(this.constructor.pane3())
-		this.html.push(this.constructor.pane4())
-	}
-
-	static pane1() {
-		return `<div id="pane-1" class="st-checkout-pane row">
-			<div class="st-checkout-header col s12">
-				<h2>Okay, let's get started!</h2>
-				<span>You're very close to getting expert tutoring from Brooke Hanson. <strong>NOTE:</strong> Your card will not be charged until your trial period is over, and you're free to cancel at any time. If your course comes with free books, they will not ship until your trial has expired.</span>
-			</div>
-			<div id="st-checkout-account" class="st-checkout-form col s12 l6 push-l3">
-				<div class="input-field col s12 l6 st-input-half-left">
-					<input class="browser-default invalid" type="text" name="st-first-name" placeholder="First Name" required />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-right">
-					<input class="browser-default" type="text" name="st-last-name" placeholder="Last Name" />
-				</div>
-				<div class="input-field col s12">
-					<input class="browser-default" type="email" name="st-email" placeholder="Email Address" />
-				</div>
-				<div class="input-field col s12">
-					<input class="browser-default" type="password" name="st-password" placeholder="Password" />
-				</div>
-			</div>
-			<div class="st-checkout-errors col s12"></div>
-			<div class="st-checkout-buttons col s12">
-				<a class="st-checkout-next st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.next()">Next >></a>
-			</div>
-		</div>`
-	}
-
-	static pane2() {
-		return `<div id="pane-2" class="st-checkout-pane">
-			<div class="st-checkout-header col s12">
-				<h2>What's your billing address?</h2>
-				<span>This is the address associated with the card you are going to use for payment. We use this to verify your payment, so please check the accuracy of the information you provide.</span>
-			</div>
-			<div id="st-checkout-billing" class="st-checkout-form col s12 l6 push-l3">
-				<div class="input-field col s12">
-					<input class="browser-default" type="text" name="st-billing-address1" placeholder="Address 1" />
-				</div>
-				<div class="input-field col s12">
-					<input class="browser-default" type="text" name="st-billing-address1" placeholder="Address 2" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-left">
-					<input class="browser-default" type="text" name="st-billing-city" placeholder="City" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-right">
-					<input class="browser-default" type="text" name="st-billing-state" placeholder="State" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-left">
-					<input class="browser-default" type="text" name="st-billing-postal-code" placeholder="Postal Code" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-right">
-					<input class="browser-default" type="text" name="st-billing-country" placeholder="Country" />
-				</div>
-			</div>
-			<div class="st-checkout-buttons col s12">
-				<a class="st-checkout-prev st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.prev()"><< Back</a>
-				<a class="st-checkout-next st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.next()">Next >></a>
-			</div>
-		</div>`
-	}
-
-	static pane3() {
-		return `<div id="pane-3" class="st-checkout-pane">
-			<div class="st-checkout-header col s12">
-				<h2>Where are we sending your books?</h2>
-				<span>Even if you're signing up for a course that doesn't ship books, we still collect this information to keep on file in your account. We never share this information with anyone.</span>
-			</div>
-			<div id="st-checkout-shipping" class="st-checkout-form col s12 l6 push-l3">
-				<div class="st-checkout-spaced col s12">
-					<label>
-						<input name="st-shipping-copy-billing" class="filled-in" type="checkbox" />
-						<span>Same as billing address</span>
-					</label>
-				</div>
-				<div class="st-checkout-spaced col s12">
-					<label>
-						<input name="st-shipping-priority" class="filled-in" type="checkbox" />
-						<span>I want Priority Shipping (+$7.05, U.S. only)</span>
-					</label>
-				</div>
-				<div class="input-field col s12">
-					<input class="browser-default" type="text" name="st-billing-address1" placeholder="Address 1" />
-				</div>
-				<div class="input-field col s12">
-					<input class="browser-default" type="text" name="st-billing-address1" placeholder="Address 2" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-left">
-					<input class="browser-default" type="text" name="st-billing-city" placeholder="City" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-right">
-					<input class="browser-default" type="text" name="st-billing-state" placeholder="State" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-left">
-					<input class="browser-default" type="text" name="st-billing-postal-code" placeholder="Postal Code" />
-				</div>
-				<div class="input-field col s12 l6 st-input-half-right">
-					<input class="browser-default" type="text" name="st-billing-country" placeholder="Country" />
-				</div>
-			</div>
-			<div class="st-checkout-buttons col s12">
-				<a class="st-checkout-prev st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.prev()"><< Back</a>
-				<a class="st-checkout-next st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.next()">Next >></a>
-			</div>
-		</div>`
-	}
-
-	static pane4() {
-		return `<div id="pane-4" class="st-checkout-pane">
-			<div class="st-checkout-header col s12">
-				<h2>Almost there!</h2>
-				<span>Your total is below. Does everything look correct? If so, enter your credit card info and then hit submit! It's that easy! (Remember, you will not be charged until your {{trial}} day trial period is up.)</span>
-			</div>
-			<div id="st-checkout-shipping" class="st-checkout-form col s12 l6 push-l3">
-				<div class="input-field col s12">
-					<input class="browser-default" type="text" name="st-card-name" placeholder="Name on card" />
-				</div>
-				<div id="st-checkout-card-element" class="col s12"></div>
-				<script>if (!_st.checkout.card) _st.checkout.setup()</script>
-			</div>
-			<div class="st-checkout-buttons col s12">
-				<a class="st-checkout-prev st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.prev()"><< Back</a>
-				<a class="st-checkout-submit st-checkout-btn pmt-button btn waves-effect waves-light" onclick="_st.checkout.submit()" disabled>SUBMIT</a>
-			</div>
-		</div>`
 	}
 
 	next() {
 		if (this.index < 4) {
-			var pane = $('#pane-'+this.index)
-			this.html[this.index] = pane
-			this.index++
-			this.render()
+			var pane = $('#pane-'+this.index),
+				inputs = $('input,select',pane),
+				t = this
+			return this.validate(inputs, function(inp) {
+				t.update(inp.serializeArray())
+				t.html[t.index] = pane
+				t.index++
+				t.render()
+			})
 		}
 	}
 
 	prev() {
 		if (this.index > 1) {
-			var pane = $('#pane-'+this.index)
-			this.html[this.index] = pane
-			this.index--
-			this.render()
+			var pane = $('#pane-'+this.index),
+				inputs = $('input,select',pane)
+				this.update(inputs.serializeArray())
+				this.html[this.index] = pane
+				this.index--
+				this.render()
 		}
 	}
 
 	render(el) {
 		var t = this
 		if (t.index === 0) {
-			t.html.forEach(function(l,i){
+			/* t.html.forEach(function(l,i){
 				if (typeof l !== 'string' || l === '') return
 				
 				t.html[i] = l.replace(/({{)(.*)(}})/g,(match,p1,p2,p3) => {
 					return t.totals[p2]
 				})
 
-			})
+			}) */
 			t.index++
 		}
 		
@@ -210,6 +90,8 @@ const Checkout = class {
 			var wrapper = $('#st-checkout-wrapper')
 			wrapper.empty().append(t.html[t.index])
 		}
+
+		this.renderItemsTable()
 		
 		$('.st-checkout-pane').removeClass('active')
 		setTimeout(function(){
@@ -219,69 +101,88 @@ const Checkout = class {
 		},100)
 	}
 
+	renderItemsTable() {
+		var t = this
+		$('.items-row').fadeOut(100,function() {
+			var that = $(this)
+			that.empty()
+
+			t.table.forEach(function(row){
+				that.append($(row))
+			})
+
+			$('#ttltxt>span').text(t.pricer(t.state.total))
+		}).fadeIn(100)
+	}
+
+	setIndex(itm,ind,val) {
+		if (typeof ind == 'string')
+			return this.setIndex(itm,ind.split('-'), val);
+		else if (ind.length==1 && val!==undefined)
+			return itm[ind[0]] = val;
+		else if (ind.length==0)
+			return itm;
+		else
+			if (typeof itm[ind[0]] == 'undefined') itm[ind[0]] = {}
+			return this.setIndex(itm[ind[0]],ind.slice(1), val);
+	}
+
+	setState(obj) {
+		var t = this
+		if (typeof obj !== 'undefined'){
+			obj.forEach(function(val){
+				val.name = val.name.replace('st-','')
+				t.setIndex(t.state,val.name.split('-'),val.value)
+			})
+		}
+		return this
+	}
+
+	setShipping() {
+		this.state.shipping = 705
+		this.update()
+		return this
+	}
+
 	pricer(price) {
 		return (Math.round(price)/100).toFixed(2)
 	}
 
 	update(obj) {
-		if (obj !== null) {
-			$.extend(this.totals,obj)
+		if (typeof obj !== 'undefined') this.setState(obj)
+		var state = this.state,
+			t = this
+		state.total = state.taxable = 0
+		t.table = []
+
+		for ( var i = 0; i < state.items.length; i++ ) {
+			var item = state.items[i]
+			state.total += item.price
+			state.taxable += item.taxable_amt
+			t.table.push('<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+t.pricer(item.price)+'</div></div>')
 		}
 
-		if ( this.state === this.totals ) {
-			console.log('state unchanged')
-			return false
-		}
-		var items = this.items,
-			keys = Object.keys(items),
-			tot = this.totals
-
-			$('.items-row').fadeOut(100,function() {
-			$(this).empty()
-
-			for ( var i = 0; i < keys.length; i++ ) {
-				if ( i === 0 ) {
-					tot.total = tot.taxable = tot.tax.amt = 0
-				}
-
-				var item = items[keys[i]],
-					price = item.price*item.qty
-
-				if ( item.taxable !== false ) {
-					tot.taxable += item.taxableAmt
-				}
-
-				tot.total += price
-
-				$(this).append('<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+_st.checkout.pricer(price)+'</div></div>')
+			if ( 0 < state.disc ) {
+				var discprice = state.disc;
+			} else if ( 0 < state.discp ) {
+				var discprice = (state.total*(state.discp/100));
 			}
 
-			if ( 0 < tot.disc ) {
-				var discprice = tot.disc;
-			} else if ( 0 < tot.discp ) {
-				var discprice = (tot.total*(tot.discp/100));
+			if (0 < state.disc || 0 < state.discp) {
+				state.total -= discprice
+				t.table.push('<div class="row"><div class="col s2"></div><div class="col s8">Discount ('+state.coupon+')</div><div class="col s2 right-align">-'+t.pricer(discprice)+'</div></div>')
 			}
 
-			if (0 < tot.disc || 0 < tot.discp) {
-				tot.total -= discprice
-				$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">Discount ('+tot.coupon+')</div><div class="col s2 right-align">-'+_st.checkout.pricer(discprice)+'</div></div>')
+			if ( state.tax > 0 ) {
+				let taxxx = (state.taxable*state.tax)/100
+				state.total += taxxx
+				t.table.push('<div class="row"><div class="col s2"></div><div class="col s8">'+state.taxmsg+'</div><div class="col s2 right-align">+'+t.pricer(taxxx)+'</div></div>')
 			}
 
-			if ( tot.tax.rate > 0 ) {
-				tot.tax.amt = (tot.taxable*tot.tax.rate)/100
-				tot.total += tot.tax.amt
-				$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">'+tot.tax.msg+'</div><div class="col s2 right-align">+'+_st.checkout.pricer(tot.tax.amt)+'</div></div>')
+			if ( state.shipping > 0 ) {
+				state.total += state.shipping
+				t.table.push('<div class="row"><div class="col s2"></div><div class="col s8">Priority Shipping</div><div class="col s2 right-align">+'+t.pricer(state.shipping)+'</div></div>')
 			}
-
-			if ( tot.shipping > 0 ) {
-				tot.total += tot.shipping
-				$(this).append('<div class="row"><div class="col s2"></div><div class="col s8">Priority Shipping</div><div class="col s2 right-align">+'+_st.checkout.pricer(tot.shipping)+'</div></div>')
-			}
-
-			$('#ttltxt>span').text(_st.checkout.pricer(tot.total))
-		}).fadeIn(100);
-
-		this.state = $.extend( true, {}, this.totals );
 	}
 
 	setOutcome( result, con ) {
@@ -307,8 +208,7 @@ const Checkout = class {
 			this.setOutcome( event, '#checkout-wrapper' )
 		});
 		this.card = true
-		/* M.updateTextFields()
-		$('select').formSelect()
+		/* 
 		this.update() */
 	}
 
@@ -409,32 +309,34 @@ const Checkout = class {
 		})
 	}
 
-	validate( inputs, context, extra ) {
-		if ( typeof extra === 'undefined' ) {
-			extra = true
+	validate( inputs, cb ) {
+		this.valid = false
+		var context = '#st-modal-inner',
+			that = this,
+			inp = inputs.toArray(),
+			msg = ' is invalid'
+		inp.some( function( v, i ) {
+			var t = $(v)
+			if ( t.is(':required') && ( !t.val() || t.hasClass('invalid') ) ) {
+				if (!t.val()) msg = t.attr('placeholder')+' is required'
+				t.addClass('invalid')
+				return true
+			} else if ( t.hasClass('invalid') ) {
+				msg = t.attr('placeholder')+msg
+				return true
+			}
+			if ( i === inp.length-1) that.valid = true
+			return false
+		})
+		
+		if (!this.valid) {
+			$( 'p.error', context ).text( msg )
+			return this.valid
 		}
 
-		var cEr = true
-
-		inputs.each( function( k, v ) {
-			var t = $(this),
-				msgTag = ''
-
-			if ( t.is(':required') && ( !t.val() || t.hasClass('invalid') ) ) {
-				var msgTag = ( !t.val() ) ? ' is required' : ' is invalid'
-				cEr = false
-				$( '.error', context ).html( $(v).siblings('label').text()+msgTag );
-			} else if ( t.hasClass('invalid') ) {
-				cEr = false
-				$( '.error', context ).html( $(v).siblings('label').text()+' is invalid' );
-			}
-
-			if ( !cEr ) { return cEr }
-		});
-
-		$( '.signup-submit', context ).prop( 'disabled', !( cEr && extra ) );
-
-		return ( cEr && extra )
+		$( 'p.error', context ).text('')
+		$( '.st-checkout-submit', context ).prop( 'disabled', !( this.valid ) )
+		typeof cb === 'function' && cb(inputs)
 	}
 }
 

@@ -7,26 +7,31 @@ body
 	color: $ltblack
 	background-color: $bodybg
 
-	#main-wrapper #not-header-wrapper, #sttvmodal
+	#main-wrapper #not-header-wrapper, #st-modal
 
 		.input-field input:focus + label, .input-field textarea.materialize-textarea:focus + label, .input-field .prefix.active
 			color: $azure
 
 		.input-field input:focus, .input-field textarea.materialize-textarea:focus
-			border-bottom: 1px solid $azure
-			box-shadow: 0 1px 0 0 $azure
 
 		input:-webkit-autofill
 			background-color: inherit
 
-		[type="checkbox"].filled-in:checked+label:after, [type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after
-			border: 2px solid $azure
+		[type="checkbox"].filled-in:checked+span:not(.lever):after, [type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after
+			border: 1px solid $azure
 			background-color: $azure
+
+		[type="checkbox"].filled-in:not(:checked)+span:not(.lever):after
+			border: 1px solid $qtrblack
 
 		.dropdown-content
 
 			li>span, li>a
 				color: $azure
+	
+	input:focus
+		outline: none
+
 
 	label
 		width: 100% !important

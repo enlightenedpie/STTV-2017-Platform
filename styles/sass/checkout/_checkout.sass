@@ -20,7 +20,7 @@ body.page-template-signup
 			&.st-input-half-right
 				padding-left: $tiny
 
-		input
+		input, select, #st-checkout-card-element
 			padding: $tiny $small
 			margin-bottom: 1em
 			width: 100%
@@ -30,6 +30,9 @@ body.page-template-signup
 
 			&.invalid
 				border: 1px solid red
+			
+			&.valid
+				border: 1px solid green
 
 			&:focus:not(.invalid)
 				border: 1px solid $azure
@@ -39,13 +42,21 @@ body.page-template-signup
 				color: $qtrblack
 				font-style: italic
 
+		select
+			-webkit-appearance: none
+			-moz-appearance: none
+			appearance: none
+
+			&.selector, option:selected
+				color: $ltblack
+
 		.st-checkout-pane
 			opacity: 0
 			visibility: hidden
 			transition: opacity .1s ease-in-out
 
 			.st-checkout-spaced
-				margin-bottom: 1em
+				margin-bottom: $tiny
 
 			.st-checkout-header
 				text-align: center
@@ -68,9 +79,26 @@ body.page-template-signup
 			.st-checkout-buttons
 				text-align: center
 
+			#st-checkout-items-table
+				margin-bottom: 1em
+				background-image: url('../i/sttv-border.png')
+				background-repeat: no-repeat
+				background-position: center bottom
+				background-size: 100% 5px
 
+				.items-row .row
+					padding: $small 0
 
+				.totals-row
+					margin-bottom: 1em
 
+					#ttltxt
+						font-size: $large
+						color: green
+
+					input[name="st-coupon"]
+						font-size: $small
+						margin-bottom: 0
 
 @include MQ($mq-mobile)
 	body.page-template-signup

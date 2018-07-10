@@ -1,40 +1,32 @@
 import $ from 'jquery'
 
 $(document).ready(function(){
-    
+    //$('#st-modal-overlay').css('background-image', 'url(' + _st.resources.content + '/i/sttv-loader-rings.gif)')
 })
 
 // BEGIN Checkout form handlers //
-$('#same_as_billing').on('change',function() {
+$(document).on('change','input[name="st-customer-shipping-copy-billing"]',function() {
     if ($(this).is(":checked")) {
-
-        $('input[name=sttv_shipping_address1]').val($('input[name=sttv_billing_address1]').val());
-        $('input[name=sttv_shipping_address2]').val($('input[name=sttv_billing_address2]').val());
-        $('input[name=sttv_shipping_city]').val($('input[name=sttv_billing_city]').val());
-        $('input[name=sttv_shipping_state]').val($('input[name=sttv_billing_state]').val());
-        $('input[name=sttv_shipping_pcode]').val($('input[name=sttv_billing_pcode]').val());
-        $('select[name=sttv_shipping_country]').val($('select[name=sttv_billing_country]').val());
-
-        $('select').formSelect()
-
+        var billing = _st.checkout.state.customer.billing
+        $('input.shipping, select.shipping').each(function(){
+            var classes = this.className.split(/\s+/),
+                el = $(this)
+            classes.some(function(a){
+                return billing[a] && el.val(billing[a])
+            })
+        })
     } else {
-        $("#shipping_fields :input").each(function(){
+        $("input.shipping").each(function(){
             $(this).val('')
         });
-        $("select[name=sttv_shipping_country]").prop("selectedIndex", -1)
+        $("select.shipping").prop("selectedIndex", -1)
     }
-
-    M.updateTextFields()
-    $( 'input, select', '#shipping_fields' ).blur()
+    $( 'input, select', '#st-checkout-shipping' ).blur()
 })
 
-$('[name=shipping_options]').on({
-    change : function(e) {
-        e.preventDefault()
-        _st.checkout.update({
-            shipping : parseInt($(this).filter(':checked').val())
-        })
-    }
+$(document).on('change','[name="st-customer-shipping-priority"]',function(e){
+    e.preventDefault()
+    _st.checkout.setShipping()
 })
 
 $('[name=sttv_billing_pcode]').on({
