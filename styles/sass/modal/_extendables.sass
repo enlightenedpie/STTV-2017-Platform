@@ -1,0 +1,38 @@
+// modal extendables
+%st-modal-form-wrapper
+    position: relative
+    padding: 0 1em
+
+%st-modal-form-fields
+    margin: $medium 0
+
+%st-modal-form-btns
+    text-align: center
+
+%st-modal-form-btn
+    top: -3px
+    @include btncolor
+
+%st-modal-form-header
+    text-align: center
+
+    h2
+        margin-top: 0
+        color: $sunrise
+        
+    span
+        font-size: $small
+        font-style: italic
+
+        a
+            text-decoration: underline
+            cursor: pointer
+
+@mixin st-modal-form-pane ()
+    opacity: 0
+    display: none
+    transition: all .25s ease-in-out
+
+    &.active
+        opacity: 1
+        visibility: visible

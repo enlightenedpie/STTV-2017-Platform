@@ -1,21 +1,33 @@
 /* Let's define the checkout object with methods and properties */
 const Checkout = class {
-	constructor(){
+	constructor(id){
 		Object.assign(this,{
 			valid : false,
 			card : false,
-			reset : null,
+			stripe : null,
+			elements : null,
+			tempId : id,
 			index : 0,
 			state : {
+				id : '',
+      			signature : '',
 				items : [],
-				total : 0,
-				tax : 0,
-				taxable : 0,
-				shipping : 0,
-				disc : 0,
-				discp : 0,
-				coupon : '',
 				trial: 0,
+				total : 0,
+				shipping : 0,
+				taxable : 0,
+				tax : {
+					id: '',
+					val: ''
+				},
+				coupon : {
+					id: '',
+					val: ''
+				},
+				email: {
+					id: '',
+					val: ''
+				},
 				customer : {
 					token: ''
 				}
@@ -25,22 +37,45 @@ const Checkout = class {
 		})
 	}
 
+	copyAddress(el) {
+		var billing = this.state.customer.billing,
+			elems = document.querySelectorAll('input.shipping, select.shipping')
+		elems.forEach(function(v){
+			if (el.checked) {
+				var classes = v.className.split(/\s+/)
+				classes.some(function(a){
+					return v.value = billing[a] || ''
+				})
+			} else {
+				if (v.selectedIndex) {
+					v.selectedIndex = 0
+				} else {
+					v.value = ''
+				}
+			}
+			v.focus()
+			v.blur()
+		})
+	}
+
 	init(cb) {
 		var t = this
 		_st.request({
-			route: '/checkout?pricing=C3500',
+			route: '/checkout?pricing='+t.tempId, //C3500
 			success : (data) => {
-				console.log(data)
-				t.html = data.data.html
+				data.data.html.forEach(function(v){
+					t.html.push($(v))
+				})
 				t.state.items.push(data.data.pricing)
 				t.state.trial = data.data.pricing.trial_period
 				t.update()
 				typeof cb === 'function' && cb(t)
+				t.setIDSignature()
 			},
 			error : (err) => {
 			  console.log(err)
 			}
-		  })
+		})
 	}
 
 	next() {
@@ -68,35 +103,34 @@ const Checkout = class {
 		}
 	}
 
+	pricer(price) {
+		return (Math.round(price)/100).toFixed(2)
+	}
+
 	render(el) {
 		var t = this
 		if (t.index === 0) {
-			/* t.html.forEach(function(l,i){
-				if (typeof l !== 'string' || l === '') return
-				
-				t.html[i] = l.replace(/({{)(.*)(}})/g,(match,p1,p2,p3) => {
-					return t.totals[p2]
-				})
-
-			}) */
-			t.index++
-		}
-		
-		if (typeof el !== 'undefined') {
 			var wrapper = $('<div id="st-checkout-wrapper" class="col s12"></div>')
-			wrapper.html(t.html[t.index])
-			wrapper.appendTo(el)
+			if (typeof el !== 'undefined') wrapper.appendTo(el)
+			t.html.forEach(function(v){
+				wrapper.append(v)
+			})
+			t.index++
 		} else {
 			var wrapper = $('#st-checkout-wrapper')
-			wrapper.empty().append(t.html[t.index])
 		}
+
+		var currentPane = $('#pane-'+t.index)
 
 		this.renderItemsTable()
 		
-		$('.st-checkout-pane').removeClass('active')
+		$('.st-checkout-pane').fadeOut(100,function(){
+			$(this).removeClass('active').hide()
+		})
 		setTimeout(function(){
+			currentPane.show()
 			setTimeout(function(){
-				$('#pane-'+t.index).addClass('active')
+				currentPane.addClass('active')
 			},100)
 		},100)
 	}
@@ -115,37 +149,113 @@ const Checkout = class {
 		}).fadeIn(100)
 	}
 
-	setIndex(itm,ind,val) {
-		if (typeof ind == 'string')
-			return this.setIndex(itm,ind.split('-'), val);
-		else if (ind.length==1 && val!==undefined)
-			return itm[ind[0]] = val;
-		else if (ind.length==0)
-			return itm;
-		else
-			if (typeof itm[ind[0]] == 'undefined') itm[ind[0]] = {}
-			return this.setIndex(itm[ind[0]],ind.slice(1), val);
+	setChecker(el) {
+		function clear(el,reset) {
+			$('p.error').text('')
+			el.classList.remove('valid', 'invalid')
+			if (typeof reset !== 'undefined' && reset) t.state[p] = {'id':'','val':''}
+			t.update().renderItemsTable()
+			return true
+		}
+		var t = this,
+			params = ['coupon','email','tax'],
+			p = false
+			params.some(function(v){
+				if (el.classList.contains(v)) p = v
+				return el.classList.contains(v)
+			})
+		
+		if (el.value === '') return clear(el,true)
+
+		if (el.value === t.state[p].val) return false
+
+		_st.request({
+			route : '/checkout?'+p+'='+el.value+'&sig='+t.state.signature,
+			success : function(d) {
+				clear(el)
+				switch (d.code) {
+					case 'coupon_valid':
+					case 'email_available':
+					case 'checkout_tax':
+						el.classList.add('valid')
+						break;
+					case 'coupon_invalid':
+					case 'coupon_expired':
+					case 'email_taken':
+						el.classList.add('invalid')
+						$('p.error').text(d.message)
+						break;
+					default:
+						return 'What\'re you even doing here?'
+				}
+				t.state[p] = {
+					id: d.id,
+					val: d.value
+				}
+				t.update().renderItemsTable()
+			},
+			error : function(x){
+				console.log(x)
+			}
+		})
+		return this
 	}
 
-	setState(obj) {
+	setIDSignature() {
+		delete this['tempId']
+		this.state.id = Date.now()
+		this.state.signature = btoa(navigator.userAgent+'|'+navigator.platform+'|'+navigator.product).replace(/=/g,'')
+		return this
+	}
+
+	setIndex(itm,ind,val) {
+		var nInd = ind[0]
+		if (typeof ind == 'string')
+			return this.setIndex(itm,ind.split('-'), val)
+		else if (ind.length==1 && typeof val !== 'undefined') {
+			return itm[nInd] =  val
+		} else if (ind.length==0)
+			return itm;
+		else
+			if (typeof itm[nInd] === 'undefined') itm[nInd] = {}
+			return this.setIndex(itm[nInd],ind.slice(1), val)
+	}
+
+	setOutcome( result, con = document ) {
 		var t = this
-		if (typeof obj !== 'undefined'){
-			obj.forEach(function(val){
-				val.name = val.name.replace('st-','')
-				t.setIndex(t.state,val.name.split('-'),val.value)
+		if ( typeof result.error !== 'undefined' ) {
+			return $( '.error', con ).text( result.error.message );
+		} else {
+			$( '.error', con ).text( '' );
+		}
+
+		if ( !result.empty && result.complete ) {
+			var inputs = $( 'input, select', con )
+			_st.checkout.validate( inputs, function(inp) {
+				t.update(inp.serializeArray())
+				t.valid = true
+				t.enableSubmit()
 			})
+		}
+	}
+
+	setState(arr) {
+		var t = this
+		if (typeof arr !== 'undefined'){
+			for (let a = 0; a < arr.length; a++) {
+				let v = arr[a].name.split('|')
+				for (let i = 0; i < v.length; i++) {
+					t.setIndex(t.state,v[i].replace('st-','').split('-'),arr[a].value)
+				}
+			}
 		}
 		return this
 	}
 
-	setShipping() {
-		this.state.shipping = 705
+	setShipping(el) {
+		this.state.shipping = (el.checked) ? 705 : 0
 		this.update()
 		return this
-	}
-
-	pricer(price) {
-		return (Math.round(price)/100).toFixed(2)
 	}
 
 	update(obj) {
@@ -159,95 +269,69 @@ const Checkout = class {
 			var item = state.items[i]
 			state.total += item.price
 			state.taxable += item.taxable_amt
-			t.table.push('<div class="row"><div class="col s2">'+item.qty+'</div><div class="col s8">'+item.name+'</div><div class="col s2 right-align">'+t.pricer(item.price)+'</div></div>')
+			t.table.push('<div class="row"><div class="col s8">'+item.name+'</div><div class="col s4 right-align">'+t.pricer(item.price)+'</div></div>')
 		}
 
-			if ( 0 < state.disc ) {
-				var discprice = state.disc;
-			} else if ( 0 < state.discp ) {
-				var discprice = (state.total*(state.discp/100));
-			}
+		var disc = state.coupon.val.match(/\\$([0-9]+)/) || ['0','0'],
+			discp = state.coupon.val.match(/([0-9]+)%/) || ['0','0'],
+			discprice = state.total*(parseInt(discp[1])/100) || parseInt(disc[1])
 
-			if (0 < state.disc || 0 < state.discp) {
-				state.total -= discprice
-				t.table.push('<div class="row"><div class="col s2"></div><div class="col s8">Discount ('+state.coupon+')</div><div class="col s2 right-align">-'+t.pricer(discprice)+'</div></div>')
-			}
-
-			if ( state.tax > 0 ) {
-				let taxxx = (state.taxable*state.tax)/100
-				state.total += taxxx
-				t.table.push('<div class="row"><div class="col s2"></div><div class="col s8">'+state.taxmsg+'</div><div class="col s2 right-align">+'+t.pricer(taxxx)+'</div></div>')
-			}
-
-			if ( state.shipping > 0 ) {
-				state.total += state.shipping
-				t.table.push('<div class="row"><div class="col s2"></div><div class="col s8">Priority Shipping</div><div class="col s2 right-align">+'+t.pricer(state.shipping)+'</div></div>')
-			}
-	}
-
-	setOutcome( result, con ) {
-		if ( typeof result.error !== 'undefined' ) {
-			$( '.error', con ).text( result.error.message );
-		} else {
-			$( '.error', con ).text( '' );
+		if (0 < discprice) {
+			state.total -= discprice
+			t.table.push('<div class="row"><div class="col s8">Discount ('+state.coupon.id+')</div><div class="col s4 right-align">-'+t.pricer(discprice)+'</div></div>')
 		}
 
-		var inputs = $( 'input, select', con )
-		_st.checkout.validate( inputs, con, result.complete )
+		if ( parseFloat(state.tax.val) > 0 ) {
+			let taxxx = (state.taxable*parseFloat(state.tax.val))/100
+			state.total += taxxx
+			t.table.push('<div class="row"><div class="col s8">'+state.tax.id+'</div><div class="col s4 right-align">+'+t.pricer(taxxx)+'</div></div>')
+		}
+
+		if ( state.shipping > 0 ) {
+			state.total += state.shipping
+			t.table.push('<div class="row"><div class="col s8">Priority Shipping</div><div class="col s4 right-align">+'+t.pricer(state.shipping)+'</div></div>')
+		}
+		return this
 	}
 
 	setup() {
-		var stripe = Stripe(_st.stripe.publicKey)
-		var elements = stripe.elements()
-		var card = elements.create('card',{
+		this.stripe = Stripe(_st.stripe.publicKey)
+		this.elements = this.stripe.elements()
+		this.card = this.elements.create('card',{
 			hidePostalCode: true
-		});
-		card.mount('#st-checkout-card-element');
+		})
+		
+		this.card.mount('#st-checkout-card-element')
 
-		card.on( 'change', function( event ) {
-			this.setOutcome( event, '#checkout-wrapper' )
-		});
-		this.card = true
-		/* 
-		this.update() */
+		var t = this
+		this.card.on( 'change', function( event ) {
+			t.setOutcome( event, '#st-checkout-wrapper' )
+		})
 	}
 
-	submit( data ) {
-		_st.modal.loader(function(){
-			var mo = $('#modal_loading_overlay')
+	submit() {
+		_st.modal.loader()
+		var cus = this.state.customer,
+			t = this
 
-			mo.find('*').not('img').remove()
-
-			mo.append('<h2 style="margin-top:4em">Authorizing card...</h2>')
-				.append('<span>(Patience, young padawan... This will take a moment.)</span>');
-		})
-		var det = {
-			name: data.cardname,
-			address_line1: data.billing_address1,
-			address_line2: data.billing_address2,
-			address_city: data.billing_city,
-			address_state: data.billing_state,
-			address_zip: data.billing_pcode,
-			address_country: data.billing_country
-		}
-
-		stripe.createToken(card, det).then(function(result){
+		t.stripe.createToken(t.card, cus.billing).then(function(result){
 			if (result.error) {
 				console.log(result.error)
 				return _st.modal.loader(function(el){
 					$('.error',el).text(result.error.message)
 				})
 			} else {
-				$('#modal_loading_overlay h2').text('Processing order...')
-				data.token = result.token
-				data.cart = _st.cart.cartObj
+				cus.token = result.token.id
+				cus.shipping.name = cus.firstname+' '+cus.lastname
+				delete cus.shipping.copy
 
 				_st.request({
 					route : '/checkout',
 					method : 'POST',
-					cdata : data,
+					cdata : t.state,
 					success : function(d) {
-						console.log(d)
+						window.location.href = _st.resources.app
+						return console.log(d)
 
 						if ( 'error' === d.code ) {
 							var ecode = d.error.decline_code || d.error.code
@@ -293,8 +377,6 @@ const Checkout = class {
 								page : '/checkout'
 							})
 
-							_st.cart.unset()
-
 							setTimeout(function(){
 								window.location.href = d.order.redirect
 							},3000)
@@ -309,10 +391,20 @@ const Checkout = class {
 		})
 	}
 
+	enableSubmit() {
+		if (this.valid) {
+			document.querySelector('.st-checkout-submit').removeAttribute( 'disabled' )
+		}
+	}
+
+	disableSubmit() {
+		document.querySelector('.st-checkout-submit').setAttribute( 'disabled', '' )
+	}
+
 	validate( inputs, cb ) {
-		this.valid = false
+		this.disableSubmit()
 		var context = '#st-modal-inner',
-			that = this,
+			ctrl = false,
 			inp = inputs.toArray(),
 			msg = ' is invalid'
 		inp.some( function( v, i ) {
@@ -320,22 +412,20 @@ const Checkout = class {
 			if ( t.is(':required') && ( !t.val() || t.hasClass('invalid') ) ) {
 				if (!t.val()) msg = t.attr('placeholder')+' is required'
 				t.addClass('invalid')
-				return true
+				return ctrl = true
 			} else if ( t.hasClass('invalid') ) {
 				msg = t.attr('placeholder')+msg
-				return true
+				return ctrl = true
 			}
-			if ( i === inp.length-1) that.valid = true
 			return false
 		})
 		
-		if (!this.valid) {
+		if (ctrl) {
 			$( 'p.error', context ).text( msg )
-			return this.valid
+			return !ctrl
 		}
 
 		$( 'p.error', context ).text('')
-		$( '.st-checkout-submit', context ).prop( 'disabled', !( this.valid ) )
 		typeof cb === 'function' && cb(inputs)
 	}
 }

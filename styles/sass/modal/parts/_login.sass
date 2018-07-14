@@ -1,0 +1,32 @@
+@import '../_extendables.sass'
+
+body.login-redirect-modal
+
+	#st-modal
+
+		& #st-closer-wrapper
+			visibility: hidden
+
+		#st-modal-errors
+			margin-bottom: 1em
+
+		#st-modal-inner
+			width: $bodyw / 2
+
+		#st-login-wrapper
+			@extend %st-modal-form-wrapper
+
+			.st-login-btn
+				@extend %st-modal-form-btn
+
+			.st-login-pane
+				@include st-modal-form-pane()
+
+				.st-login-header
+					@extend %st-modal-form-header
+
+				.st-login-form
+					@extend %st-modal-form-fields
+
+				.st-login-buttons
+					@extend %st-modal-form-btns

@@ -17,12 +17,31 @@ body
 		input:-webkit-autofill
 			background-color: inherit
 
-		[type="checkbox"].filled-in:checked+span:not(.lever):after, [type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after
-			border: 1px solid $azure
-			background-color: $azure
+		[type="checkbox"]+span:not(.lever)
+			height: $medium
+			line-height: 1em
+			padding-left: 2em
+		
+		[type="checkbox"].filled-in:checked+span:not(.lever)
+			
+			&:after
+				border: 1px solid $azure
+				background-color: $azure
+				height: 1em
+				width: 1em
+				margin-top: 0
+
+			&:before
+				top: 2px
+				margin-top: 0
+				width: $ittybitty * 1.5
+				height: $ittybitty * 2.5
 
 		[type="checkbox"].filled-in:not(:checked)+span:not(.lever):after
 			border: 1px solid $qtrblack
+			height: 1em
+			width: 1em
+			margin-top: 0
 
 		.dropdown-content
 

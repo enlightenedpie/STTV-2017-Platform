@@ -1,11 +1,13 @@
+@import './parts/**/*.sass'
+
 body.modal-open
     overflow: hidden
+    
+    & > #st-modal
+        opacity: 1
+        visibility: visible
 
-body.modal-open #st-modal
-	opacity: 1
-	visibility: visible
-
-#st-modal
+body > #st-modal
     position: fixed
     width: 100vw
     height: 100vh
@@ -32,17 +34,17 @@ body.modal-open #st-modal
         background-color: rgb(255,255,255)
         overflow: hidden
         position: relative
-        top: 7%
-        margin: 0 auto $huge
+        top: 5%
+        margin: 0 auto
         z-index: 1000
-        width: $bodyw / 2
+        width: $bodyw / 2 + 100
         border-radius: 10px
         
         header
             position: relative
             background-color: $mdblack
             color: $transwht
-            padding: $small
+            padding: $tiny
             font-weight: 700
             font-size: $medium
             text-transform: uppercase
@@ -57,18 +59,71 @@ body.modal-open #st-modal
             #st-closer-wrapper
                 text-align: right
                 cursor: pointer
+        
+        #st-modal-errors
+            font-size: $small
+            color: red
 
         #st-modal-inner-content
             position: relative
             padding: 1em 1em 0 1em
-            height: auto
-            min-height: 20em
+            min-height: 15em
 
             &.loader-active > #st-modal-overlay
                 opacity: 1
                 visibility: visible
 
             #st-modal-inner-content-inner
+                .input-field
+                    margin: 0
+
+                    &.st-input-half-left
+                        padding-right: $tiny
+
+                    &.st-input-half-right
+                        padding-left: $tiny
+
+                    &>label
+                        position: relative
+
+                input, select, #st-checkout-card-element
+                    padding: $tiny $small
+                    margin-bottom: 1em
+                    width: 100%
+                    border-radius: $ittybitty
+                    border: 1px solid $qtrblack
+                    transition: border .25s linear
+
+                    &.invalid
+                        border: 1px solid red
+                    
+                    &.valid
+                        border: 1px solid green
+
+                    &:focus:not(.invalid)
+                        border: 1px solid $azure
+
+                    &::placeholder
+                        opacity: 1
+                        color: $qtrblack
+                        font-style: italic
+
+                select
+                    -webkit-appearance: none
+                    -moz-appearance: none
+                    appearance: none
+
+                    &.selector, option:selected
+                        color: $ltblack
+
+                .input-field.required:before, .input-field.required [type="checkbox"]:required+label:after
+                    color: red
+                    display: block
+                    height: 0
+                    position: absolute
+                    top: 25%
+                    right: 1em
+                    content: "*"
 
             #st-modal-overlay
                 opacity: 0
@@ -126,32 +181,49 @@ body.modal-open #st-modal
                 height: auto
 
 @include MQ($mq-desktop)
-    #st-modal
+    body.modal-open
 
-        .st-modal-inner
-            width: 90%
+        #st-modal
+
+            #st-modal-inner
+                top: 50%
+                transform: translateY(-50%)
 
 @include MQ($mq-tablet)
-    #st-modal
+    body.modal-open
 
-        .st-modal-inner
-            width: 100%
+        #st-modal
 
+            #st-modal-inner
+                width: 80%
 
 @include MQ($mq-mobile)
-    #st-modal
+    body.modal-open
 
-        .st-modal-inner
-            margin: 0
-            width: 100%
+        #st-modal
             padding: 1em
 
-        .st-closer-wrapper
-            right: $large
-            top: $large
-            width: $large
-            height: $large
-            z-index: 99999
+            #st-modal-inner
+                width: 100%
+                margin: 0
+                top: 0
 
-            .material-icons
-                font-size: $large
+                header
+
+                    #st-closer-wrapper
+                        right: $large
+                        z-index: 99999
+
+                        .material-icons
+                            font-size: $large
+            
+                #st-modal-inner-content
+
+                    #st-modal-overlay
+                        background-size: 60%
+                    
+                    .input-field
+
+                        &.st-input-half-left, &.st-input-half-right
+                            padding: 0
+

@@ -1,0 +1,59 @@
+@import '../_extendables.sass'
+
+body.checkout-modal
+
+	#st-checkout-wrapper
+		@extend %st-modal-form-wrapper
+
+		.st-checkout-btn
+			@extend %st-modal-form-btn
+
+		.st-checkout-pane
+			@include st-modal-form-pane()
+
+			.st-checkout-spaced
+				margin-bottom: $tiny
+
+			.st-checkout-header
+				@extend %st-modal-form-header
+
+			.st-checkout-form
+				@extend %st-modal-form-fields
+
+			.st-checkout-buttons
+				@extend %st-modal-form-btns
+
+			.st-checkout-options
+				font-size: $small
+				margin-bottom: 1em
+
+				&:after
+					display: block
+					height: 0
+					clear: both
+
+			#st-checkout-items-table
+				margin-bottom: 1em
+				background-image: url('../i/sttv-border.png')
+				background-repeat: no-repeat
+				background-position: center bottom
+				background-size: 100% 5px
+
+				.row
+					padding-bottom: $small
+				
+				.items-row
+					font-size: $small
+
+				.totals-row
+					margin-bottom: $small
+
+					#ttltxt
+						font-size: $large
+						color: green
+
+					input[name="st-coupon-val"]
+						font-size: $small
+						margin-bottom: 0
+
+@include MQ($mq-mobile)

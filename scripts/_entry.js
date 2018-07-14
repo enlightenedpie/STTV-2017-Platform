@@ -1,7 +1,6 @@
-import cart from './modules/cart'
 import checkout from './modules/checkout/checkout'
 import config from './modules/utilities/config'
-import form from './modules/form'
+import login from './modules/login'
 import modal from './modules/modal'
 import mu from './modules/mu'
 import * as func from './modules/functions'
@@ -16,10 +15,9 @@ const STTV = class {
 			app : 'https://courses.supertutortv.com',
 			content : this.root+'/wp-content/themes/sttvsite'
 		}
-		this.cart = cart,
-		this.checkout = checkout,
-		this.form = form,
-		this.modal = modal,
+		this.checkout = checkout
+		this.login = login
+		this.modal = modal
 		this.mu = mu
 	}
 

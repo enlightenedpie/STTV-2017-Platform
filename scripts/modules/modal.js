@@ -29,7 +29,7 @@ const Modal = class {
         break
       case 'login':
         cb = function(el) {
-          _st.login(el)
+          _st.login = new _st.login(el)
         }
         break
       case 'mu-checkout':
@@ -45,11 +45,11 @@ const Modal = class {
       case 'sttv-cart':
       case 'checkout':
         cb = function(el) {
-          _st.checkout = new _st.checkout()
-          _st.checkout.init(((x) => {
+          _st.checkout = new _st.checkout('C3500')
+          _st.checkout.init((x) => {
             x.render(el)
             t.loader()
-          }))
+          })
         }
         break
     }
