@@ -61,16 +61,23 @@ const Checkout = class {
 	init(cb) {
 		var t = this
 		_st.request({
-			route: '/checkout?pricing='+t.tempId, //C3500
+			route: '/checkout?pricing='+t.tempId,
 			success : (data) => {
 				data.data.html.forEach(function(v){
 					t.html.push($(v))
 				})
-				t.state.items.push(data.data.pricing)
-				t.state.trial = data.data.pricing.trial_period
+				t.state.items = data.data.pricing
 				t.update()
 				typeof cb === 'function' && cb(t)
 				t.setIDSignature()
+
+				ga('ec:addImpression', {
+					'id': t.state.signature,
+					'name': t.tempID,
+					'category': 'Courses/Subscriptions',
+					'brand': 'SupertutorTV',
+					'list': 'Sales Page'
+				})
 			},
 			error : (err) => {
 			  console.log(err)
@@ -330,57 +337,34 @@ const Checkout = class {
 					method : 'POST',
 					cdata : t.state,
 					success : function(d) {
-						window.location.href = _st.resources.app
-						return console.log(d)
 
-						if ( 'error' === d.code ) {
+						if ( 'stripe_error' === d.code ) {
 							var ecode = d.error.decline_code || d.error.code
 							_st.modal.loader(function(el){
 								$('p.error',el).html('<span class="col s12">We\'re sorry. '+d.error.message+'</span><span class="col s12">err code: '+ecode+'</span>')
 							})
-						} else if ( 'success' === d.code ) {
-							var success = $('<div/>',{
-								id: 'success',
-								'class': 'col s12'
-							}).append('<h2><i class="material-icons">done</i></h2><br/><span>'+d.message+'</span>')
-
-							$('#modal_loading_overlay')
-								.empty()
-								.append(success)
-
-							var lines = d.order.invoice.data[0].lines.data,
-								tax = shipping = '0',
-								coupon = d.order.invoice.data[0].discount || ''
-
-							for (var i = 0, len = lines.length; i < len; i++) {
-								var line = lines[i]
-
-								if ( line.description === 'Sales tax' ) {
-									tax = (line.amount/100).toFixed(2)
-								} else if ( line.description === 'Priority Shipping' ) {
-									shipping = (line.amount/100).toFixed(2)
-								}
-							}
-
-							_st.analytics({
-								type : 'ec:setAction',
-								action : 'purchase',
-								data : {
-									'id' : d.cart.ID,
-									'revenue' : (d.order.invoice.data[0].amount_paid/100).toFixed(2),
-									'tax' : tax,
-									'shipping' : shipping,
-									'coupon' : coupon,
-									'affiliation' : 'SupertutorTV Online Store'
-								},
-								pageview : true,
-								page : '/checkout'
-							})
-
-							setTimeout(function(){
-								window.location.href = d.order.redirect
-							},3000)
+							return false
 						}
+						
+						var resp = d.response
+						_st.analytics({
+							type : 'ec:setAction',
+							action : 'purchase',
+							data : {
+								'id' : resp.metadata.checkout_id,
+								'revenue' : (resp.total/100).toFixed(2),
+								'tax' : t.state.tax.val,
+								'shipping' : t.state.shipping,
+								'coupon' : t.state.coupon.id,
+								'affiliation' : 'SupertutorTV Online Store'
+							},
+							pageview : true,
+							page : location.pathname
+						})
+
+						setTimeout(function(){
+							window.location.href = _st.resources.app
+						},1000)
 					},
 					error : function(x) {
 						var d = x[0].responseJSON

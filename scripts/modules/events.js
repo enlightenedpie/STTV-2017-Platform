@@ -1,7 +1,14 @@
 import $ from 'jquery'
 
 $(document).ready(function(){
-    //$('#st-modal-overlay').css('background-image', 'url(' + _st.resources.content + '/i/sttv-loader-rings.gif)')
+    $('.parallax').parallax()
+    $('.sidenav').sidenav()
+    $('.dropdown-trigger').dropdown()
+})
+
+$(document).on('click','.login-modal',function(e) {
+    e.preventDefault()
+    _st.modal.init('login')
 })
 
 // END Checkout form handlers //
@@ -102,7 +109,7 @@ $(document).on('click','.slide-bar',function(e) {
 // ########################## //
 
 // BEGIN Modal window handler
-var selectors = '.st-dismiss, .mu-signup, .mu-submitter, .cart-fab, .payment-launcher'
+var selectors = '.st-dismiss, .mu-signup, .mu-submitter, .cart-fab'
 $(document).on('click',selectors,function(e) {
     e.preventDefault();
     var t = $(this),
@@ -111,7 +118,6 @@ $(document).on('click',selectors,function(e) {
 
     var f = {
         'mu-signup' : 'mu-signup',
-        'payment-launcher' : 'checkout',
         'st-dismiss' : 'close',
         'mu-submitter' : 'mu-checkout',
         'cart-fab' : 'sttv-cart'

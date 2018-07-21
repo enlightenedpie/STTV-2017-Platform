@@ -1,80 +1,60 @@
-#front-main
-	padding: 1em
-	
-	#triptych
-		+wfull
-		
-		div[id$="_panel"]
-			display: inline-block
-			padding: 1em
-			
-			.tripicon-wrap
-				margin-bottom: 1em
-				
-				.tripicon
-					font-size: $huge * 3
-				
+body.page-template-front
 
-.triptext
-	padding: 1em !important
-	text-align: center
-	
-.billboard
-	margin-bottom: 0px
-	color: black
-	min-height: $huge * 6
-	display: flex
-	
-	div.col
-		position: relative
-	
-	.bb-inner
-		display: block
-		
-		h3
-			margin-top: 0px
-	
-	img
-		+wfull
-		height: auto
-		display: block
-	
-	ul
-		display: block
-		list-style-type: none
-		font-size: $small
-		margin-bottom: 1em
-		
-		li
-			display: list-item
-			list-style-type: none
-			line-height: $large
+	#st-stage-front
+		color: white
+		background-color: black
+		margin-bottom: 0
 
-#front-latest-post
-	text-align: center
-	padding: $huge
-	
-	h2, h4
-		text-transform: uppercase
-		font-weight: 700
-	
-	figure
-		padding: 0px
-		margin: 0px
+		.tinted
+			filter: brightness(75%)
 
-		img
-			display: block
+		.col
+			padding: 0
+
+		.parallax
+			z-index: 500
+
+		.parallax-container
+			height: 720px
+
+			.st-parallax-inner
+				position: relative
+				width: 100%
+				max-width: $bodyw
+				height: 100%
+				margin: 0 auto
+				z-index: 501
+
+				.st-parallax-content
+					position: absolute
+					bottom: $huge * 2
+
+					.st-parallax-text-block
+						display: block
+						width: 50%
+	
+	#st-banners-front
+		color: white
+		margin-bottom: 0
+		transform: translateY(-50%)
+		z-index: 600
+
+		#st-banners-inner
 			width: 100%
-			height: auto
-	
-	summary
-		text-align: left
-		display: block
-		padding-left: $huge * 2
-		padding-right: $huge * 4
-	
-		p
-			font-size: 125%
+			max-width: $bodyw
+			margin: 0 auto
+
+			.st-test-block
+				padding: $large
+			
+			#act-test-block
+				background-color: $sienna
+			
+			#sat-test-block
+				background-color: $azure
+			
+			#mailinglist-block
+				background-color: rgb(51,51,51)
 
 /* Mobile */
 @include MQ($mq-tablet)

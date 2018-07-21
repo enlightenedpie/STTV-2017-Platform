@@ -6,10 +6,10 @@ add_action( 'init', 'sttv_add_menus');
 function sttv_add_menus() {
 	
 	register_nav_menus( [
-		'sttv-nav' => __('SupertutorTV Main Nav Menu'),
-		'sttv-acct' => __('SupertutorTV Account Menu'),
+		'sttv-nav' => 'SupertutorTV Main Nav Menu',
+		'sttv-sub-nav-blog' => 'SupertutorTV Blog Sub Nav Menu',
 		'footer-menu' => __('SupertutorTV Footer Menu'),
-		'tutoring-info' => __('SupertutorTV Tutoring Info Links')
+		'tutoring-info' => 'SupertutorTV Tutoring Info Links'
 	 ] );
 
 }
@@ -36,7 +36,7 @@ class Tutoring_Info_Walker extends Walker_Nav_Menu {
 ##### ADD ADMIN-ONLY BACKEND LINK TO NAV MENU #####
 ###################################################
 
-add_filter( 'wp_get_nav_menu_items', 'sttv_admin_only_link', 20, 2 );
+//add_filter( 'wp_get_nav_menu_items', 'sttv_admin_only_link', 20, 2 );
 
 function sttv_admin_only_link( $items, $menu ) {
 	global $post;

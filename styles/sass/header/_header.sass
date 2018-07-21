@@ -1,61 +1,54 @@
 header#siteheader
-	+wfull
 	height: $headerh
-	position: absolute
 	background-color: $bodybg
 	z-index: 399
-	top: 0
-	box-shadow: 1px 1px 5px 0px $smblack
-	@include border($qtrblack,1px,bottom)
+	margin: 0
+	padding-bottom: 5px
+	background-image: url('../i/sttv-border.jpg')
+	background-size: 100% 5px
+	background-position: bottom
+	background-repeat: no-repeat
 	
-	#logo-box
-		width: auto
+	#main-nav
+		color: inherit
+		background-color: inherit
+		line-height: $headerh
+		-webkit-box-shadow: none
+		box-shadow: none
 		height: 100%
-		padding: $tiny
-		display: inline-block
-		position: absolute
-		+centerpos
-		
-		img
-			width: auto
-			height: 100%
-
-	a#main-menu, a#login
-		padding: 0 1em
-		height: 100%
+		max-width: $bodyw
 		display: block
-		position: absolute
-		
-	a#main-menu
-		left: 0px
-		@include border($qtrblack,1px,right)
-		
-	a#login
-		right: 0px
-		@include border($qtrblack,1px,left)
-	
-a#menu-closer
-	display: block
-	padding: 0 1em
-	text-align: right
-	+wfull
-	@include border($qtrblack,1px,bottom)
-	
-	i
-		color: red
-		
+		margin: 0 auto
 
-.icon-block
-	position: relative
-	/*top:50%;transform:translateY(-50%)*/
-	+centerpos
+		.nav-wrapper
+			height: $headerh
+			padding: 0
+				
+			img
+				display: inline-block
+				padding: $small 0
+				width: auto
+				height: 100%
 
-.dashicons
-	width: 1em !important
-	height: 1em !important
-	font-size: 1em !important
-	line-height: 1em !important
-	vertical-align: baseline
+			ul
+				height: 100%
+				font-size: 1em
+				font-weight: 700
+				text-transform: uppercase
+
+				li
+					font-size: inherit
+					height: 100%
+
+					a
+						height: 100%
+						font-size: inherit
+
+						.material-icons
+							height: 100%
+							line-height: inherit
+							margin-left: 0
+							margin-right: -$tiny
 	
 	
 /** Mobile **/

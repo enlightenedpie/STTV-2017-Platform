@@ -5,7 +5,7 @@ const Modal = class {
     this.inner = $('#st-modal-inner-content-inner')
   }
 
-  init( act ){
+  init( act, extra ){
     var t = this
     if (typeof act === 'undefined') return false
     if (t.action === act) return t.toggle()
@@ -44,8 +44,9 @@ const Modal = class {
         break
       case 'sttv-cart':
       case 'checkout':
+        let ex = extra.dataset.course
         cb = function(el) {
-          _st.checkout = new _st.checkout('C3500')
+          _st.checkout = new _st.checkout(ex)
           _st.checkout.init((x) => {
             x.render(el)
             t.loader()

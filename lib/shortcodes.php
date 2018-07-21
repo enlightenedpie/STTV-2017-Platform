@@ -19,12 +19,12 @@
 add_shortcode('sttv-bio','sttv_shortcode_bio');
 function sttv_shortcode_bio($atts,$content) {
 
-	$sttv_atts = shortcode_atts( array(
-			'name' => 'name',
-			'title' => 'title',
-			'img' => 10656,
-			'columns' => '2'
-    		), $atts, 'sttv-bio' );
+	$sttv_atts = shortcode_atts( [
+		'name' => 'name',
+		'title' => 'title',
+		'img' => 10656,
+		'columns' => '2'
+	], $atts, 'sttv-bio' );
 	$cols = '';
 
 	switch($sttv_atts['columns']) :
@@ -99,26 +99,13 @@ add_shortcode('stripe-plan','sttv_stripe_plan');
 function sttv_stripe_plan($atts,$content='') {
 
 	$contents = explode(',',$content);
+	$ids = explode( ',', $atts['id'] );
 
-	$highlight = $taxable = false;
-	if (in_array('highlight',$atts)) {
-		$highlight = 'highlight';
-	}
-	if (in_array('taxable',$atts)) {
-		$taxable = true;
-	}
+	$highlight = false;
+	if (in_array('highlight',$atts)) $highlight = 'highlight';
 
-	$taxableAmt = ( isset( $atts['taxable_amt'] ) ) ? $atts['taxable_amt'] : $atts['price'];
-
-	$databind = [
-		'id' => $atts['plan'],
-		'name' => sanitize_text_field($atts['title']),
-		'price' => (int) str_replace('.','',str_replace('$','',$atts['price'])),
-		'taxable' => $taxable,
-		'taxableAmt' => (int) str_replace('.','',str_replace('$','',$taxableAmt)),
-		'qty' => 1,
-		'type' => 'subscription'
-	];
+	$databind = [];
+	foreach( $ids as $id ) $databind[] = $id;
 
 	$cols = '';
 
@@ -143,7 +130,7 @@ function sttv_stripe_plan($atts,$content='') {
 	<div class="row">
 		<div class="col s12 m8 l6 xl4 offset-m2 offset-l3 offset-xl4 sttv-sales-table-wrapper <?php echo ($highlight) ? $highlight.' z-depth-4': ''; ?>">
         	<table id="sttv-sales-table-<?php echo $atts['plan']; ?>" class="sttv-sales-table centered">
-            	<caption class="<?php echo ($highlight) ?: ''; ?>"><a href="javascript:void(0)" class="payment-launcher" data-bind='<?php echo json_encode($databind); ?>'><?php _e(str_replace('.00','',$atts['price'])); ?></a></caption>
+            	<caption class="<?php echo ($highlight) ?: ''; ?>"><a data-course='<?php echo base64_encode(json_encode($databind)); ?>' onclick="_st.modal.init('checkout',this)" class="payment-launcher" >$<?php _e(str_replace('.00','',$atts['price'])); ?></a></caption>
 					<?php /*?><tr>
                     	<td>
                         	<span class="sttv-course-price"><?php echo $atts['price']; ?></span>
@@ -169,21 +156,12 @@ function sttv_stripe_plan($atts,$content='') {
     		?>
             <tr>
             	<td>
-                	<a class="payment-launcher pmt-button btn waves-effect waves-light"> Sign up now!</a>
+                	<a data-course='<?php echo base64_encode(json_encode($databind)); ?>' onclick="_st.modal.init('checkout',this)" class="payment-launcher pmt-button btn waves-effect waves-light"> Sign up now!</a>
                 </td>
             </tr>
             </table>
 		</div>
 	</div>
-	<script>
-		ga('ec:addImpression', {
-			'id': '<?php echo $databind['id']; ?>',
-			'name': '<?php echo $databind['name']; ?>',
-			'category': 'Courses/Subscriptions',
-			'brand': 'SupertutorTV',
-			'list': 'Sales Page'
-		});
-	</script>
 	<?php return ob_get_clean();
 }
 

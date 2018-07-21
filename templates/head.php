@@ -39,7 +39,4 @@
 </head>
 
 <body <?php body_class(); ?>>
-<?php do_action('sttv_after_body_tag'); ?>
-<?php do_action('sttv_sale_banner'); ?>
-	<div id="main-wrapper">
-    	<div id="navcloser" class="slide-bar"></div>
+<?php do_action('sttv_alert_banner'); ?>
