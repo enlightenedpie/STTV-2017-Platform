@@ -2,7 +2,7 @@ import checkout from './modules/checkout/checkout'
 import config from './modules/utilities/config'
 import login from './modules/login'
 import modal from './modules/modal'
-import mu from './modules/mu'
+import MU from './modules/mu'
 import * as func from './modules/functions'
 import './modules/events'
 
@@ -18,7 +18,7 @@ const STTV = class {
 		this.checkout = checkout
 		this.login = login
 		this.modal = modal
-		this.mu = mu
+		this.mu = MU
 	}
 
 	analytics(obj) {

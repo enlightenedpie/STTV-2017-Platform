@@ -36,7 +36,7 @@ final class STTV {
 
     private function define_constants() {
         // MAIN CONSTANTS
-        $this->define( 'STTV_VERSION', '1.4' );
+        $this->define( 'STTV_VERSION', '2.0.0' );
         $this->define( 'STTV_PREFIX', 'sttv' );
         $this->define( 'STTV_MAIN_DIR', get_template_directory().'/' );
         $this->define( 'STTV_CACHE_DIR', dirname(ABSPATH).'/vim/vcache/' );
@@ -68,9 +68,6 @@ final class STTV {
         require_once STTV_MAIN_DIR . 'lib/customizer.php';
         require_once STTV_MAIN_DIR . 'lib/stripe.php';
         require_once STTV_MAIN_DIR . 'lib/sttv_order.class.php';
-        require_once STTV_MAIN_DIR . 'lib/multi-user/muclass.php';
-        require_once STTV_MAIN_DIR . 'lib/multi-user/mupermissions.php';
-        require_once STTV_MAIN_DIR . 'lib/multi-user/muadmin.php';
         require_once STTV_MAIN_DIR . 'lib/REST/init.php';
     }
 

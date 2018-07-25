@@ -32,14 +32,9 @@ const Modal = class {
           _st.login = new _st.login(el)
         }
         break
-      case 'mu-checkout':
-        cb = function(el) {
-          _st.mu.submit(el,'#mu_form_wrapper')
-        }
-        break
       case 'mu-signup':
         cb = function(el) {
-          _st.mu.register(el,'#mu_form_wrapper')
+          _st.mu = new _st.mu(el)
         }
         break
       case 'sttv-cart':

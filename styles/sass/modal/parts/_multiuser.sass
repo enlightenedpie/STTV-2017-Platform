@@ -1,0 +1,51 @@
+@import '../_extendables.sass'
+    
+body.page-template-mu-signup
+    background-color: $azure
+    
+    &:after
+        background-color: white
+        content: ''
+        display: block
+        position: absolute
+        top: $huge
+        left: $huge
+        right: $huge
+        bottom: $huge
+        z-index: -1
+        
+    #st-modal
+
+        & #st-closer-wrapper
+            visibility: hidden
+
+body.modal-open
+
+    #st-modal
+        
+        #st-modal-errors
+            margin-bottom: 1em
+        
+        #st-modal-inner
+            width: $bodyw / 2
+        
+        #st-musignup-wrapper
+            @extend %st-modal-form-wrapper
+
+            .st-musignup-btn
+                @extend %st-modal-form-btn
+
+            .st-musignup-pane
+                @include st-modal-form-pane()
+
+                &.active
+                    display: block
+
+                .st-musignup-header
+                    @extend %st-modal-form-header
+
+                .st-musignup-form
+                    @extend %st-modal-form-fields
+
+                .st-musignup-buttons
+                    @extend %st-modal-form-btns

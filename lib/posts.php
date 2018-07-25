@@ -6,7 +6,7 @@
 
 function sttv_pagination() {
 	global $wp_query;
-	$args = array(
+	$args = [
 		'format' => 'page/%#%',
 		'current' => max( 1, get_query_var('paged') ),
 		'total' => $wp_query->max_num_pages,
@@ -16,7 +16,7 @@ function sttv_pagination() {
 		'prev_next' => true,
 		'prev_text' => '<i class="material-icons">chevron_left</i>',
 		'next_text' => '<i class="material-icons">chevron_right</i>'
-	);
+	];
 	
 	$pages = paginate_links($args);
 	
@@ -35,8 +35,9 @@ function sttv_pagination() {
 ######################
 
 add_action('add_meta_boxes', 'add_course_meta');
-function add_course_meta()
-{
+function add_course_meta() {
+	global $post;
+
     add_meta_box(
 		'album_id', // $id
 		'Page template file name', // $title
@@ -54,6 +55,16 @@ function add_course_meta()
 		'side', // $context
 		'high' // $priority
 	);
+
+	if ( 'mu-signup.php' == get_post_meta( $post->ID, '_wp_page_template', true ) )
+		add_meta_box(
+			'mu_teacher', // $id
+			'Multiuser Teacher', // $title
+			'sttv_mu_teacher', // $callback
+			[ 'page' ], // $post_type
+			'side', // $context
+			'high' // $priority
+		);
 }
 
 function sttv_youtube_link()
@@ -71,14 +82,16 @@ function sttv_display_album_id()
 	global $post; echo get_post_meta( $post->ID, '_wp_page_template', true );
 }
 
-function sttv_display_plan_id()
-{
-    global $post;  
-        $meta = get_post_meta($post->ID, 'stripe_sub_plan_id', true);
-        
-        echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';
-        
-        echo '<input name="stripe_sub_plan_id" class="widefat" type="text" value="'.$meta.'" />';
+function sttv_mu_teacher() {
+	$users = get_users( [ 'role__in' => [ 'teacher', 'administrator' ] ] );
+	$uselect = '<option value="" disabled selected>Select Teacher</option>';
+	foreach ( $users as $user ) {
+		$uselect .= "<option value='{$user->ID}'>{$user->user_email}</option>";
+	}
+	$html = <<<HTML
+	<select name="mu_teacher">$uselect</select>
+HTML;
+	print $html;
 }
 
 function save_album_meta($post_id) {
