@@ -1,8 +1,7 @@
 body
 
 	& > footer
-		padding: 1em
-		padding-bottom: 5px
+		padding: 0 0 5px
 		text-align: center
 		color: $transwht
 		background-color: $mdblack
@@ -11,7 +10,7 @@ body
 		background-position: bottom
 		background-repeat: no-repeat
 
-		&.row
+		&.row, &>.row
 			margin-bottom: 0
 
 		.footer-logo
@@ -33,40 +32,81 @@ body
 			h5
 				font-weight: 700
 
-		.site-social
-			display: block
-			font-size: $large
-
-			a
-				color: $azure
-				opacity: .75
-				transition: opacity .25s
-
-				&:not(:last-of-type)
-					margin-right: 1em
-
-				&:hover
-					opacity: 1
-
-				i
-					color: inherit
-
-	#footer-subscribe-cta
-		+wfull
-		text-align: center
-		margin-bottom: 0px
+	#pre-footer-cta
+		margin: 0
 		color: white
 		background-color: $azure
-		
-		div
-			padding: $large
+
+		#footer-subscribe-cta
+			text-align: center
+			margin-bottom: 0px
+			padding: 1em
+			width: 100%
+			max-width: $bodyw
+			margin: 0 auto
+
+			a, h4
+				display: inline-block
+				height: 100%
 
 			a
 				color: $azure
 				background-color: white
 			
 			h4
-				margin-top: 0px
+				margin: 0
+
+	#stFooterTailights
+		width: 100%
+		background-color: $bodybg
+		color: $ltblack
+		text-align: left
+
+		#stFooterTailightsInner
+			width: 100%
+			max-width: $bodyw
+			margin: 0 auto
+			font-size: $medium
+
+			&>.col
+				padding: 1em
+
+			.stSocialBlock
+				text-align: right
+			
+				.stSocialMenu
+					display: block
+
+					a.stSocialIcon
+						opacity: .75
+						transition: opacity .1s ease-in-out
+
+						&:hover
+							opacity: 1
+
+						&:not(:last-of-type)
+							margin-right: $large
+
+						&.yt
+							color: red
+
+						&.fb
+							color: #3B5998
+						
+						&.ig
+							color: #833ab4
+
+						&.tw
+							color: #1DA1F2
+
+						&.g\+
+							color: #d34836
+						
+						&.at
+							color: $sunrise
+
+						i
+							color: inherit
 
 @include MQ($mq-mobile)
 	body

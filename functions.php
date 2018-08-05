@@ -69,6 +69,8 @@ final class STTV {
         require_once STTV_MAIN_DIR . 'lib/stripe.php';
         require_once STTV_MAIN_DIR . 'lib/sttv_order.class.php';
         require_once STTV_MAIN_DIR . 'lib/REST/init.php';
+
+        \STTV\Shortcodes::init();
     }
 
     private function init_hooks() {
@@ -99,7 +101,8 @@ final class STTV {
         remove_action( 'wp_head', 'wp_generator' );
         remove_action( 'rest_api_init', 'create_initial_rest_routes', 99 );
 		add_filter( 'ls_meta_generator', '__return_false' );
-		add_filter( 'show_admin_bar', '__return_false' );
+        add_filter( 'show_admin_bar', '__return_false' );
+        remove_filter( 'the_content', 'wpautop' );
     }
 
     public function init() {

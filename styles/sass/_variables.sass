@@ -4,24 +4,6 @@ $weights: 100 400 700
 // Commonly used
 $borderimg: url(../i/sttv-border.png)
 
-// Defined colors //
-$invblack: rgba(0,0,0,0.02)
-$smblack: rgba(0,0,0,0.1)
-$qtrblack: rgba(0,0,0,0.25)
-$ltblack: rgba(0,0,0,0.60)
-$mdblack: rgba(0,0,0,0.80)
-$transwht: rgba(255,255,255,.85)
-$gray: rgba(204, 204, 204, 1)
-$bodybg: rgba(255,255,255,1)
-$sunrise: rgba(237,129,46,1)
-$goldenrod: rgba(232,200,37,1)
-$olive: rgba(148,172,59,1)
-$seafoam: rgba(45,158,107,1)
-$azure: rgba(16,159,218,1)
-$smazure: rgba(16,159,218,.25)
-$sienna: rgba(136,45,23,1)
-$salmon: rgba(250,108,108,1)
-
 // Responsive sizes //
 $ittybitty: .25em
 $tiny: .5em
@@ -32,8 +14,8 @@ $huge: 2em
 
 // Static sizes //
 $bodytext: 20px
-$bodyw: 1400px
-$headerh: 75px
+$bodyw: 1200px
+$headerh: 48px
 $sidew: 320px
 $sidelog: 350px
 
@@ -43,3 +25,25 @@ $mq-tportrait: 980px
 $mq-tablet: 1200px
 $mq-desktop: 1401px
 $mq-wide: 1800px
+
+@import './_functions.sass'
+
+// Defined colors //
+$sunrise: #ed812e
+$goldenrod: #e8c825
+$olive: #94ac3b
+$seafoam: #2d9e6b
+$azure: #109fda    
+$sienna: #882d17
+$salmon: #fa6c6c
+$black: #000
+$white: #fff
+$smazure: azure(.25)
+$invblack: black(.02)
+$smblack: black(.1)
+$qtrblack: black(.25)
+$ltblack: black(.60)
+$mdblack: black(.80)
+$transwht: white(.85)
+$gray: rgba(204, 204, 204, 1)
+$bodybg: $white

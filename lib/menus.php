@@ -8,7 +8,7 @@ function sttv_add_menus() {
 	register_nav_menus( [
 		'sttv-nav' => 'SupertutorTV Main Nav Menu',
 		'sttv-sub-nav-blog' => 'SupertutorTV Blog Sub Nav Menu',
-		'footer-menu' => __('SupertutorTV Footer Menu'),
+		'footer-menu' => 'SupertutorTV Footer Menu',
 		'tutoring-info' => 'SupertutorTV Tutoring Info Links'
 	 ] );
 
@@ -32,43 +32,78 @@ class Tutoring_Info_Walker extends Walker_Nav_Menu {
 	}
 }
 
-###################################################
-##### ADD ADMIN-ONLY BACKEND LINK TO NAV MENU #####
-###################################################
+#####################################
+##### CUSTOM NAV MENU GENERATOR #####
+#####################################
 
-//add_filter( 'wp_get_nav_menu_items', 'sttv_admin_only_link', 20, 2 );
+class STTV_Nav_Menu {
 
-function sttv_admin_only_link( $items, $menu ) {
-	global $post;
-	if ( $menu->slug == 'main-nav' ) {
-		if (current_user_can('read')) :
-			$items[] = _custom_nav_menu_item( 'The Best ACT Prep Course Ever', get_site_url().'/courses/the-best-act-prep-course-ever', 1, array('menu-item-100') );
-		endif;
-		
-		if ( current_user_can( 'edit_others_posts' ) ) :
-	  		$items[] = @_custom_nav_menu_item( 'Admin', get_admin_url(), 111, array('admin-link') );
-	  		$items[] = @_custom_nav_menu_item( 'Edit '.get_post_type(), get_edit_post_link($post->ID), 120);
-		endif;
+	public $output = '';
+
+	private $items = [];
+
+	private $menu_id = '';
+
+	private $menu_class = '';
+
+	public function __toString() {
+		return $this->output;
 	}
-	return $items;
+
+	public function __construct($menu_name = '', $mid = '', $mclass = '') {
+		if ( ( $locations = get_nav_menu_locations() ) && !isset( $locations[ $menu_name ] ) ) return '<span>Menu not found</span>';
+
+		$this->menu_id = $mid;
+		$this->menu_class = $mclass;
+		$menu = wp_get_nav_menu_items( wp_get_nav_menu_object( $locations[ $menu_name ] )->term_id );
+		foreach ($menu as $item) {
+			$mn = [
+				'title' => $item->title,
+				'url' => $item->url ?? '',
+				'class' => implode(' ',$item->classes)
+			];
+			if ($item->menu_item_parent != 0) 
+				$this->items[$item->menu_item_parent]['children'][$item->ID] = $mn;
+			else
+				$this->items[$item->ID] = $mn;
+		}
+		$this->render();
+	}
+
+	private function render() {
+		$ulclass = !$this->menu_class ? '' : " class='{$this->menu_class}'";
+		$ulid = !$this->menu_id ? '' : " id='{$this->menu_id}'";
+
+		$this->output .= "<ul$ulclass$ulid>";
+
+		$this->draw_lvl($this->items);
+
+		$this->output .= '</ul>';
+	}
+
+	private function draw_lvl($arr) {
+		foreach ($arr as $id => $atts) {
+			$theid = " id='menu-item-{$id}'";
+			$classes = empty($atts['class']) ? '': " class='{$atts['class']}'";
+			$theurl = empty($atts['url']) ? '' : " href='{$atts['url']}'";
+	
+			$this->output .= "<li$theid><a$classes$theurl";
+	
+			if (isset($atts['children'])) {
+				$submenuid = 'sub-menu-' . strtolower($atts['title']);
+				$this->output .= " data-target='{$submenuid}'>{$atts['title']}</a>";
+				$this->output .= "<ul class='dropdown-content' id='{$submenuid}'>";
+				$this->draw_lvl($atts['children']);
+				$this->output .= '</ul>';
+			} else {
+				$this->output .= ">{$atts['title']}</a>";
+			}
+	
+			$this->output .= '</li>';
+		}
+	}
 }
-function _custom_nav_menu_item( $title = '', $url = '', $order = 0, $classes = array() ){
-  $item = new stdClass();
-  $item->ID = 1000000 + $order;
-  $item->title = $title;
-  $item->url = $url;
-  $item->menu_order = $order;
-  $item->menu_item_parent = 0;
-  $item->target = '';
-	$item->attr_title = '';
-	$item->description = '';
-	$item->xfn = '';
-	$item->status = '';
-  $item->type = '';
-  $item->object = '';
-  $item->object_id = '';
-  $item->db_id = 0;
-  $item->classes = $classes;
-  
-  return $item;
+
+function sttv_nav_menu($menu_name = '', $mid = '', $mclass = '') {
+	echo new STTV_Nav_Menu($menu_name,$mid,$mclass);
 }

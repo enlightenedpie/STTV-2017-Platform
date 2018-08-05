@@ -1,0 +1,106 @@
+body.page-template-contact
+
+	header#stHeader
+		
+		#stHeaderLower
+			background-color: $olive
+
+	#not-header-wrapper
+
+		section
+			min-height: 10em
+			margin: 0
+
+		#st-contact-stage
+			background: $olive
+			background: radial-gradient(circle, olive(.50) 0%, olive(.90) 150%)
+			color: white
+			text-align: center
+			padding: $huge * 2 1em $huge * 4
+
+			h1
+				margin: 0 0 $ittybitty
+
+			span
+				display: block
+				font-style: italic
+
+		#content-wrapper
+
+			#stContactBlocks
+				margin-bottom: $huge * 2
+
+			.stBlock
+				margin: 0 auto
+				width: 100%
+				max-width: $bodyw
+				padding: 0
+				text-align: center
+
+				a
+					color: olive(.8)
+					transition: color .1s ease-in-out
+
+					&:hover
+						color: black(.6)
+
+				.stCallout
+					padding: 0 $tiny 1em
+					margin: 0
+					transform: translateY(-$huge * 2)
+
+					.stCalloutInner
+						background-color: $white
+						border-radius: $ittybitty
+						padding: 0
+
+						&>.row
+							margin: 0
+
+						.stCalloutContent
+
+							.stCalloutIcon
+								border-radius: 50%
+								background-color: $white
+								width: $huge * 3
+								height: $huge * 3
+								transform: translateY(-1em)
+								display: inline-block
+								margin-bottom: 1em
+
+							.stCalloutTitle
+
+								h2
+									font-size: $large
+									margin-top: 0
+							
+							.stCalloutBlurb
+								color: black(.40)
+								padding: 0 3em 1em
+								min-height: 3em
+
+						.stCalloutLink
+							background-color: $invblack
+
+							a
+								display: block
+								padding: $small
+								width: 100%
+								line-height: 1
+								font-size: 1em
+	
+	#pre-footer-cta
+		background-color: olive()
+
+		#footer-subscribe-cta
+
+			a
+				color: olive()
+		
+@include MQ($mq-mobile)
+	//.material-icons.prefix
+		//display: none
+	
+	//#sttv_contact
+		//input, textarea
+			//+wfull

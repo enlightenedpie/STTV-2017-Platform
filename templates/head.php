@@ -38,5 +38,5 @@
     	<script src="https://www.google.com/recaptcha/api.js?onload=recapOnload&render=explicit" async defer></script>
 </head>
 
-<body <?php body_class(); ?>>
+<body <?php body_class('st-body'); ?>>
 <?php do_action('sttv_alert_banner'); ?>

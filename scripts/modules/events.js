@@ -3,7 +3,8 @@ import $ from 'jquery'
 $(document).ready(function(){
     $('.parallax').parallax()
     $('.sidenav').sidenav()
-    $('.dropdown-trigger').dropdown()
+    $('.st-dropdown-trigger').dropdown()
+    console.log('ready')
 })
 
 $(document).on('click','.login-modal',function(e) {

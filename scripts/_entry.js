@@ -1,5 +1,6 @@
-import checkout from './modules/checkout/checkout'
 import config from './modules/utilities/config'
+import checkout from './modules/checkout/checkout'
+import forms from './modules/forms'
 import login from './modules/login'
 import modal from './modules/modal'
 import MU from './modules/mu'
