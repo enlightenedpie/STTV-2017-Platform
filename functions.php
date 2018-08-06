@@ -103,7 +103,8 @@ final class STTV {
         remove_action( 'wp_head', 'wp_generator' );
         remove_action( 'rest_api_init', 'create_initial_rest_routes', 99 );
 		add_filter( 'ls_meta_generator', '__return_false' );
-		add_filter( 'show_admin_bar', '__return_false' );
+        add_filter( 'show_admin_bar', '__return_false' );
+        add_filter('xmlrpc_enabled', '__return_false');
     }
 
     public function init() {
