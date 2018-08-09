@@ -1,0 +1,101 @@
+body
+
+	& > footer
+		padding: 0
+		color: $transwht
+		background-color: $mdblack
+
+		&.row, &>.row
+			margin-bottom: 0
+
+		#stFooter
+
+			.stFooterBlockInner
+				padding: $huge * 2
+				width: 100%
+				max-width: $bodyw
+				margin: 0 auto $huge
+				background-color: white(.10)
+				border-radius: 1em
+
+			#stFooterInner
+				padding: $large
+				width: 100%
+				max-width: $bodyw
+				margin: 0 auto
+
+				#stFooterBadge
+					padding: $large
+					text-align: center
+
+					.footer-logo
+						width: 100%
+						display: block
+						margin: 0
+						padding: 1em 1em 0
+
+						img
+							height: auto
+							width: 100%
+			
+					.site-tagline
+						text-transform: uppercase
+						display: block
+						
+						h5
+							font-weight: 700
+
+					.stInfoBlock
+						text-align: left
+						display: block
+						padding: 1em 0
+
+		#stFooterTailights
+			width: 100%
+			background-color: $bodybg
+			color: $ltblack
+			text-align: left
+
+			#stFooterTailightsInner
+				width: 100%
+				max-width: $bodyw
+				margin: 0 auto
+
+				&>.col
+					padding: 1em
+
+					.stSocialBlock
+						text-align: right
+	
+	#stPostFooter
+		width: 100%
+		height: 5px
+
+@include MQ($mq-mobile)
+	body
+
+		#pre-footer-cta
+
+			#footer-subscribe-cta
+
+				h4
+					margin: 0 0 $tiny
+		
+		footer
+
+			#stFooter
+
+				#stFooterInner
+
+					div:first-of-type, div:last-of-type
+						display: none
+
+			#stFooterTailights
+
+				#stFooterTailightsInner
+					text-align: center
+					font-size: $medium
+
+					.stSocialBlock
+						text-align: center
+						padding-bottom: 0

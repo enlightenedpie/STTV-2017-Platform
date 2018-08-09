@@ -1,3 +1,10 @@
+<?php
+	global $post;
+	$slug = $post->post_name;
+	add_filter( 'body_class',function($classes) use ($slug) {
+		return ['stBody','stPage-'.$slug];
+	});
+?>
 <!DOCTYPE html>
 <html class="no-js" <?php language_attributes(); ?>>
 <head>
@@ -37,6 +44,5 @@
 		</script>
     	<script src="https://www.google.com/recaptcha/api.js?onload=recapOnload&render=explicit" async defer></script>
 </head>
-
-<body <?php body_class('st-body'); ?>>
+<body <?php body_class(); ?>>
 <?php do_action('sttv_alert_banner'); ?>

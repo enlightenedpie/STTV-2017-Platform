@@ -1,10 +1,10 @@
-import config from './modules/utilities/config'
-import checkout from './modules/checkout/checkout'
-import forms from './modules/forms'
+import config from './utilities/config'
+import checkout from './modules/checkout'
+import sub from './modules/subscribe'
 import login from './modules/login'
 import modal from './modules/modal'
 import MU from './modules/mu'
-import * as func from './modules/functions'
+import * as func from './core/functions/index'
 import './modules/events'
 
 const STTV = class {
@@ -17,6 +17,7 @@ const STTV = class {
 			content : this.root+'/wp-content/themes/sttvsite'
 		}
 		this.checkout = checkout
+		this.subscribe = sub
 		this.login = login
 		this.modal = modal
 		this.mu = MU

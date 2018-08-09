@@ -23,38 +23,53 @@
 		@media only screen and (max-width: #{$breakpoint})
 			@content
 
+@mixin nomp
+	margin: 0
+	padding: 0
 
-=nomp
-	margin: 0px
-	padding: 0px
+@mixin wfull
+	width: 100%
 	
-=borderbtm
+@mixin borderbtm
 	height: 5px
 	background: $borderimg no-repeat
 	background-size: 100% 5px
 	
-=centerpos
+@mixin centerpos
+	position: absolute
 	top: 50%
 	left: 50%
 	transform: translate3d(-50%,-50%, 0)
 	
-=widebtn
-	+wfull
+@mixin widebtn
 	padding: $small
 	margin-bottom: $tiny
 	
-=btncolor
+@mixin btncolor
 	background: $azure
 	color: white
-	
-=wfull
+
+@mixin centerblock
+	max-width: $bodyw
+	margin: 0 auto
 	width: 100%
 
-=w3quarter
-	width: 75%
-	
-=whalf
-	width: 50%
-	
-=w1quarter
-	width: 25%
+@mixin recolor($color: $azure)
+	header#stHeader
+			
+		#stHeaderLower
+			background-color: $color
+
+	#not-header-wrapper
+
+		#stStage
+			background: $color
+			background: radial-gradient(circle, stcolor($color,.50) 0%, stcolor($color,.90) 150%)
+
+	#stPreFooterCTA
+		background-color: $color
+
+		#stPreFooterCTAInner
+
+			a
+				color: $color

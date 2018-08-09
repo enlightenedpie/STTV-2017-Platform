@@ -118,6 +118,11 @@ final class STTV {
 			return site_url();
 		} );
 
+        add_action('st_stage_bottom',function(){
+            if (is_page('subscribe')) {
+                print do_shortcode('[stMailinglist]');
+            }
+        });
     }
 
     public function sttv_declare_themes_support() {

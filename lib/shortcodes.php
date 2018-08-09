@@ -11,8 +11,10 @@ class Shortcodes {
 			'stBlock',
 			'stContainer',
 			'stCallout',
+			'stMailinglist',
+			'stSocial',
+			'stLogin',
 			'sttv-bio',
-			'subscribe-form',
 			'sttv-school-card',
 			'stripe-plan',
 			'sttv-faq'
@@ -108,26 +110,6 @@ class Shortcodes {
 							<span class="card-title">'.$sttv_atts['name'].'<i class="material-icons right">close</i></span>
 							<p>'.$content.'</p>
 						</div>
-					</div>
-				</div>';
-	}
-
-	public static function subscribe_form($atts,$content = '') {
-		global $current_user;
-		wp_get_current_user();
-	
-		$atts = shortcode_atts( array(
-				'context' => 'content',
-				'title' => 'Subscribe Now!'
-				), $atts, 'sttv-bio' );
-		$context = ($atts['context'] == 'sidebar') ? 'l12' : 'l6' ;
-	
-	
-		return '<div id="subscribeform">
-					<h4>'.$atts['title'].'</h4>
-					<div id="subscribe-c2a">'.$content.'</div>
-					<div id="sub_redir_button">
-						<a class="z-depth-2 button" href="'.site_url().'/subscribe"><h3>Subscribe now!</h3></a>
 					</div>
 				</div>';
 	}
@@ -234,5 +216,23 @@ class Shortcodes {
 			<div class="sttv-faq-inner"><?php echo $content; ?></div>
 		</div>
 	<?php return ob_get_clean();
+	}
+
+	public static function stMailinglist($att,$con,$tag) {
+		return self::stTemplate($tag);
+	}
+
+	public static function stSocial($att,$con,$tag) {
+		return self::stTemplate($tag);
+	}
+
+	public static function stLogin($att,$con,$tag) {
+		return self::stTemplate($tag);
+	}
+
+	private static function stTemplate($name) {
+		ob_start();
+		sttv_get_template($name);
+		return ob_get_clean();
 	}
 }

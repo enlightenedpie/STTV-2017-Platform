@@ -1,0 +1,64 @@
+/* #not-header-wrapper = container that includes all the main body elements except for <header> and <footer> */
+#not-header-wrapper
+	margin: 0
+
+	section
+		min-height: 6em
+		margin: 0
+
+	/* #content = wraps all content except for the "stage" (image/video/slider display area) */
+	#content
+		max-width: $bodyw
+		margin: 0 auto
+
+		.col
+			padding: 0
+	
+		/* #content-wrapper = wraps the content only (article, title, meta, etc.), excluding the sidebar */
+		#content-wrapper
+			
+			p
+				margin-bottom: 1em
+				line-height: $medium
+				
+				a
+					color: $azure
+
+		#content-mobile-reveal
+			display: none
+			-webkit-box-shadow: 0px -60px 60px 10px rgba(255,255,255,1)
+			-moz-box-shadow: 0px -60px 60px 10px rgba(255,255,255,1)
+			box-shadow: 0px -60px 60px 10px rgba(255,255,255,1)
+			background-color: rgba(255,255,255,1)
+			padding: 1em
+			position: relative
+			z-index: 398
+
+			button
+				+wfull
+				padding: 1em
+
+/** Mobile **/		
+@include MQ($mq-tablet)
+	#not-header-wrapper
+		margin-top: 0px
+		
+		#content
+			padding: 0 2em		
+
+@include MQ($mq-mobile)
+	body.single-post
+
+		#not-header-wrapper
+
+			#content
+
+				#content-wrapper
+					overflow: hidden
+					width: 100%
+					max-height: 16em
+					font-size: $medium
+					margin: 0
+
+				#content-mobile-reveal
+					display: block

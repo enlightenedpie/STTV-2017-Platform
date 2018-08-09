@@ -1,0 +1,44 @@
+.stCallout
+    padding: 0 $tiny 1em
+    margin: 0
+    transform: translateY(-$huge * 2)
+
+    .stCalloutInner
+        background-color: $white
+        border-radius: $ittybitty
+        padding: 0
+
+        &>.row
+            margin: 0
+
+        .stCalloutContent
+
+            .stCalloutIcon
+                border-radius: 50%
+                background-color: $white
+                width: $huge * 3
+                height: $huge * 3
+                transform: translateY(-1em)
+                display: inline-block
+                margin-bottom: 1em
+
+            .stCalloutTitle
+
+                h2
+                    font-size: $large
+                    margin-top: 0
+            
+            .stCalloutBlurb
+                color: black(.40)
+                padding: 0 3em 1em
+                min-height: 3em
+
+        .stCalloutLink
+            background-color: $invblack
+
+            a
+                display: block
+                padding: $small
+                width: 100%
+                line-height: 1
+                font-size: 1em

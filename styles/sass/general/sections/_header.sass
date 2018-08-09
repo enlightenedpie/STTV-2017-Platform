@@ -1,0 +1,128 @@
+header#stHeader
+	background-color: $bodybg
+	z-index: 399
+	margin: 0
+
+	.stHeaderInner
+		height: $headerh
+		margin: 0
+
+		.nav-wrapper
+			padding: 0
+			max-width: $bodyw
+			width: 100%
+			height: 100%
+			display: block
+			margin: 0 auto
+
+			&>.col
+				padding: 0
+				height: 100%
+
+	#stHeaderUpper
+
+		#stHeaderUpperInner
+
+			#stHeaderBranding
+				padding: 0 1em
+
+				a, span
+					height: 100%
+					float: left
+
+				img
+					line-height: 100%
+					padding: $ittybitty 0
+					width: auto
+					height: 100%
+
+				.stHeaderSlogan
+					text-transform: uppercase
+					font-weight: 700
+					margin-left: 1em
+
+	#stHeaderLower
+		color: $transwht
+		background-color: $azure
+		display: block
+
+	#main-nav
+		color: inherit
+		background-color: inherit
+		line-height: $headerh
+		-webkit-box-shadow: none
+		box-shadow: none
+		height: 100%
+
+		ul
+			height: 100%
+			font-size: .85em
+			font-weight: 400
+
+			li
+				font-size: inherit
+				height: 100%
+
+				a
+					height: 100%
+					font-size: inherit
+					padding: 0 1em
+
+				a.st-dropdown-trigger
+					position: relative
+					outline: none
+					padding-right: $large
+
+					&:before
+						font-family: "Material Icons"
+						content: "arrow_drop_down"
+						position: absolute
+						width: 0
+						height: 0
+						font-size: 1em
+						right: $medium
+						text-transform: none
+			
+				ul.dropdown-content
+					overflow: hidden
+					position: absolute
+					top: $headerh !important
+					width: auto !important
+					height: auto !important
+					z-index: 999999
+	
+/** Mobile **/
+@include MQ($mq-tablet)
+	body
+
+		header#stHeader
+			position: -webkit-sticky !important
+			position: -moz-sticky !important
+			position: -ms-sticky !important
+			position: -o-sticky !important
+			position: sticky !important
+
+			#stHeaderLower
+				display: none
+
+			#stHeaderUpper
+
+				#stHeaderUpperInner
+
+					#stHeaderRight
+						display: none
+
+					#stHeaderBranding
+						padding: 0
+
+						.stHeaderSlogan
+							display: none
+
+						.sidenav-trigger
+
+							i
+								line-height: $headerh
+		
+@include MQ($mq-tportrait)
+	.icon-block span.link-text
+		display: none

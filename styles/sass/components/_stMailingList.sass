@@ -1,0 +1,81 @@
+@mixin mlistform($color: $azure)  
+    #stMailinglistWrapper
+        padding: 1em $huge
+        margin-top: 1em
+        position: relative
+
+        #stMailinglistOverlay
+            background: none
+            text-align: center
+
+            span
+                font-size: $large
+                +centerpos
+
+        #stMailinglistWrapperInner
+            opacity: 1
+            -webkit-transition: all .25s ease-in-out
+            transition: all .25s ease-in-out
+
+            &.inactive
+                opacity: 0
+
+        #stMailinglistForm
+
+            .input-field
+                margin: 0
+
+                &.st-input-half-left
+                    padding-right: $tiny
+
+                &.st-input-half-right
+                    padding-left: $tiny
+
+                &>label
+                    position: relative
+
+            input, select
+                padding: $tiny $small
+                margin-bottom: 1em
+                width: 100%
+                border-radius: $ittybitty
+                border: 1px solid $qtrblack
+                transition: border .25s linear
+
+                &.invalid
+                    border: 1px solid red
+                
+                &.valid
+                    border: 1px solid green
+
+                &:focus:not(.invalid)
+                    border: 1px solid $color
+
+                &::placeholder
+                    opacity: 1
+                    color: $qtrblack
+                    font-style: italic
+
+            select
+                -webkit-appearance: none
+                -moz-appearance: none
+                appearance: none
+
+                &.selector, option:selected
+                    color: $ltblack
+
+            .input-field.required:before, .input-field.required [type="checkbox"]:required+label:after
+                color: red
+                display: block
+                height: 0
+                position: absolute
+                top: 25%
+                right: 1em
+                content: "*"
+
+        #stMailinglistButtons
+            text-align: center
+
+            button
+                background-color: white
+                color: $color

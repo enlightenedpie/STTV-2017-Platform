@@ -3,11 +3,10 @@ import $ from 'jquery'
 $(document).ready(function(){
     $('.parallax').parallax()
     $('.sidenav').sidenav()
-    $('.st-dropdown-trigger').dropdown()
-    console.log('ready')
+    $('.st-dropdown-trigger').dropdown({hover: true})
 })
 
-$(document).on('click','.login-modal',function(e) {
+$(document).on('click','.loodabooda',function(e) {
     e.preventDefault()
     _st.modal.init('login')
 })

@@ -1,0 +1,20 @@
+.stOverlay
+    position: absolute
+    opacity: 0
+    visibility: hidden
+    top: 0
+    right: 0
+    left: 0
+    bottom: 0
+    z-index: 10
+    background-color: white
+    background-size: 30%
+    background-repeat: no-repeat
+    background-position: center
+    background-image: url('../i/sttv-loader-rings.gif')
+     -webkit-transition: all .25s ease-in-out
+    transition: all .25s ease-in-out
+
+    &.active
+        opacity: 1
+        visibility: visible
