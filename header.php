@@ -1,5 +1,5 @@
 <?php get_template_part('templates/head'); ?>
-<?php sttv_nav_menu('sttv-nav','st-nav-list-mobile','sidenav'); ?>
+<?php sttv_nav_menu('sttv-mobile-nav','st-nav-list-mobile','sidenav'); ?>
 <header class="row z-depth-3" id="stHeader">
     <nav class="main-nav" id="main-nav">
         <div id="stHeaderUpper" class="stHeaderInner main-nav row">

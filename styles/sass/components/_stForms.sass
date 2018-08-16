@@ -1,0 +1,73 @@
+body.stBody
+
+    .stFormWrapper
+
+        .input-field
+            margin: 0
+
+            &.st-input-half-left
+                padding-right: $tiny
+
+            &.st-input-half-right
+                padding-left: $tiny
+
+            &>label
+                position: relative
+
+        input, select, #st-checkout-card-element
+            padding: $tiny $small
+            margin-bottom: 1em
+            width: 100%
+            border-radius: $ittybitty
+            border: 1px solid $qtrblack
+            transition: border .25s linear
+
+            &.invalid
+                border: 1px solid red
+            
+            &.valid
+                border: 1px solid green
+
+            &:focus:not(.invalid)
+                border: 1px solid $azure
+
+            &::placeholder
+                opacity: 1
+                color: $qtrblack
+                font-style: italic
+
+        select
+            -webkit-appearance: none
+            -moz-appearance: none
+            appearance: none
+
+            &.selector, option:selected
+                color: $ltblack
+
+        .input-field.required:before, .input-field.required [type="checkbox"]:required+label:after
+            color: red
+            display: block
+            height: 0
+            position: absolute
+            top: 25%
+            right: 1em
+            content: "*"
+
+        .stFormHeader
+            padding-bottom: 1em
+
+        .stForgotBlock
+            text-align: center
+            padding-bottom: 1em
+
+        .stFormButtons
+            text-align: center
+
+            .stFormButton
+                background-color: $azure
+
+#stFormErrors
+    color: red
+    font-size: $small
+    padding: 0 $large $large
+    text-align: center

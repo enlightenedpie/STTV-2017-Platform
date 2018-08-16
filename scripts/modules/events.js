@@ -3,7 +3,7 @@ import $ from 'jquery'
 $(document).ready(function(){
     $('.parallax').parallax()
     $('.sidenav').sidenav()
-    $('.st-dropdown-trigger').dropdown({hover: true})
+    $('.st-dropdown-trigger').dropdown()
 })
 
 $(document).on('click','.loodabooda',function(e) {
@@ -130,10 +130,10 @@ $(document).on('click',selectors,function(e) {
 // ########################## //
 
 // BEGIN 'Read More' mobile button handler //
-$(document).on('click','.read-more',function(e) {
+$(document).on('click','.readMore',function(e) {
     e.preventDefault()
     $(this).parent().css({'display':'none'});
-    $('#content-wrapper').css({'max-height':'none'});
+    $('#stContentWrapper').css({'max-height':'none'});
 })
 // END 'Read More' mobile button handler //
 

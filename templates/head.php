@@ -1,9 +1,10 @@
 <?php
 	global $post;
 	$slug = $post->post_name;
-	add_filter( 'body_class',function($classes) use ($slug) {
-		return ['stBody','stPage-'.$slug];
-	});
+	if (is_page())
+		add_filter( 'body_class',function($classes) use ($slug) {
+			return ['stBody','stPage-'.$slug];
+		});
 ?>
 <!DOCTYPE html>
 <html class="no-js" <?php language_attributes(); ?>>

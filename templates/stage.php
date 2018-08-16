@@ -1,7 +1,18 @@
 <section id="stStage" class="row">
-    <div id="stStageInner">
-        <h1><?php the_title(); ?></h1>
-        <span><?php the_excerpt(); ?></span>
-        <?php do_action('st_stage_bottom'); ?>
-    </div>
+    <div id="stStageInner"><?php
+    foreach([
+        'is_page',
+        'is_archive',
+        'is_404',
+        'is_single'
+    ] as $temp) {
+        if ($temp()) {
+            $temp = str_replace('is_','-',$temp);
+            sttv_get_template("stage{$temp}",'stage');
+            break;
+        }
+    }
+    do_action('st_stage_bottom');
+?></div>
 </section>
+<?php do_action('sttv_after_stage');

@@ -1,5 +1,5 @@
-<?php get_header(); ?>
-<?php get_template_part('templates/title'); ?>
+<?php get_header(); 
+sttv_get_template('stage'); ?>
 <div class="content" style="min-height:10em;text-align:center;">
 	<span style="display:block;margin-top:6em;">Try using the site menu or any of the links below to get where you're trying to go.</span>
 </div>

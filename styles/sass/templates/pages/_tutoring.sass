@@ -1,0 +1,50 @@
+body.stPage-tutoring, body.stPage-private-tutoring
+
+    #not-header-wrapper
+
+        #stContentWrapper
+            padding: 0
+
+            #stTutoringIntro
+                +stTanBlock
+
+                #stTutoringIntroInner
+
+                    &>div
+                        padding: $huge * 1.5 1em
+
+                        span
+                            display: block
+                            padding-top: $medium
+                            line-height: $medium
+
+                    .stHeroRight
+
+                        img, iframe
+                            width: 100%
+                            +shadow-4
+
+                        img
+                            height: auto
+            
+            .stTutoringSection
+
+                .stBlockCentered
+                    padding: 0 1em
+
+                h2
+                    font-size: $large
+                    font-weight: 700
+                    width: 100%
+                    text-align: center
+
+            #stTutoringRates
+                padding: $large 0 $huge * 3
+                background-color: $azure
+
+                h2
+                    color: $white
+
+                &>div .stInner
+                    background-color: $white
+                    +shadow-4

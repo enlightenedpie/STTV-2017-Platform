@@ -7,7 +7,7 @@ function sttv_add_menus() {
 	
 	register_nav_menus( [
 		'sttv-nav' => 'SupertutorTV Main Nav Menu',
-		'sttv-sub-nav-blog' => 'SupertutorTV Blog Sub Nav Menu',
+		'sttv-mobile-nav' => 'SupertutorTV Mobile Nav Menu',
 		'footer-menu' => 'SupertutorTV Footer Menu',
 		'tutoring-info' => 'SupertutorTV Tutoring Info Links'
 	 ] );

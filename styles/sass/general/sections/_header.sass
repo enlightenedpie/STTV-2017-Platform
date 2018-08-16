@@ -1,5 +1,6 @@
 header#stHeader
 	background-color: $bodybg
+	position: relative
 	z-index: 399
 	margin: 0
 
@@ -86,9 +87,11 @@ header#stHeader
 				ul.dropdown-content
 					overflow: hidden
 					position: absolute
-					top: $headerh !important
-					width: auto !important
+					top: $headerh + 5px !important
+					width: 300px !important
 					height: auto !important
+					padding: 1em
+					border: 1px solid black(.25)
 					z-index: 999999
 	
 /** Mobile **/

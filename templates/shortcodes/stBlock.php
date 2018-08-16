@@ -1,0 +1,1 @@
+<div <?php if (isset($atts['id']) && !empty($atts['id'])) echo "id=\"{$atts['id']}\""; ?> class="stBlock row"><?php echo do_shortcode($content); ?></div>

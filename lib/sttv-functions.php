@@ -162,4 +162,32 @@ function sttv_mailinglist_subscribe( $email = '', $firstname = '', $lastname = '
 	);
 
 }
+
+function stFWInset($class = null, $html) {
+	print <<<HTML
+<div id="stFWInsetLeft" class="col s12 m6"></div>
+<div id="stFWInsetRight" class="col l6 {$class}">
+	<div id="stFWInsetRightInner" class="z-depth-1">
+		<header class="stBordered row">
+			<div id="stFWInsetDarkHeader" class="col s12">
+				<img src="http://localhost:8888/sttvroot/wp-content/themes/sttvsite/i/sttv_logo_contrast.png" />
+			</div>
+		</header>
+		<header class="stBoxed row">
+			<div id="stFWInsetLightHeader" class="col s12">
+				<img src="http://localhost:8888/sttvroot/wp-content/themes/sttvsite/i/sttv_logo_contrast.png" />
+			</div>
+		</header>
+		{$html}
+		<div id="stFormErrors" class="row"></div>
+		<div id="stInsetRightFooter" class="row"></div>
+	</div>
+</div>
+HTML;
+return;
+}
+
+function stCamelCase( $string = '' ) {
+	return str_replace(' ','', ucwords(str_replace(['-','_'],' ',$string)));
+}
 // end of line, man.

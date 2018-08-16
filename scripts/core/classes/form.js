@@ -1,6 +1,10 @@
 export default class Form {
-    constructor() {
-        this.state = {}
+    constructor(obj = {}) {
+        this.state = obj
+    }
+
+    overlay() {
+        return document.querySelector('.stOverlay').classList.toggle('active')
     }
 
     prepare(el) {
@@ -11,7 +15,7 @@ export default class Form {
     }
 
     printError(msg) {
-        return document.querySelector('#stFormErrors p.error').innerHTML = msg
+        return document.querySelector('#stFormErrors').innerHTML = msg
     }
 
     setIndex(itm,ind,val) {
@@ -44,7 +48,7 @@ export default class Form {
         for (var val in this.state) {
           if (this.state[val].length == 0) return val
         }
-        _st.modal.loader()
+        this.overlay()
     
         _st.request({
             route : rt,

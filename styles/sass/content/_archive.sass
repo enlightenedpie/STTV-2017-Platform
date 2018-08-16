@@ -4,10 +4,10 @@ body.archive
 
 	#not-header-wrapper
 
-		#stage
+		#stStage
 			height: auto
 
-			#stage-inner
+			#stStageInner
 				padding: 0 2em
 	
 				h1
@@ -21,52 +21,56 @@ body.archive
 					.category-desc
 						font-style: italic
 
-		#content
+		#stContentWrapper
+			+centerblock
 
-			#content-wrapper
-				width: auto
-				margin: 0
+			.stArchivePost
+				margin-bottom: $huge * 2
 
+				.stArchivePostInner
+					margin-bottom: $huge
 
-#not-header-wrapper
-
-	#content
-
-		.archive
-
-			article.archive-post
-				font-size: $small
-				padding-right: 1em
-
-				.archive-inner
-					border: 1px solid $qtrblack
-				
 					figure
 						display: block
+						margin: 0
 						
 						img
 							display: block
 							+wfull
 							height: auto
-					
-					figure
-						margin: 0
-						margin-bottom: 1em
 
 					summary
-						padding: 0 1em 1em
+						padding: 1em
 						display: block
 					
 						h4
 							font-weight: 700
 							margin-top: 0
 
+				.stArchivePostTail
+					padding: $tiny 0
+					border: 1px $qtrblack
+					border-style: solid none solid none
+					position: relative
+
+					span
+						font-style: italic
+
+					a
+						position: absolute
+						right: 0
+						color: $azure
+						transition: color .25s ease-in-out
+
+						&:hover
+							color: inherit
+
 @include MQ($mq-desktop)
 	body.archive
 
 		#not-header-wrapper
 
-			#stage
+			#stStage
 				margin-bottom: 0
 				min-height: 0px
 
@@ -78,18 +82,16 @@ body.archive
 
 	#not-header-wrapper
 
-		#content
+		#stContentWrapper
+			padding: 0 $huge
 
-			.archive
-				padding: 0 $huge
+			article.archive-post
 
-				article.archive-post
+				&:nth-of-type(4n)
+					padding-right: 0
 
-					&:nth-of-type(4n)
-						padding-right: 0
-
-					.archive-inner
-						margin: 0
+				.archive-inner
+					margin: 0
 		
 /** Mobile **/		
 @include MQ($mq-tablet)
@@ -97,10 +99,10 @@ body.archive
 
 		#not-header-wrapper
 
-			#stage
+			#stStage
 				margin-bottom: 0
 
-				#stage-inner
+				#stStageInner
 
 					#title-meta
 						padding: 0
@@ -109,40 +111,23 @@ body.archive
 							padding: 3em 0
 							margin: 0
 							width: auto
-
-	#not-header-wrapper
 		
-		#content
+			#stContentWrapper
 
-			.archive
-
-				& > .row
-					margin: 0
-
-				article.archive-post
-					padding: 0
-
-					.archive-inner
-
-						figure
-							margin-bottom: 0
-						
-						summary
-							padding-top: 1em
+				.stArchivePost
+					padding: $huge
 
 @include MQ($mq-mobile)
-	#not-header-wrapper
-		
-		#content
+	body.archive
 
-			.archive
+		#not-header-wrapper
+			
+			#stContentWrapper
 
-				& > .row
-					margin: 0
+				.stArchivePost
+					margin-bottom: $huge
 
-					article.archive-post
-						padding: 0
+					.stArchivePostInner
 
-						.archive-inner
-
-							summary
+						summary
+							padding: 2em 0 0

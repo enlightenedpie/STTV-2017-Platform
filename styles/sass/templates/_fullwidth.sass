@@ -13,8 +13,87 @@
 
     #stFWStrippedInner
         position: relative
-        top: 50%
-        transform: translateY(-50%)
+        top: 10%
         width: 100%
         max-width: $bodyw * .75
-        margin: 2em auto 0
+        margin: $huge auto 0
+        
+        #stFWInsetRight
+            padding: 1em
+
+            #stInsetRightFooter
+                display: none
+
+            #stFWInsetRightInner
+                background-color: white()
+                overflow: hidden
+
+                .stFormWrapper
+                    padding: $large
+
+                header
+                    position: relative
+                    padding: $tiny
+                    font-weight: 700
+                    font-size: $medium
+                    text-transform: uppercase
+
+                    & > div.col
+                        text-align: center
+
+                        img
+                            height: $headerh
+                            width: auto
+                            display: inline-block
+
+            &.stBoxed
+
+                #stFWInsetRightInner
+                    border: 1px solid black(.15)
+
+                    header.stBordered
+                        display: none
+
+            &.stBordered
+
+                #stFWInsetRightInner
+                    border-radius: 1em
+
+                    header.stBordered
+                        background-color: $mdblack
+                        color: $transwht
+
+                    header.stBoxed
+                        display: none
+
+                    .stFormWrapper
+
+                        h2
+                            margin: 0
+                            color: $sunrise
+                            font-size: $medium
+                            font-weight: 700
+                            
+                        span
+                            font-size: $small
+                            font-style: italic
+
+                            a
+                                text-decoration: underline
+                                cursor: pointer
+
+@include MQ($mq-tportrait)
+    #stFWStripped
+
+        #stFWStrippedInner
+            top: auto
+            margin: 0 auto
+            max-width: $bodyw * .5
+
+            #stFWInsetLeft
+                display: none
+            
+            #stFWInsetRight
+
+                #stInsetRightFooter
+                    display: block

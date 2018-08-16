@@ -102,26 +102,43 @@ final class STTV {
         remove_action( 'rest_api_init', 'create_initial_rest_routes', 99 );
 		add_filter( 'ls_meta_generator', '__return_false' );
         add_filter( 'show_admin_bar', '__return_false' );
-        remove_filter( 'the_content', 'wpautop' );
     }
 
     public function init() {
         add_post_type_support( 'page', 'excerpt' );
 
+        remove_filter( 'the_content', 'wpautop' );
+        add_filter( 'the_content', function($content) {
+            return is_single() ? wpautop($content,false) : $content;
+        }, 99 );
+        add_filter( 'the_content', 'shortcode_unautop', 100 );
+
+        add_filter( 'the_excerpt', function($content) {
+           return ( has_excerpt() ) ? $content : '';
+        }, 999 );
+
         add_filter( 'excerpt_length', function() {
 			return 20;
         }, 999 );
+
         add_filter( 'author_link', function() {
 			return site_url('about');
-		} );
+        } );
+        
         add_filter( 'login_headerurl' , function() {
 			return site_url();
 		} );
 
+        add_filter( 'lostpassword_url', function() {
+            return site_url('/password/reset');
+        });
+
+        add_filter( 'post_thumbnail_html', function($html) {
+            return ( '' == $html ) ? '<img src="' . get_template_directory_uri() . '/screenshot.png" />' : $html;
+        });
+
         add_action('st_stage_bottom',function(){
-            if (is_page('subscribe')) {
-                print do_shortcode('[stMailinglist]');
-            }
+            if (is_page('subscribe')) print do_shortcode('[stMailinglist]');
         });
     }
 

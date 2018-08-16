@@ -1,0 +1,18 @@
+body.single-post
+
+	#stStage
+		margin-bottom: $huge
+
+		#stStageInner
+			max-width: $bodyw + 200
+
+
+@include MQ($mq-desktop)
+	body.single-post
+		#stStage
+			height: 45vh
+
+@include MQ($mq-mobile)
+	body.single-post
+
+		#stContentWrapper

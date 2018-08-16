@@ -24,7 +24,7 @@ if (!is_page('subscribe')) { ?>
     <section id="stFooterTailights" class="row">
         <div id="stFooterTailightsInner">
             <div class="col s12 m6 push-m6">
-                <?php sttv_get_template('stSocial'); ?>
+                <?php sttv_get_template('stSocial','shortcodes'); ?>
             </div>
             <div class="col s12 m6 pull-m6"><span>© <?php echo date('Y'); ?> Supertutor Media, Inc. All Rights Reserved.</span></div>
         </div>

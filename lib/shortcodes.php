@@ -6,78 +6,35 @@ defined( 'ABSPATH' ) || exit;
 
 class Shortcodes {
 
-	public static function init() {
-		$codes = [
-			'stBlock',
-			'stContainer',
-			'stCallout',
-			'stMailinglist',
-			'stSocial',
-			'stLogin',
-			'sttv-bio',
-			'sttv-school-card',
-			'stripe-plan',
-			'sttv-faq'
-		];
+	private static $codes = [
+		'stBlock',
+		'stContainer',
+		'stCallout',
+		'stMailinglist',
+		'stSocial',
+		'stLogin',
+		'stBio',
+		'stFAQ'
+	];
 
-		foreach ( $codes as $code ) {
-			add_shortcode( $code, __CLASS__ . '::' . str_replace('-','_',$code) );
+	public static function init() {
+		foreach ( self::$codes as $code ) {
+			add_shortcode( $code, function( $atts = [], $content = '', $name ) use ($code) {
+				ob_start();
+				require STTV_TEMPLATE_DIR . 'shortcodes/' . $code . '.php';
+				return ob_get_clean();
+			});
 		}
 	}
 
-	public static function stBlock($dump,$content) {
-		ob_start(); ?>
-		<div <?php if (isset($dump['id']) && !empty($dump['id'])) echo "id=\"{$dump['id']}\""; ?> class="stBlock row"><?php echo do_shortcode($content); ?></div>
-		<?php return ob_get_clean();
-	}
-
-	public static function stContainer($atts,$content) {
-		extract(array_merge([
-			'cols' => '12',
-			'class' => 'default',
-			'title' => ''
-		],$atts));
-		ob_start(); ?>
-		<div class="stContainer col s12 m<?php echo $cols.' '.$class;?>">
-		<?php if ($title) : ?><div class="stContainerTitle row"><h3><?php echo $title; ?></h3></div><?php endif; ?>
-		<div class="stContainerText row"><?php echo $content; ?></div>
-		</div>
-		<?php return ob_get_clean();
-	}
-
-	public static function stCallout($atts,$content) {
-		extract(array_merge([
-			'cols' => '12',
-			'class' => 'default',
-			'color' => 'azure',
-			'title' => 'Callout',
-			'link' => '/',
-			'linktext' => 'Go to link'
-		],$atts));
-		ob_start(); ?>
-		<div class="stCallout col s12 m<?php echo $cols; ?>">
-			<div class="stCalloutInner z-depth-4 col s12">
-				<div class="stCalloutContent row">
-					<div class="stCalloutIcon <?php echo $class; ?> z-depth-2"></div>
-					<div class="stCalloutTitle"><h2><?php echo $title; ?></h2></div>
-					<div class="stCalloutBlurb"><?php echo $content; ?></div>
-				</div>
-				<div class="stCalloutLink row">
-					<a href="<?php echo $link; ?>"><?php echo $linktext; ?></a>
-				</div>
-			</div>
-		</div>
-		<?php return ob_get_clean();
-	}
-
-	public static function sttv_bio($atts,$content) {
+	public static function stbio($atts,$content) {
 
 		$sttv_atts = shortcode_atts( [
 			'name' => 'name',
 			'title' => 'title',
 			'img' => 10656,
 			'columns' => '2'
-		], $atts, 'sttv-bio' );
+		], $atts, 'stBio' );
 		$cols = '';
 	
 		switch($sttv_atts['columns']) :
@@ -208,31 +165,5 @@ class Shortcodes {
 			</div>
 		</div>
 		<?php return ob_get_clean();
-	}
-
-	public static function sttv_faq($atts,$content='') {
-		ob_start(); ?>
-		<div id="sttv_faq_<?php echo $atts['id']; ?>" class="sttv-faq-column col s12 m6">
-			<div class="sttv-faq-inner"><?php echo $content; ?></div>
-		</div>
-	<?php return ob_get_clean();
-	}
-
-	public static function stMailinglist($att,$con,$tag) {
-		return self::stTemplate($tag);
-	}
-
-	public static function stSocial($att,$con,$tag) {
-		return self::stTemplate($tag);
-	}
-
-	public static function stLogin($att,$con,$tag) {
-		return self::stTemplate($tag);
-	}
-
-	private static function stTemplate($name) {
-		ob_start();
-		sttv_get_template($name);
-		return ob_get_clean();
 	}
 }

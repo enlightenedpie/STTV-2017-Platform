@@ -1,0 +1,1 @@
+<?php sttv_get_template('title');

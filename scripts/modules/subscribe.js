@@ -1,8 +1,17 @@
 import Form from '../core/classes/form'
+import el from '../core/classes/stDom'
 
 export default class Subscribe extends Form {
+    constructor() {
+        super({
+            firstname: '',
+            lastname: '',
+            email: ''
+        })
+    }
+    
     submit() {
-        this.send('/list/subscribe',(d) => {
+        this.send('/forms/subscribe',(d) => {
             if (d.code === 'sub_error')
                 return this.printError(d.message)
             else

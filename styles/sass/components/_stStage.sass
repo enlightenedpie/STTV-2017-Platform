@@ -1,21 +1,24 @@
-#stStage
-	padding: 0
-	margin-bottom: $large * 2
-	background: $azure
-	background: radial-gradient(circle, azure(.50) 0%, azure(.90) 150%)
-	color: white
-	text-align: center
-	padding: $huge * 2 1em $huge * 3
+body[class*="stPage-"]:not(.noStageGrad)
 
-	h1
-		margin: 0 0 $ittybitty
-
-	span
-		display: block
-		font-style: italic
-
-	.col
+	#stStage
 		padding: 0
+		background: $azure
+		background: radial-gradient(circle, azure(.50) 0%, azure(.90) 150%)
+		color: white
+		text-align: center
+		padding: $huge * 2 1em $huge * 3
+
+		h1
+			margin: 0 0 $ittybitty
+
+		span
+			display: block
+			font-style: italic
+
+		.col
+			padding: 0
+
+#stStage
 
 	#stStageInner
 		height: 100%
@@ -39,15 +42,7 @@
 			
 @include MQ($mq-desktop)
 	#stStage
-		//height: 45vh
 		min-height: 6em
-
-		#stStageInner
-	
-			span.sttv-embed-video, span.post-thumb-top
-				
-				iframe
-
 		
 @include MQ($mq-tablet)			
 	#stStage
