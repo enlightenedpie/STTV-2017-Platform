@@ -9,7 +9,7 @@ export default class Login extends Form {
   }
 
   submit() {
-    this.send('/auth/token',(d) => {
+    this.post('/auth/token',(d) => {
         if (d.code === 'login_fail')
             return this.printError(d.message) && this.overlay()
         else

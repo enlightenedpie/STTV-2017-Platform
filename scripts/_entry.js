@@ -1,5 +1,5 @@
 import config from './utilities/config'
-import checkout from './modules/checkout'
+import signup from './modules/signup'
 import sub from './modules/subscribe'
 import login from './modules/login'
 import modal from './modules/modal'
@@ -16,7 +16,7 @@ const STTV = class {
 			app : 'https://courses.supertutortv.com',
 			content : this.root+'/wp-content/themes/sttvsite'
 		}
-		this.checkout = checkout
+		this.signup = signup
 		this.subscribe = sub
 		this.login = login
 		this.modal = modal

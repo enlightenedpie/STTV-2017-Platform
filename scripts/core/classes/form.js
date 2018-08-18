@@ -4,7 +4,7 @@ export default class Form {
     }
 
     overlay() {
-        return document.querySelector('.stOverlay').classList.toggle('active')
+        return typeof document.querySelector('.stOverlay').classList.toggle('active') === 'boolean'
     }
 
     prepare(el) {
@@ -14,8 +14,12 @@ export default class Form {
         }])
     }
 
+    clearError() {
+        return !!(document.querySelector('#stFormErrors').innerHTML = '')
+    }
+
     printError(msg) {
-        return document.querySelector('#stFormErrors').innerHTML = msg
+        return !!(document.querySelector('#stFormErrors').innerHTML = msg)
     }
 
     setIndex(itm,ind,val) {
@@ -42,18 +46,11 @@ export default class Form {
 			}
 		}
 		return this
-	}
-
-    send(rt,cb) {
-        for (var val in this.state) {
-          if (this.state[val].length == 0) return val
-        }
-        this.overlay()
+    }
     
+    get(rt,cb) {
         _st.request({
             route : rt,
-            method : 'POST',
-            cdata : this.state,
             success : (d) => {
                 typeof cb === 'function' && cb(d)
             },
@@ -61,5 +58,29 @@ export default class Form {
                 console.log(x)
             }
         })
-      }
+    }
+
+    post(rt,dt,cb) {return this.send('POST',rt,dt,cb)}
+    patch(rt,dt,cb) {return this.send('PATCH',rt,dt,cb)}
+    put(rt,dt,cb) {return this.send('PUT',rt,dt,cb)}
+    delete(rt,dt,cb) {return this.send('DELETE',rt,dt,cb)}
+
+    send(mth,rt,dt,cb) {
+        
+        for (var val in dt) {
+          if (dt[val].length == 0) return val
+        }
+    
+        _st.request({
+            route : rt,
+            method : mth,
+            cdata : dt,
+            success : (d) => {
+                typeof cb === 'function' && cb(d)
+            },
+            error : (x) => {
+                console.log(x)
+            }
+        })
+    }
 }

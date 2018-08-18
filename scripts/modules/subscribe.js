@@ -11,7 +11,7 @@ export default class Subscribe extends Form {
     }
     
     submit() {
-        this.send('/forms/subscribe',(d) => {
+        this.post('/forms/subscribe',(d) => {
             if (d.code === 'sub_error')
                 return this.printError(d.message)
             else

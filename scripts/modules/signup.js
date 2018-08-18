@@ -1,39 +1,104 @@
-/* Let's define the checkout object with methods and properties */
-const Checkout = class {
-	constructor(id){
-		Object.assign(this,{
+import Form from '../core/classes/form'
+
+export default class Signup extends Form {
+	constructor(){
+		super({
+			el : null,
 			valid : false,
 			card : false,
 			stripe : null,
-			elements : null,
-			tempId : id,
-			index : 0,
-			state : {
-				id : '',
-      			signature : '',
-				items : [],
-				trial: 0,
-				total : 0,
-				shipping : 0,
-				taxable : 0,
-				tax : {
-					id: '',
-					val: ''
+			step : 0,
+			id : '',
+			signature : '',
+			items : [],
+			trial: 0,
+			total : 0,
+			shipping : 0,
+			taxable : 0,
+			tax : {
+				id: '',
+				val: ''
+			},
+			coupon : {
+				id: '',
+				val: ''
+			},
+			customer : {
+				account : {
+					submitted: false,
+					email: '',
+					firstname: '',
+					lastname: '',
+					password: ''
 				},
-				coupon : {
-					id: '',
-					val: ''
+				plan : {
+					submitted: false
 				},
-				email: {
-					id: '',
-					val: ''
+				shipping : {
+					submitted: false
 				},
-				customer : {
-					token: ''
-				}
+				billing : {
+					submitted: false
+				},
+				token: ''
 			},
 			html : [],
 			table : []
+		})
+
+		this.state.el = document.getElementById('stSignupForm')
+
+		this.overlay()
+		this.get('/signup/init', (data) => {
+			this.state.id = Date.now()
+			this.state.signature = btoa(navigator.userAgent+'|'+navigator.platform+'|'+navigator.product).replace(/=/g,'')
+
+			data.html.forEach((ele,i,a) => {
+				if (ele.length === 0) {
+					return this.state.html[i] = ele
+				}
+
+				var temp = document.createElement('template')
+				temp.innerHTML = ele
+				var blurs = temp.content.firstChild.querySelectorAll('input, select')
+				blurs.forEach((el) => {
+					el.addEventListener('blur', () => {
+						this.setState([el])
+					})
+				})
+    			return this.state.html[i] = temp.content.firstChild
+			})
+			this.step(() => {
+				this.overlay()
+			})
+		})
+	}
+
+	step(dir = 'forward',cb) {
+		cb = (typeof dir === 'function') ? dir : cb
+		dir = (typeof dir === 'function') ? '' : dir
+
+		this.state.html[this.state.step] = this.state.el.firstChild
+		while (this.state.el.firstChild) this.state.el.removeChild(this.state.el.firstChild)
+		if (dir === 'back')
+			this.state.step--
+		else
+			this.state.step++
+
+		this.state.el.appendChild(this.state.html[this.state.step])
+		this.report()
+		typeof cb === 'function' && cb()
+	}
+
+	report() {
+		_st.analytics({
+			type : 'ec:setAction',
+			action : 'checkout',
+			data : {
+				'step' : this.state.step
+			},
+			pageview : true,
+			page : '/checkout'
 		})
 	}
 
@@ -58,56 +123,34 @@ const Checkout = class {
 		})
 	}
 
-	init(cb) {
-		var t = this
-		_st.request({
-			route: '/checkout?pricing='+t.tempId,
-			success : (data) => {
-				data.data.html.forEach(function(v){
-					t.html.push($(v))
-				})
-				t.state.items = data.data.pricing
-				t.update()
-				typeof cb === 'function' && cb(t)
-				t.setIDSignature()
+	next(action) {
+		this.clearError()
+		if (typeof action === 'undefined') return false
 
-				ga('ec:addImpression', {
-					'id': t.state.signature,
-					'name': t.tempID,
-					'category': 'Courses/Subscriptions',
-					'brand': 'SupertutorTV',
-					'list': 'Sales Page'
-				})
-			},
-			error : (err) => {
-			  console.log(err)
-			}
+		this.overlay()
+
+		action = action.replace('stBtn_','')
+		
+		if (action === 'void') return this.step(() => {
+			this.overlay()
 		})
-	}
 
-	next() {
-		if (this.index < 4) {
-			var pane = $('#pane-'+this.index),
-				inputs = $('input,select',pane),
-				t = this
-			return this.validate(inputs, function(inp) {
-				t.update(inp.serializeArray())
-				t.html[t.index] = pane
-				t.index++
-				t.render()
+		if (!this.state.customer[action].submitted)
+			this.post('/signup/'+action,this.state.customer[action], (d) => {
+				if (d.code === 'signup_error') return this.printError(d.message) && this.overlay()
+
+				this.state.customer[action].submitted = true
+				this.step(() => {
+					this.overlay()
+				})
 			})
-		}
 	}
 
 	prev() {
-		if (this.index > 1) {
-			var pane = $('#pane-'+this.index),
-				inputs = $('input,select',pane)
-				this.update(inputs.serializeArray())
-				this.html[this.index] = pane
-				this.index--
-				this.render()
-		}
+		this.overlay()
+		this.step('back',() => {
+			this.overlay()
+		})
 	}
 
 	pricer(price) {
@@ -208,26 +251,6 @@ const Checkout = class {
 		return this
 	}
 
-	setIDSignature() {
-		delete this['tempId']
-		this.state.id = Date.now()
-		this.state.signature = btoa(navigator.userAgent+'|'+navigator.platform+'|'+navigator.product).replace(/=/g,'')
-		return this
-	}
-
-	setIndex(itm,ind,val) {
-		var nInd = ind[0]
-		if (typeof ind == 'string')
-			return this.setIndex(itm,ind.split('-'), val)
-		else if (ind.length==1 && typeof val !== 'undefined') {
-			return itm[nInd] =  val
-		} else if (ind.length==0)
-			return itm;
-		else
-			if (typeof itm[nInd] === 'undefined') itm[nInd] = {}
-			return this.setIndex(itm[nInd],ind.slice(1), val)
-	}
-
 	setOutcome( result, con = document ) {
 		var t = this
 		if ( typeof result.error !== 'undefined' ) {
@@ -244,19 +267,6 @@ const Checkout = class {
 				t.enableSubmit()
 			})
 		}
-	}
-
-	setState(arr) {
-		var t = this
-		if (typeof arr !== 'undefined'){
-			for (let a = 0; a < arr.length; a++) {
-				let v = arr[a].name.split('|')
-				for (let i = 0; i < v.length; i++) {
-					t.setIndex(t.state,v[i].replace('st-','').split('-'),arr[a].value)
-				}
-			}
-		}
-		return this
 	}
 
 	setShipping(el) {
@@ -413,5 +423,3 @@ const Checkout = class {
 		typeof cb === 'function' && cb(inputs)
 	}
 }
-
-export default Checkout
