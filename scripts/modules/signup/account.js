@@ -1,4 +1,3 @@
 export default function account(action) {
-    var obj = this.state.customer.account
-    return (!obj.submitted) ? this.update(action,obj) : false
+    return (!this.state.submitted.account) ? this.update(action,this.state.customer.account) : false
 }

@@ -1,25 +1,25 @@
 import Form from '../core/classes/form'
-import account from './signup/account'
 import cardSetup from './signup/cardSetup'
 import copyAddress from './signup/copyAddress'
 import disableSubmit from './signup/disableSubmit'
 import enableSubmit from './signup/enableSubmit'
 import next from './signup/next'
+import pay from './signup/pay'
+import plan from './signup/plan'
 import prev from './signup/prev'
 import pricer from './signup/pricer'
+import render from './signup/render'
 import renderItemsTable from './signup/renderItemsTable'
 import report from './signup/report'
 import setChecker from './signup/setChecker'
 import setOutcome from './signup/setOutcome'
 import setShipping from './signup/setShipping'
 import step from './signup/step'
-import submit from './signup/submit'
 import update from './signup/update'
 import validate from './signup/validate'
 
 export default class Signup extends Form {
 	constructor(){
-
 		// set state
 		super({
 			el : document.getElementById('stSignupForm'),
@@ -27,42 +27,41 @@ export default class Signup extends Form {
 			card : false,
 			stripe : null,
 			step : 0,
+			submitted : {
+				account : false,
+				plan : false,
+				shipping : false,
+				billing : false,
+				payment : false
+			},
 			id : '',
 			signature : '',
 			customer : {
 				account : {
-					submitted: false,
 					email: '',
 					firstname: '',
 					lastname: '',
 					password: ''
 				},
-				plan : {
-					submitted: false
-				},
-				shipping : {
-					submitted: false
-				},
-				billing : {
-					submitted: false
-				},
+				plan : {},
+				shipping : {},
+				billing : {},
 				token: ''
 			},
 			pricing : {
-				items : [],
 				total : 0,
 				shipping : 0,
 				taxable : 0,
 				tax : {
 					id: '',
-					val: ''
+					val: 0
 				},
 				coupon : {
 					id: '',
 					val: ''
 				}
 			},
-			html : [],
+			html : [''],
 			table : []
 		})
 
@@ -71,41 +70,30 @@ export default class Signup extends Form {
 		this.get('/signup/init', (data) => {
 			this.state.id = Date.now()
 			this.state.signature = btoa(navigator.userAgent+'|'+navigator.platform+'|'+navigator.product).replace(/=/g,'')
-
-			data.html.forEach((ele,i,a) => {
-				if (ele.length === 0) return this.state.html[i] = ele
-
-				var temp = document.createElement('template')
-				temp.innerHTML = ele
-				var blurs = temp.content.firstChild.querySelectorAll('input, select')
-				blurs.forEach((el) => {
-					el.addEventListener('blur', () => {
-						this.setState([el])
-					})
-				})
-    			return this.state.html[i] = temp.content.firstChild
-			})
+			this.render(data.html)
 			this.step(() => {
 				this.overlay()
 			})
 		})
 	}
 
-	account(action) {account.call(this,action)}
+	// defined methods (from modules)
 	cardSetup() {cardSetup.call(this)}
 	copyAddress(el) {copyAddress.call(this,el)}
 	disableSubmit() {disableSubmit.call(this)}
 	enableSubmit() {enableSubmit.call(this)}
-	next(action) {next.call(this,action)}
+	next(action,cb) {next.call(this,action,cb)}
+	pay() {pay.call(this)}
+	plan(action) {plan.call(this,action)}
 	prev() {prev.call(this)}
 	pricer(price) {pricer.call(this,price)}
+	render(html) {render.call(this,html)}
 	renderItemsTable() {renderItemsTable.call(this)}
 	report() {report.call(this)}
 	setChecker(el) {setChecker.call(this,el)}
 	setOutcome(result,con) {setOutcome.call(this,result,con)}
 	setShipping() {setShipping.call(this,el)}
 	step(dir,cb) {step.call(this,dir,cb)}
-	submit() {submit.call(this)}
-	update(action,obj) {update.call(this,action,obj)}
+	update(obj,action,cb) {update.call(this,obj,action,cb)}
 	validate(inputs,cb) {validate.call(this,inputs,cb)}
 }

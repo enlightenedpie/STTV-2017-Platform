@@ -1,17 +1,11 @@
 export default function setOutcome( result, con = document ) {
     var t = this
-    if ( typeof result.error !== 'undefined' ) {
-        return $( '.error', con ).text( result.error.message );
-    } else {
-        $( '.error', con ).text( '' );
-    }
+    if (typeof result.error !== 'undefined') return this.printError(result.error.message)
+    this.clearError()
 
     if ( !result.empty && result.complete ) {
-        var inputs = $( 'input, select', con )
-        _st.checkout.validate( inputs, function(inp) {
-            t.update(inp.serializeArray())
-            t.valid = true
-            t.enableSubmit()
+        this.validate( '', () => {
+            this.enableSubmit()
         })
     }
 }

@@ -1,12 +1,18 @@
-export default function update(action,obj) {
-    this.post('/signup/'+action, obj, (d) => {
-        if (d.code === 'signup_error') return this.printError(d.message) && this.overlay()
-        Object.assign(obj,d.update)
-        obj.submitted = true
-        return this.step(() => {
-            this.overlay()
+export default function update(obj,action,cb) {
+    return !this.state.submitted[action] && ((obj,action,cb) => {
+        this.post('/signup/'+action, obj, (d) => {
+            if (d.code === 'signup_error') return this.printError(d.message) && this.overlay()
+            
+            Object.assign(obj,d.update)
+            this.state.submitted[action] = true
+            this.render(d.html)
+            this.step(() => {
+                typeof cb !== 'undefined' && this[cb]()
+                this.overlay()
+            })
         })
-    })
+    })(obj,action,cb)
+
     /* if (typeof obj !== 'undefined') this.setState(obj)
     var state = this.state,
         t = this

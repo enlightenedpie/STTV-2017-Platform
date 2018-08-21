@@ -66,11 +66,6 @@ export default class Form {
     delete(rt,dt,cb) {return this.send('DELETE',rt,dt,cb)}
 
     send(mth,rt,dt,cb) {
-        
-        for (var val in dt) {
-          if (dt[val].length == 0) return val
-        }
-    
         _st.request({
             route : rt,
             method : mth,

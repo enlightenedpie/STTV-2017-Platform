@@ -1,5 +1,8 @@
-export default function validate( inputs, cb ) {
-    this.disableSubmit()
+export default function validate( inp, cb ) {
+    /* for (var val in inp) {
+        if (inp[val].length == 0) return val
+    } */
+    /* this.disableSubmit()
     var context = '#st-modal-inner',
         ctrl = false,
         inp = inputs.toArray(),
@@ -22,6 +25,6 @@ export default function validate( inputs, cb ) {
         return !ctrl
     }
 
-    $( 'p.error', context ).text('')
-    typeof cb === 'function' && cb(inputs)
+    $( 'p.error', context ).text('') */
+    typeof cb === 'function' && cb()
 }

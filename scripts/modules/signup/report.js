@@ -6,6 +6,6 @@ export default function report() {
             'step' : this.state.step
         },
         pageview : true,
-        page : '/checkout'
+        page : '/signup'
     })
 }

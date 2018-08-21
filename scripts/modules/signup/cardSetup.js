@@ -1,14 +1,11 @@
 export default function cardSetup() {
-    this.stripe = Stripe(_st.stripe.publicKey)
-    this.elements = this.stripe.elements()
-    this.card = this.elements.create('card',{
+    this.state.stripe = Stripe(_st.stripe.publicKey)
+    this.state.elements = this.state.stripe.elements()
+    this.state.card = this.state.elements.create('card',{
         hidePostalCode: true
     })
-    
-    this.card.mount('#st-checkout-card-element')
-
-    var t = this
-    this.card.on( 'change', function( event ) {
-        t.setOutcome( event, '#st-checkout-wrapper' )
+    this.state.card.mount('#stSignupCardElement')
+    this.state.card.on( 'change', ( event ) => {
+        this.setOutcome( event, this.state.el )
     })
 }

@@ -1,51 +1,21 @@
 export default function setChecker(el) {
-    function clear(el,reset) {
-        $('p.error').text('')
+    var clear = (el,reset) => {
+        this.clearError()
         el.classList.remove('valid', 'invalid')
-        if (typeof reset !== 'undefined' && reset) t.state[p] = {'id':'','val':''}
-        t.update().renderItemsTable()
+        if (typeof reset !== 'undefined' && reset) this.state.pricing[p] = {'id':'','val':''}
+        //this.renderItemsTable()
         return true
     }
-    var t = this,
-        params = ['coupon','email','tax'],
-        p = false
-        params.some(function(v){
-            if (el.classList.contains(v)) p = v
-            return el.classList.contains(v)
-        })
-    
+
     if (el.value === '') return clear(el,true)
 
-    if (el.value === t.state[p].val) return false
+    var p = el.classList.contains('tax') ? 'tax' : 'coupon'
 
-    _st.request({
-        route : '/checkout?'+p+'='+el.value+'&sig='+t.state.signature,
-        success : function(d) {
-            clear(el)
-            switch (d.code) {
-                case 'coupon_valid':
-                case 'email_available':
-                case 'checkout_tax':
-                    el.classList.add('valid')
-                    break;
-                case 'coupon_invalid':
-                case 'coupon_expired':
-                case 'email_taken':
-                    el.classList.add('invalid')
-                    $('p.error').text(d.message)
-                    break;
-                default:
-                    return 'What\'re you even doing here?'
-            }
-            t.state[p] = {
-                id: d.id,
-                val: d.value
-            }
-            t.update().renderItemsTable()
-        },
-        error : function(x){
-            console.log(x)
-        }
-    })
-    return this
+    if (el.value === this.state.pricing[p].val) return false
+
+    this.get('/signup/check?'+p+'='+el.value+'&sig='+this.state.signature, (d) => {
+        clear(el,true)
+        if (d.code === 'signup_error') return this.printError(d.message) && this.overlay()
+        Object.assign(this.state.pricing[p],d.update)
+    });
 }
