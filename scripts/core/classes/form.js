@@ -15,7 +15,7 @@ export default class Form {
     }
 
     clearError() {
-        return !!(document.querySelector('#stFormErrors').innerHTML = '')
+        return !(document.querySelector('#stFormErrors').innerHTML = '')
     }
 
     printError(msg) {
@@ -36,16 +36,15 @@ export default class Form {
     }
     
     setState(arr) {
-		var t = this
-		if (typeof arr !== 'undefined'){
-			for (let a = 0; a < arr.length; a++) {
-				let v = arr[a].name.split('|')
-				for (let i = 0; i < v.length; i++) {
-					t.setIndex(t.state,v[i].replace('st-','').split('-'),arr[a].value)
-				}
-			}
-		}
-		return this
+        if (typeof arr === 'undefined') return false
+        if (!Array.isArray(arr)) arr = [arr]
+        for (let a = 0; a < arr.length; a++) {
+            let v = arr[a].name.split('|')
+            for (let i = 0; i < v.length; i++) {
+                this.setIndex(this.state,v[i].replace('st-','').split('-'),arr[a].value)
+            }
+        }
+		return true
     }
     
     get(rt,cb) {

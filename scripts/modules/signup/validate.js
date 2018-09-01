@@ -1,30 +1,16 @@
-export default function validate( inp, cb ) {
-    /* for (var val in inp) {
-        if (inp[val].length == 0) return val
-    } */
-    /* this.disableSubmit()
-    var context = '#st-modal-inner',
-        ctrl = false,
-        inp = inputs.toArray(),
-        msg = ' is invalid'
-    inp.some( function( v, i ) {
-        var t = $(v)
-        if ( t.is(':required') && ( !t.val() || t.hasClass('invalid') ) ) {
-            if (!t.val()) msg = t.attr('placeholder')+' is required'
-            t.addClass('invalid')
-            return ctrl = true
-        } else if ( t.hasClass('invalid') ) {
-            msg = t.attr('placeholder')+msg
-            return ctrl = true
+export default function validate(cb) {
+    var err = false,
+        inp = Array.from(document.getElementById('step-'+this.state.step).querySelectorAll('input, select'))
+
+    inp.some((el) => {
+        if ( (el.hasAttribute('required') && ( !el.value || el.classList.contains('invalid') )) || el.classList.contains('invalid') ) {
+            el.classList.add('invalid')
+            this.printError('invalid')
+            return err = true
         }
         return false
     })
-    
-    if (ctrl) {
-        $( 'p.error', context ).text( msg )
-        return !ctrl
-    }
-
-    $( 'p.error', context ).text('') */
+    this.clearError()
     typeof cb === 'function' && cb()
+    return !err
 }

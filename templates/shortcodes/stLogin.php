@@ -9,10 +9,10 @@ stFWInset('stBordered',<<<HTML
     </div>
     <div id="stLoginCredentials" class="col s12">
         <div class="input-field col s12">
-            <input class="browser-default validate email" type="email" name="st-username" placeholder="Email Address" onblur="_st.login.prepare(this)"/>
+            <input class="browser-default validate email" type="email" name="st-username" placeholder="Email Address" onblur="_st.login.setState(this)"/>
         </div>
         <div class="input-field col s12">
-            <input class="browser-default validate" type="password" name="st-password" placeholder="Password" onblur="_st.login.prepare(this)"/>
+            <input class="browser-default validate" type="password" name="st-password" placeholder="Password" onblur="_st.login.setState(this)"/>
         </div>
     </div>
     <div class="stForgotBlock col s12">

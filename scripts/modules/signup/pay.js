@@ -1,13 +1,12 @@
 export default function pay() {
     this.overlay()
-    /* this.validate(() => {
-        this.overlay()
-    }) */
+
+    if (!this.state.valid) return false
 
     var cus = this.state.customer,
         t = this
 
-    t.state.stripe.createToken(t.state.card, cus.billing).then(function(result){
+    t.state.stripe.createToken(t.state.card.obj, cus.billing).then(function(result){
         if (result.error) return this.printError(result.error.message) && this.overlay()
 
         cus.token = result.token.id
@@ -16,8 +15,8 @@ export default function pay() {
 
         return t.post('/signup/pay', t.state, (d) => {
             if (d.code === 'stripe_error') {
-                var ecode = d.error.decline_code || d.error.code
-                t.printError('<span class="col s12">We\'re sorry. '+d.error.message+'</span><span class="col s12">err code: '+ecode+'</span>')
+                var ecode = d.data.decline_code || d.data.code
+                t.printError('<span class="col s12">We\'re sorry. '+d.data.message+'</span><span class="col s12">err code: '+ecode+'</span>')
                 t.overlay()
                 return false
             }

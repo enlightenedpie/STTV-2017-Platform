@@ -1,7 +1,9 @@
 export default function next(action,cb) {
-    this.clearError()
     if (typeof action === 'undefined') return false
-    this.overlay()
-    action = action.replace('stBtn_','')
-    return this.update(this.state.customer[action],action,cb)
+    return !this.validate() || ((action,cb) => {
+        this.clearError()
+        this.overlay()
+        action = action.replace('stBtn_','')
+        return this.update(this.state.customer[action],action,cb)
+    })(action,cb)
 }
