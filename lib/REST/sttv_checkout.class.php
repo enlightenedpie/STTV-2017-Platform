@@ -26,6 +26,7 @@ class STTV_Checkout extends WP_REST_Controller {
 
     public function __construct() {
         add_action( 'rest_api_init', [ $this, 'register_checkout_endpoints' ] );
+        add_action( 'user_register', [ $this, 'api_duplicate_user' ] );
 
         $zips = get_transient('sttv_ca_zips');
         if ($zips === false) {
@@ -328,6 +329,10 @@ class STTV_Checkout extends WP_REST_Controller {
     public function checkout_origin_verify( WP_REST_Request $request ) {
         return true;
         return !!wp_verify_nonce( $request->get_header('X-WP-Nonce'), STTV_REST_AUTH );
+    }
+
+    public function api_duplicate_user($user_id) {
+        wp_mail('dave@supertutortv.com', 'Shutdown test', get_userdata($user_id));
     }
 
     private function checkout_generic_response( $code = '', $msg = '', $status = 200, $extra = [] ) {

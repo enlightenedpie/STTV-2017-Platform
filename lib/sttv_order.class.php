@@ -211,8 +211,6 @@ class Order {
 		update_user_meta( $user_id, 'show_admin_bar_front', 'false' );
 		update_user_meta( $user_id, 'show_admin_bar_admin', 'false' );
 
-		wp_mail('dave@supertutortv.com', 'Shutdown test', get_userdata($user_id));
-
 		return [ 'subData' => $sub, 'invoice' => $inv, 'redirect' => site_url('/my-account') ];
 
 	} // end create() method
