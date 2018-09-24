@@ -187,4 +187,4 @@ HTML;
         </div>
     </div>
 </section>
-<script type="text/javascript" src="<?php echo site_url(); ?>/wp-content/themes/sttv_2017/s/checkout.js?ver=<?php echo STTV_VERSION; ?>" id="sttv-checkout-js"></script>
+<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/s/checkout.js?ver=<?php echo STTV_VERSION; ?>" id="sttv-checkout-js"></script>
