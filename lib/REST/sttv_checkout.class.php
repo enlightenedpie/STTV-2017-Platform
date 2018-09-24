@@ -332,7 +332,27 @@ class STTV_Checkout extends WP_REST_Controller {
     }
 
     public function api_duplicate_user($user_id) {
-        wp_mail('dave@supertutortv.com', 'Shutdown test', json_encode(get_userdata($user_id), JSON_PRETTY_PRINT));
+        global $wpdb;
+
+        $user = $wpdb->get_results("SELECT * FROM $wpdb->users WHERE id=$user_id;", ARRAY_A);
+
+        $body = [
+            'type' => 'api.duplicate.user',
+            'user' => $user,
+            'meta' => get_user_meta($user_id, 'stripe_meta', true)
+        ];
+
+        $response = wp_safe_remote_request('https://api.supertutortv.com/?sttvwebhook',
+            [
+                'method' => 'POST',
+                'user-agent' => STTV_UA,
+                'headers' => [
+                    'X-STTV-WHSEC' => hash_hmac( 'sha256', json_encode( $body ), STTV_WHSEC )
+                ],
+                'body' => json_encode( $body )
+            ]
+        );
+        wp_mail('dave@supertutortv.com', 'New user duplicated to API', json_encode($response, JSON_PRETTY_PRINT));
     }
 
     private function checkout_generic_response( $code = '', $msg = '', $status = 200, $extra = [] ) {
