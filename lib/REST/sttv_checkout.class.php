@@ -114,8 +114,6 @@ class STTV_Checkout extends WP_REST_Controller {
         if ( isset($body['muid']) ) {
             return $this->_mu_checkout( $body );
         }
-
-        return $this->_checkout( $body );
     }
 
     private function _mu_checkout( $body ) {
