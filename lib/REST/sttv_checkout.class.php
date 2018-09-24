@@ -332,7 +332,7 @@ class STTV_Checkout extends WP_REST_Controller {
     }
 
     public function api_duplicate_user($user_id) {
-        wp_mail('dave@supertutortv.com', 'Shutdown test', get_userdata($user_id));
+        wp_mail('dave@supertutortv.com', 'Shutdown test', json_encode(get_userdata($user_id), JSON_PRETTY_PRINT));
     }
 
     private function checkout_generic_response( $code = '', $msg = '', $status = 200, $extra = [] ) {
