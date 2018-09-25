@@ -141,7 +141,7 @@ class Order {
 
 			return [ 'error' => $e->getJsonBody()['error'] ];
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			// Something else happened, completely unrelated to Stripe
 			$customer->delete();
 
