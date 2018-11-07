@@ -119,10 +119,9 @@ class Order {
 
 			$sub = \Stripe\Subscription::create([
 				"customer" => $customerID,
-				"items" => $items['subscription']
+				"items" => $items['subscription'],
+				"cancel_at_period_end" => true
 			]);
-
-			$sub->cancel([ 'at_period_end' => true ]);
 
 			/**
 			 * Fetch the invoice just created
