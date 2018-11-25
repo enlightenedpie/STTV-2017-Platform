@@ -6,7 +6,7 @@
 	<form id="sttv_login_form" action="/" method="post">
 		<p class="message"></p>
 		<div class="row" style="color:white;background-color:red;padding:1em">
-			<span>ATTENTION: If you purchased one of our courses after November 19th, 2018, DO NOT sign in below. Click <a href="https://courses.supertutortv.com/login">here</a> for the proper signin page.</span>
+			<span>ATTENTION: If you purchased one of our courses after November 19th, 2018, DO NOT sign in below. Click <a style="text-decoration:underline;" href="https://courses.supertutortv.com/login">here</a> for the proper signin page.</span>
 		</div>
 		<div class="row">
 			<div class="input-field s12">
