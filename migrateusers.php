@@ -22,5 +22,5 @@ $response = wp_remote_post('https://dev.api.supertutortv.com/v2/migrate/users',[
 ]);
 
 echo '<pre>';
-print_r( $data );
+print_r( $response );
 echo '</pre>';
