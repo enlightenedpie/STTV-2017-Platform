@@ -40,5 +40,5 @@ $resp = curl_exec($curl);
 curl_close($curl);
 
 echo '<pre>';
-print_r( $resp );
+print_r( json_decode($resp) );
 echo '</pre>';
