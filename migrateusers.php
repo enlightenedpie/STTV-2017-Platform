@@ -11,7 +11,7 @@ $users = get_users([
     'role__in' => [ 'the_best_act_prep_course_ever' ]
 ]);
 
-unset($users[0]->ID);
+unset($users[0]['ID']);
 
 $data = serialize($users[0]);
 
