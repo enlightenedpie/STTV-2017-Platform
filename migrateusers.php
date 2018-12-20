@@ -28,8 +28,8 @@ curl_setopt_array($curl, array(
     CURLOPT_URL => 'https://dev.api.supertutortv.com/v2/migrate/users',
     CURLOPT_USERAGENT => 'STTV Main Site Migration',
     CURLOPT_HTTPHEADER => [
-        'Content-Type' => 'text/plain',
-        'STTVWHSEC' => hash_hmac( 'sha256', $data, STTV_WHSEC )
+        'Content-Type: text/plain',
+        'STTVWHSEC: ' . hash_hmac( 'sha256', $data, STTV_WHSEC )
     ],
     CURLOPT_POST => 1,
     CURLOPT_POSTFIELDS => $data
