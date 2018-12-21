@@ -17,7 +17,7 @@ $curl = curl_init();
 
 curl_setopt_array($curl, array(
     CURLOPT_RETURNTRANSFER => 1,
-    CURLOPT_URL => 'https://dev.api.supertutortv.com/v2/migrate/users',
+    CURLOPT_URL => 'https://api.supertutortv.com/v2/migrate/users',
     CURLOPT_USERAGENT => 'STTV Main Site Migration',
     CURLOPT_HTTPHEADER => [
         'Content-Type: text/plain',

@@ -19,10 +19,10 @@
             	<img src="<?php header_image(); ?>" alt="<?php echo bloginfo('name');?>" />
             </a>
         </div>
-        <a href="<?php echo site_url(); ?>/my-account" id="login" class="modal-toggle" <?php print ($loggedin) ? 'data-action="account"' : 'data-action="login"'; ?>>
+        <a href="https://courses.supertutortv.com/login" id="login">
             <div class="icon-block">
                 <span class="dashicons dashicons-admin-users"></span>
-                <span class="link-text"><?php print ($loggedin) ? $firstname : 'Login'; ?></span>
+                <span class="link-text">Login</span>
             </div>
         </a>
     </header>
